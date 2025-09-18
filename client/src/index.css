@@ -1,0 +1,37 @@
+@import 'tailwindcss';
+
+@layer base {
+  :root {
+    --color-primary: 255 105 180; /* hot pink */
+    --color-primary-600: 236 72 153; /* pink-500ish */
+    --color-primary-700: 219 39 119;
+    --color-accent: 158 91 255; /* soft violet */
+    --color-muted: 250 232 255; /* rose/rose-50 */
+    --color-bg: 255 250 252; /* very soft rose */
+    --color-text: 31 41 55; /* gray-800 */
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+  body {
+    @apply bg-[rgb(var(--color-bg))] text-[rgb(var(--color-text))];
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-pink-600 hover:bg-pink-700 text-white rounded-lg px-4 py-2 transition-colors;
+  }
+  .btn-accent {
+    @apply bg-violet-600 hover:bg-violet-700 text-white rounded-lg px-4 py-2 transition-colors;
+  }
+  .badge-primary {
+    @apply bg-pink-100 text-pink-800 text-xs font-medium px-2 py-1 rounded;
+  }
+  .link-primary {
+    @apply text-pink-600 hover:text-pink-700;
+  }
+}

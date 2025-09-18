@@ -1,0 +1,403 @@
+[
+  {
+    "sku": "san-0001",
+    "name": "Sandal trắng basic",
+    "description": "Giày sandal trắng, form basic, dễ phối đồ. Chất liệu da PU, đế cao su non êm ái.",
+    "category": "Sandals",
+    "price": 990000,
+    "stock": 30,
+    "media": [
+      {
+        "url": "/images/Sandals/san-0001_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Sandals/san-0001_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Sandals/san-0001_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Sandals/san-0001_4.jpg",
+        "type": "image",
+        "order": 4
+      },
+      {
+        "url": "/images/Sandals/san-0001_5.mp4",
+        "type": "video",
+        "order": 5
+      }
+    ],
+    "variants": [
+      { "color": "White", "size": "38", "stock": 5 },
+      { "color": "White", "size": "39", "stock": 10 },
+      { "color": "White", "size": "40", "stock": 8 },
+      { "color": "White", "size": "41", "stock": 7 }
+    ]
+  },
+  {
+    "sku": "san-0002",
+    "name": "Sandal đen cao cấp",
+    "description": "Giày sandal đen, thiết kế cao cấp, phù hợp cho các dịp đặc biệt. Chất liệu da thật, đế cao su chống trượt.",
+    "category": "Sandals",
+    "price": 1290000,
+    "stock": 25,
+    "media": [
+      {
+        "url": "/images/Sandals/san-0002_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Sandals/san-0002_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Sandals/san-0002_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Sandals/san-0002_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Black", "size": "38", "stock": 6 },
+      { "color": "Black", "size": "39", "stock": 8 },
+      { "color": "Black", "size": "40", "stock": 7 },
+      { "color": "Black", "size": "41", "stock": 4 }
+    ]
+  },
+  {
+    "sku": "pan-0001",
+    "name": "Quần jean slim fit",
+    "description": "Quần jean slim fit, chất liệu cotton pha spandex, co giãn tốt. Thiết kế hiện đại, phù hợp mọi hoàn cảnh.",
+    "category": "Pants",
+    "price": 1590000,
+    "stock": 40,
+    "media": [
+      {
+        "url": "/images/Pants/pan-0001_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Pants/pan-0001_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Pants/pan-0001_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Pants/pan-0001_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Blue", "size": "S", "stock": 8 },
+      { "color": "Blue", "size": "M", "stock": 12 },
+      { "color": "Blue", "size": "L", "stock": 10 },
+      { "color": "Blue", "size": "XL", "stock": 10 }
+    ]
+  },
+  {
+    "sku": "pan-0002",
+    "name": "Quần jogger thể thao",
+    "description": "Quần jogger thể thao, chất liệu polyester co giãn, thoáng khí. Thiết kế năng động, phù hợp tập luyện và dạo phố.",
+    "category": "Pants",
+    "price": 890000,
+    "stock": 35,
+    "media": [
+      {
+        "url": "/images/Pants/pan-0002_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Pants/pan-0002_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Pants/pan-0002_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Pants/pan-0002_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Gray", "size": "S", "stock": 7 },
+      { "color": "Gray", "size": "M", "stock": 10 },
+      { "color": "Gray", "size": "L", "stock": 9 },
+      { "color": "Gray", "size": "XL", "stock": 9 }
+    ]
+  },
+  {
+    "sku": "ski-0001",
+    "name": "Chân váy midi hoa",
+    "description": "Chân váy midi hoa, chất liệu chiffon mềm mại. Thiết kế nữ tính, phù hợp cho các dịp đặc biệt và dạo phố.",
+    "category": "Skirts",
+    "price": 1190000,
+    "stock": 20,
+    "media": [
+      {
+        "url": "/images/Skirts/ski-0001_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Skirts/ski-0001_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Skirts/ski-0001_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Skirts/ski-0001_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Floral", "size": "S", "stock": 4 },
+      { "color": "Floral", "size": "M", "stock": 6 },
+      { "color": "Floral", "size": "L", "stock": 5 },
+      { "color": "Floral", "size": "XL", "stock": 5 }
+    ]
+  },
+  {
+    "sku": "ski-0002",
+    "name": "Chân váy mini denim",
+    "description": "Chân váy mini denim, chất liệu cotton denim cứng cáp. Thiết kế trẻ trung, năng động, phù hợp dạo phố và đi chơi.",
+    "category": "Skirts",
+    "price": 790000,
+    "stock": 28,
+    "media": [
+      {
+        "url": "/images/Skirts/ski-0002_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Skirts/ski-0002_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Skirts/ski-0002_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Skirts/ski-0002_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Blue", "size": "S", "stock": 6 },
+      { "color": "Blue", "size": "M", "stock": 8 },
+      { "color": "Blue", "size": "L", "stock": 7 },
+      { "color": "Blue", "size": "XL", "stock": 7 }
+    ]
+  },
+  {
+    "sku": "top-0001",
+    "name": "Áo thun basic trắng",
+    "description": "Áo thun basic trắng, chất liệu cotton 100%, mềm mại và thoáng khí. Thiết kế đơn giản, dễ phối đồ.",
+    "category": "Tops",
+    "price": 290000,
+    "stock": 50,
+    "media": [
+      {
+        "url": "/images/Tops/top-0001_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Tops/top-0001_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Tops/top-0001_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Tops/top-0001_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "White", "size": "S", "stock": 10 },
+      { "color": "White", "size": "M", "stock": 15 },
+      { "color": "White", "size": "L", "stock": 12 },
+      { "color": "White", "size": "XL", "stock": 13 }
+    ]
+  },
+  {
+    "sku": "out-0001",
+    "name": "Áo khoác bomber",
+    "description": "Áo khoác bomber, chất liệu polyester chống nước. Thiết kế thể thao, phù hợp mùa đông và các hoạt động ngoài trời.",
+    "category": "Outerwear",
+    "price": 1890000,
+    "stock": 22,
+    "media": [
+      {
+        "url": "/images/Outerwear/out-0001_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Outerwear/out-0001_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Outerwear/out-0001_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Outerwear/out-0001_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Black", "size": "S", "stock": 4 },
+      { "color": "Black", "size": "M", "stock": 6 },
+      { "color": "Black", "size": "L", "stock": 6 },
+      { "color": "Black", "size": "XL", "stock": 6 }
+    ]
+  },
+  {
+    "sku": "out-0002",
+    "name": "Áo khoác dạ",
+    "description": "Áo khoác dạ, chất liệu wool cao cấp. Thiết kế thanh lịch, phù hợp cho công sở và các dịp trang trọng.",
+    "category": "Outerwear",
+    "price": 2590000,
+    "stock": 15,
+    "media": [
+      {
+        "url": "/images/Outerwear/out-0002_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Outerwear/out-0002_2.jpg",
+        "type": "image",
+        "order": 2
+      }
+    ],
+    "variants": [
+      { "color": "Navy", "size": "S", "stock": 3 },
+      { "color": "Navy", "size": "M", "stock": 4 },
+      { "color": "Navy", "size": "L", "stock": 4 },
+      { "color": "Navy", "size": "XL", "stock": 4 }
+    ]
+  },
+  {
+    "sku": "sli-0001",
+    "name": "Dép lê cao su",
+    "description": "Dép lê cao su, thiết kế đơn giản, thoải mái. Chất liệu cao su non, đế chống trượt, phù hợp sử dụng trong nhà và dạo phố.",
+    "category": "Slides",
+    "price": 190000,
+    "stock": 60,
+    "media": [
+      {
+        "url": "/images/Slides/sli-0001_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Slides/sli-0001_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Slides/sli-0001_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Slides/sli-0001_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Black", "size": "38", "stock": 12 },
+      { "color": "Black", "size": "39", "stock": 15 },
+      { "color": "Black", "size": "40", "stock": 15 },
+      { "color": "Black", "size": "41", "stock": 18 }
+    ]
+  },
+  {
+    "sku": "bot-0001",
+    "name": "Bốt da cổ thấp",
+    "description": "Bốt da cổ thấp, chất liệu giả da mềm, đế chắc chắn, dễ phối nhiều phong cách.",
+    "category": "Boots",
+    "price": 1490000,
+    "stock": 20,
+    "media": [
+      { "url": "/images/Boots/bot-0001_1.jpg", "type": "image", "order": 1 },
+      { "url": "/images/Boots/bot-0001_2.jpg", "type": "image", "order": 2 },
+      { "url": "/images/Boots/bot-0001_3.jpg", "type": "image", "order": 3 },
+      { "url": "/images/Boots/bot-0001_4.jpg", "type": "image", "order": 4 },
+      { "url": "/images/Boots/bot-0001_5.jpg", "type": "image", "order": 5 },
+      { "url": "/images/Boots/bot-0001_6.jpg", "type": "image", "order": 6 },
+      { "url": "/images/Boots/bot-0001_7.jpg", "type": "image", "order": 7 }
+    ],
+    "variants": [
+      { "color": "Black", "size": "38", "stock": 5 },
+      { "color": "Black", "size": "39", "stock": 5 },
+      { "color": "Black", "size": "40", "stock": 5 },
+      { "color": "Black", "size": "41", "stock": 5 }
+    ]
+  },
+  {
+    "sku": "sho-0001",
+    "name": "Giày sneaker cổ thấp",
+    "description": "Giày sneaker cổ thấp, thiết kế trẻ trung, thoải mái cho đi học và đi làm.",
+    "category": "Shoes",
+    "price": 1290000,
+    "stock": 24,
+    "media": [
+      { "url": "/images/Shoes/sho-0001_1.jpg", "type": "image", "order": 1 },
+      { "url": "/images/Shoes/sho-0001_2.jpg", "type": "image", "order": 2 },
+      { "url": "/images/Shoes/sho-0001_3.jpg", "type": "image", "order": 3 },
+      { "url": "/images/Shoes/sho-0001_4.jpg", "type": "image", "order": 4 },
+      { "url": "/images/Shoes/sho-0001_5.jpg", "type": "image", "order": 5 },
+      { "url": "/images/Shoes/sho-0001_6.jpg", "type": "image", "order": 6 },
+      { "url": "/images/Shoes/sho-0001_7.jpg", "type": "image", "order": 7 }
+    ],
+    "variants": [
+      { "color": "White", "size": "38", "stock": 6 },
+      { "color": "White", "size": "39", "stock": 6 },
+      { "color": "White", "size": "40", "stock": 6 },
+      { "color": "White", "size": "41", "stock": 6 }
+    ]
+  }
+]
