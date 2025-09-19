@@ -6,7 +6,7 @@ const orderController = require('../controllers/order.controller');
 const productController = require('../controllers/product.controller');
 
 router.post('/seed', auth, requireRole('admin'), controller.seedAdmin);
-router.get('/users', auth, requireRole('admin', 'manager'), controller.getUsers);
+router.get('/users', auth, requireRole('admin'), controller.getUsers);
 
 // Admin Orders
 router.get('/orders', auth, requireRole('admin', 'manager'), orderController.list);

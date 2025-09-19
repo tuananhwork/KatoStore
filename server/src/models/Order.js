@@ -35,13 +35,24 @@ const OrderSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'],
+      enum: [
+        'pending',
+        'processing',
+        'shipped',
+        'delivered',
+        'cancelled',
+        'refunded',
+      ],
       default: 'pending',
       index: true,
     },
 
     shippingAddress: { type: AddressSchema, default: () => ({}) },
-    paymentMethod: { type: String, enum: ['card', 'paypal', 'cod'], default: 'cod' },
+    paymentMethod: {
+      type: String,
+      enum: ['card', 'paypal', 'cod'],
+      default: 'cod',
+    },
     paidAt: { type: Date },
     deliveredAt: { type: Date },
   },

@@ -11,7 +11,8 @@ const ProductCard = ({ product }) => {
 
   const imageUrl =
     Array.isArray(media) && media.length
-      ? media.find((m) => m.type === 'image' && m.order === 1)?.url || media[0].url
+      ? media.find((m) => m.type === 'image' && m.order === 1)?.url ||
+        media[0].url
       : '/api/placeholder/300/300';
 
   const onQuickAdd = () => {
@@ -37,7 +38,12 @@ const ProductCard = ({ product }) => {
           onClick={onQuickAdd}
           className="absolute bottom-2 right-2 bg-pink-600 text-white p-2 rounded-full hover:bg-pink-700 transition-colors opacity-0 group-hover:opacity-100"
         >
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            className="w-4 h-4"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
@@ -51,7 +57,9 @@ const ProductCard = ({ product }) => {
       {/* Product Info */}
       <div className="p-4">
         <Link to={`/product/${sku}`}>
-          <h3 className="font-semibold text-gray-900 hover:text-pink-600 transition-colors line-clamp-2">{name}</h3>
+          <h3 className="font-semibold text-gray-900 hover:text-[rgb(var(--color-primary))] transition-colors line-clamp-2">
+            {name}
+          </h3>
         </Link>
 
         {/* Rating */}
@@ -60,7 +68,9 @@ const ProductCard = ({ product }) => {
             {[...Array(5)].map((_, i) => (
               <svg
                 key={i}
-                className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                className={`w-4 h-4 ${
+                  i < rating ? 'text-yellow-400' : 'text-gray-300'
+                }`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -75,7 +85,10 @@ const ProductCard = ({ product }) => {
         <div className="mt-3 flex items-center justify-between">
           <div className="flex items-center space-x-2">
             <span className="text-lg font-bold text-gray-900">
-              {new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(price)}
+              {new Intl.NumberFormat('vi-VN', {
+                style: 'currency',
+                currency: 'VND',
+              }).format(price)}
             </span>
           </div>
         </div>

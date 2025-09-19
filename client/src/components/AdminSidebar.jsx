@@ -30,7 +30,7 @@ const AdminSidebar = () => {
   return (
     <aside className="w-full lg:w-64 bg-white rounded-lg shadow p-4 space-y-2">
       <div className="text-lg font-semibold text-gray-900 mb-2">Admin</div>
-      <NavLink to="/admin">Dashboard</NavLink>
+      {role === 'admin' && <NavLink to="/admin">Dashboard</NavLink>}
       <NavLink to="/admin/products">Sản phẩm</NavLink>
       <NavLink to="/admin/orders">Đơn hàng</NavLink>
       {role === 'admin' && <NavLink to="/admin/users">Người dùng</NavLink>}

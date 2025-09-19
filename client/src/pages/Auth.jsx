@@ -15,12 +15,18 @@ const Auth = () => {
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-blue-600 mb-2">KatoStore</h2>
-          <h3 className="text-2xl font-bold text-gray-900">{isLogin ? 'Đăng nhập' : 'Đăng ký'}</h3>
+          <h3 className="text-2xl font-bold text-gray-900">
+            {isLogin ? 'Đăng nhập' : 'Đăng ký'}
+          </h3>
         </div>
       </div>
 
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-        {isLogin ? <LoginForm onSwitch={handleSwitch} /> : <RegisterForm onSwitch={handleSwitch} />}
+        {isLogin ? (
+          <LoginForm onSwitch={handleSwitch} />
+        ) : (
+          <RegisterForm onSwitch={handleSwitch} />
+        )}
       </div>
     </div>
   );

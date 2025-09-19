@@ -13,3 +13,7 @@ server/dist/
 # IDE
 .vscode/
 .idea/
+
+# Backup files
+*.backup
+*.bak

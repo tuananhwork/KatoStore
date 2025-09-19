@@ -11,6 +11,11 @@ router.get('/:sku', controller.getBySku);
 router.post('/', auth, requireRole('manager', 'admin'), controller.create);
 router.patch('/:sku', auth, requireRole('manager', 'admin'), controller.update);
 router.delete('/:sku', auth, requireRole('admin'), controller.remove);
-router.post('/:sku/toggle', auth, requireRole('manager', 'admin'), controller.toggleVisibility);
+router.post(
+  '/:sku/toggle',
+  auth,
+  requireRole('manager', 'admin'),
+  controller.toggleVisibility
+);
 
 module.exports = router;

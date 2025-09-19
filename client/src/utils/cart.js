@@ -40,7 +40,10 @@ export function addToCart(product, options = {}) {
   const key = `${sku}-${color || ''}-${size || ''}`;
   const index = items.findIndex((i) => i.key === key);
   if (index >= 0) {
-    const newQty = Math.min((items[index].quantity || 0) + quantity, stock || 9999);
+    const newQty = Math.min(
+      (items[index].quantity || 0) + quantity,
+      stock || 9999
+    );
     items[index] = { ...items[index], quantity: newQty };
   } else {
     items.push({

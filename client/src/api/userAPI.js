@@ -1,50 +1,38 @@
-import axios from 'axios';
-
-const BASE_URL = import.meta.env.VITE_API_URL || '/api';
-
-const client = axios.create({
-  baseURL: BASE_URL,
-  withCredentials: true,
-});
-
-const authHeader = () => {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
+import apiClient from './client';
 
 export const getProfile = async () => {
-  const res = await client.get('/users/me', { headers: authHeader() });
+  const res = await apiClient.get('/users/me');
   return res.data;
 };
 
 export const updateProfile = async (payload) => {
-  const res = await client.put('/users/me', payload, { headers: authHeader() });
+  const res = await apiClient.put('/users/me', payload);
   return res.data;
 };
 
 export const changePassword = async (payload) => {
-  const res = await client.post('/users/change-password', payload, { headers: authHeader() });
+  const res = await apiClient.post('/users/change-password', payload);
   return res.data;
 };
 
 // Admin
 export const getUsers = async (params = {}) => {
-  const res = await client.get('/admin/users', { params, headers: authHeader() });
+  const res = await apiClient.get('/admin/users', { params });
   return res.data;
 };
 
 export const getUserById = async (id) => {
-  const res = await client.get(`/admin/users/${id}`, { headers: authHeader() });
+  const res = await apiClient.get(`/admin/users/${id}`);
   return res.data;
 };
 
 export const updateUser = async (id, payload) => {
-  const res = await client.put(`/admin/users/${id}`, payload, { headers: authHeader() });
+  const res = await apiClient.put(`/admin/users/${id}`, payload);
   return res.data;
 };
 
 export const deleteUser = async (id) => {
-  const res = await client.delete(`/admin/users/${id}`, { headers: authHeader() });
+  const res = await apiClient.delete(`/admin/users/${id}`);
   return res.data;
 };
 

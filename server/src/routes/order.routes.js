@@ -9,7 +9,12 @@ router.get('/:id', auth, controller.get);
 router.post('/', auth, controller.create); // customer creates own order
 
 // Manager/Admin can update status
-router.patch('/:id/status', auth, requireRole('manager', 'admin'), controller.updateStatus);
+router.patch(
+  '/:id/status',
+  auth,
+  requireRole('manager', 'admin'),
+  controller.updateStatus
+);
 
 // Customer can cancel own order (and manager/admin too)
 router.post('/:id/cancel', auth, controller.cancel);

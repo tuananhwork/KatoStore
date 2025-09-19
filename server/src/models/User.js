@@ -15,15 +15,31 @@ const AddressSchema = new mongoose.Schema(
 const UserSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
-    email: { type: String, required: true, unique: true, lowercase: true, trim: true, index: true },
-    role: { type: String, enum: ['admin', 'manager', 'customer'], default: 'customer', index: true },
+    email: {
+      type: String,
+      required: true,
+      unique: true,
+      lowercase: true,
+      trim: true,
+      index: true,
+    },
+    role: {
+      type: String,
+      enum: ['admin', 'manager', 'customer'],
+      default: 'customer',
+      index: true,
+    },
     passwordHash: { type: String, required: true },
 
     // Optional profile fields
     phone: { type: String, trim: true },
     avatar: { type: String, trim: true },
     dateOfBirth: { type: Date },
-    gender: { type: String, enum: ['male', 'female', 'other'], default: 'other' },
+    gender: {
+      type: String,
+      enum: ['male', 'female', 'other'],
+      default: 'other',
+    },
     address: { type: AddressSchema, default: () => ({}) },
 
     // Status/metadata

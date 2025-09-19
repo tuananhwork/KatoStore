@@ -5,6 +5,8 @@ import { toast } from 'react-toastify';
 import Spinner from '../components/Spinner';
 import orderAPI from '../api/orderAPI';
 import mediaAPI from '../api/mediaAPI';
+import authAPI from '../api/authAPI';
+import apiClient from '../api/client';
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -12,6 +14,9 @@ const Profile = () => {
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const [showChangePassword, setShowChangePassword] = useState(false);
+  const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirmPassword: '' });
+  const [pwSubmitting, setPwSubmitting] = useState(false);
   const fileInputRef = useRef(null);
   const navigate = useNavigate();
 
@@ -38,11 +43,7 @@ const Profile = () => {
       }
       setLoading(true);
       try {
-        const res = await axios.get(`${baseURL}/auth/me`, {
-          headers: { Authorization: `Bearer ${token}` },
-          withCredentials: true,
-        });
-        const u = res.data || {};
+        const u = await authAPI.getMe();
         setUserInfo((prev) => ({
           ...prev,
           name: u.name || prev.name,
@@ -106,21 +107,17 @@ const Profile = () => {
     }
     setUploadingAvatar(true);
     try {
-      const [result] = await mediaAPI.uploadMultiple([file], { type: 'image', folder: 'katostore/avatars' });
+      const [result] = await mediaAPI.uploadMultiple([file], {
+        type: 'image',
+        folder: 'katostore/avatars',
+      });
       if (result?.url) {
         // Update local UI immediately
         setUserInfo((prev) => ({ ...prev, avatar: result.url }));
         // Persist to server so it survives reload
         const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
         if (token) {
-          await axios.patch(
-            `${baseURL}/auth/me`,
-            { avatar: result.url },
-            {
-              headers: { Authorization: `Bearer ${token}` },
-              withCredentials: true,
-            }
-          );
+          await apiClient.patch(`/auth/me`, { avatar: result.url });
           // Sync localStorage user for Header/avatar
           try {
             const raw = localStorage.getItem('user');
@@ -162,10 +159,7 @@ const Profile = () => {
         gender: userInfo.gender,
         address: userInfo.address ? { street: userInfo.address } : undefined,
       };
-      const res = await axios.patch(`${baseURL}/auth/me`, payload, {
-        headers: { Authorization: `Bearer ${token}` },
-        withCredentials: true,
-      });
+      const res = await apiClient.patch(`/auth/me`, payload);
       const u = res.data || {};
       setUserInfo((prev) => ({
         ...prev,
@@ -199,6 +193,33 @@ const Profile = () => {
     }
   };
 
+  const handleSubmitChangePassword = async (e) => {
+    e.preventDefault();
+    if (!pwForm.currentPassword || !pwForm.newPassword) {
+      toast.error('Vui lòng nhập đầy đủ thông tin');
+      return;
+    }
+    if (pwForm.newPassword !== pwForm.confirmPassword) {
+      toast.error('Mật khẩu xác nhận không khớp');
+      return;
+    }
+    setPwSubmitting(true);
+    try {
+      await authAPI.changePassword({
+        currentPassword: pwForm.currentPassword,
+        newPassword: pwForm.newPassword,
+      });
+      toast.success('Đổi mật khẩu thành công');
+      setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      setShowChangePassword(false);
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Đổi mật khẩu thất bại';
+      toast.error(msg);
+    } finally {
+      setPwSubmitting(false);
+    }
+  };
+
   const tabs = [
     { id: 'profile', name: 'Thông tin cá nhân', icon: '👤' },
     { id: 'orders', name: 'Đơn hàng', icon: '📦' },
@@ -206,7 +227,11 @@ const Profile = () => {
     { id: 'settings', name: 'Cài đặt', icon: '⚙️' },
   ];
 
-  const formatVnd = (v) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v || 0);
+  const formatVnd = (v) =>
+    new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(v || 0);
   const getStatusBadge = (status) => {
     switch (status) {
       case 'delivered':
@@ -302,7 +327,9 @@ const Profile = () => {
                     key={tab.id}
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                      activeTab === tab.id ? 'bg-pink-50 text-pink-600' : 'text-gray-600 hover:bg-gray-50'
+                      activeTab === tab.id
+                        ? 'bg-pink-50 text-[rgb(var(--color-primary))]'
+                        : 'text-gray-600 hover:bg-gray-50'
                     }`}
                   >
                     <span className="mr-3">{tab.icon}</span>
@@ -531,8 +558,11 @@ const Profile = () => {
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Bảo mật</h3>
                     <div className="space-y-4">
-                      <button className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center justify_between">
+                      <button
+                        onClick={() => setShowChangePassword(true)}
+                        className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                      >
+                        <div className="flex items-center justify-between">
                           <div>
                             <h4 className="font-medium text-gray-900">Đổi mật khẩu</h4>
                             <p className="text-sm text-gray-500">Cập nhật mật khẩu của bạn</p>
@@ -543,8 +573,8 @@ const Profile = () => {
                         </div>
                       </button>
 
-                      <button className="w-full text_left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <div className="flex items_center justify_between">
+                      <button className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
+                        <div className="flex items-center justify-between">
                           <div>
                             <h4 className="font-medium text-gray-900">Xác thực 2 bước</h4>
                             <p className="text-sm text-gray-500">Bảo mật tài khoản với 2FA</p>
@@ -558,7 +588,7 @@ const Profile = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font_medium text-gray-900 mb-4">Thông báo</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-4">Thông báo</h3>
                     <div className="space-y-4">
                       <div className="flex items-center justify-between">
                         <div>
@@ -605,6 +635,68 @@ const Profile = () => {
           </div>
         </div>
       </div>
+
+      {showChangePassword && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-6 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-900">Đổi mật khẩu</h3>
+              <p className="text-sm text-gray-500">Vui lòng nhập mật khẩu hiện tại và mật khẩu mới</p>
+            </div>
+            <form onSubmit={handleSubmitChangePassword} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu hiện tại</label>
+                <input
+                  type="password"
+                  value={pwForm.currentPassword}
+                  onChange={(e) => setPwForm((p) => ({ ...p, currentPassword: e.target.value }))}
+                  required
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu mới</label>
+                <input
+                  type="password"
+                  value={pwForm.newPassword}
+                  onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
+                  required
+                  minLength={6}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Xác nhận mật khẩu mới</label>
+                <input
+                  type="password"
+                  value={pwForm.confirmPassword}
+                  onChange={(e) => setPwForm((p) => ({ ...p, confirmPassword: e.target.value }))}
+                  required
+                  minLength={6}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                />
+              </div>
+              <div className="flex justify-end space-x-2 pt-2">
+                <button
+                  type="button"
+                  onClick={() => setShowChangePassword(false)}
+                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  disabled={pwSubmitting}
+                >
+                  Hủy
+                </button>
+                <button
+                  type="submit"
+                  disabled={pwSubmitting}
+                  className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:opacity-50"
+                >
+                  {pwSubmitting ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

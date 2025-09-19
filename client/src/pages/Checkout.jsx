@@ -41,9 +41,16 @@ const Checkout = () => {
     setCartItems(getCart());
   }, []);
 
-  const formatVnd = (v) => new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(v || 0);
+  const formatVnd = (v) =>
+    new Intl.NumberFormat('vi-VN', {
+      style: 'currency',
+      currency: 'VND',
+    }).format(v || 0);
 
-  const subtotal = cartItems.reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
+  const subtotal = cartItems.reduce(
+    (total, item) => total + (item.price || 0) * (item.quantity || 0),
+    0
+  );
   const shipping = subtotal > 2000000 ? 0 : 30000;
   const tax = Math.round(subtotal * 0.1);
   const total = subtotal + shipping + tax;
@@ -65,8 +72,10 @@ const Checkout = () => {
     if (n === 1) {
       if (!formData.firstName.trim()) return 'Vui lòng nhập Họ';
       if (!formData.lastName.trim()) return 'Vui lòng nhập Tên';
-      if (!formData.email.trim() || !isEmail(formData.email)) return 'Email không hợp lệ';
-      if (!formData.phone.trim() || !isPhone(formData.phone)) return 'Số điện thoại không hợp lệ';
+      if (!formData.email.trim() || !isEmail(formData.email))
+        return 'Email không hợp lệ';
+      if (!formData.phone.trim() || !isPhone(formData.phone))
+        return 'Số điện thoại không hợp lệ';
       if (!formData.address.trim()) return 'Vui lòng nhập Địa chỉ';
       if (!formData.city.trim()) return 'Vui lòng nhập Thành phố';
       if (!formData.zipCode.trim()) return 'Vui lòng nhập Mã bưu điện';
@@ -74,7 +83,8 @@ const Checkout = () => {
     if (n === 2) {
       if (paymentMethod === 'card') {
         if (!formData.cardNumber.trim()) return 'Vui lòng nhập số thẻ';
-        if (!isMMYY(formData.expiryDate)) return 'Ngày hết hạn không hợp lệ (MM/YY)';
+        if (!isMMYY(formData.expiryDate))
+          return 'Ngày hết hạn không hợp lệ (MM/YY)';
         if (!isCVV(formData.cvv)) return 'CVV không hợp lệ';
         if (!formData.cardName.trim()) return 'Vui lòng nhập tên trên thẻ';
       }
@@ -108,7 +118,11 @@ const Checkout = () => {
     const err = validateAll();
     if (err) {
       toast.error(err);
-      setStep(err.includes('thẻ') || err.includes('CVV') || err.includes('hạn') ? 2 : 1);
+      setStep(
+        err.includes('thẻ') || err.includes('CVV') || err.includes('hạn')
+          ? 2
+          : 1
+      );
       return;
     }
     setLoading(true);
@@ -147,9 +161,21 @@ const Checkout = () => {
   };
 
   const steps = [
-    { number: 1, title: 'Thông tin giao hàng', description: 'Nhập địa chỉ giao hàng' },
-    { number: 2, title: 'Thanh toán', description: 'Chọn phương thức thanh toán' },
-    { number: 3, title: 'Xác nhận', description: 'Kiểm tra và xác nhận đơn hàng' },
+    {
+      number: 1,
+      title: 'Thông tin giao hàng',
+      description: 'Nhập địa chỉ giao hàng',
+    },
+    {
+      number: 2,
+      title: 'Thanh toán',
+      description: 'Chọn phương thức thanh toán',
+    },
+    {
+      number: 3,
+      title: 'Xác nhận',
+      description: 'Kiểm tra và xác nhận đơn hàng',
+    },
   ];
 
   return (
@@ -174,18 +200,38 @@ const Checkout = () => {
                   }`}
                 >
                   {step > stepItem.number ? (
-                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                    <svg
+                      className="w-6 h-6"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M5 13l4 4L19 7"
+                      />
                     </svg>
                   ) : (
-                    <span className="text-sm font-medium">{stepItem.number}</span>
+                    <span className="text-sm font-medium">
+                      {stepItem.number}
+                    </span>
                   )}
                 </div>
                 <div className="ml-3 hidden sm:block">
-                  <p className={`text-sm font-medium ${step >= stepItem.number ? 'text-pink-600' : 'text-gray-500'}`}>
+                  <p
+                    className={`text-sm font-medium ${
+                      step >= stepItem.number
+                        ? 'text-[rgb(var(--color-primary))]'
+                        : 'text-gray-500'
+                    }`}
+                  >
                     {stepItem.title}
                   </p>
-                  <p className="text-xs text-gray-500">{stepItem.description}</p>
+                  <p className="text-xs text-gray-500">
+                    {stepItem.description}
+                  </p>
                 </div>
                 {index < steps.length - 1 && (
                   <div
@@ -206,11 +252,15 @@ const Checkout = () => {
               {/* Step 1: Shipping Information */}
               {step === 1 && (
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Thông tin giao hàng</h2>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                    Thông tin giao hàng
+                  </h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Họ *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Họ *
+                      </label>
                       <input
                         type="text"
                         name="firstName"
@@ -223,7 +273,9 @@ const Checkout = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tên *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Tên *
+                      </label>
                       <input
                         type="text"
                         name="lastName"
@@ -237,7 +289,9 @@ const Checkout = () => {
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Email *
+                    </label>
                     <input
                       type="email"
                       name="email"
@@ -250,7 +304,9 @@ const Checkout = () => {
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Số điện thoại *
+                    </label>
                     <input
                       type="tel"
                       name="phone"
@@ -263,7 +319,9 @@ const Checkout = () => {
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ *</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Địa chỉ *
+                    </label>
                     <input
                       type="text"
                       name="address"
@@ -277,7 +335,9 @@ const Checkout = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Thành phố *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Thành phố *
+                      </label>
                       <input
                         type="text"
                         name="city"
@@ -290,7 +350,9 @@ const Checkout = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Mã bưu điện *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Mã bưu điện *
+                      </label>
                       <input
                         type="text"
                         name="zipCode"
@@ -303,7 +365,9 @@ const Checkout = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Quốc gia *</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Quốc gia *
+                      </label>
                       <select
                         name="country"
                         value={formData.country}
@@ -322,7 +386,9 @@ const Checkout = () => {
               {/* Step 2: Payment Information */}
               {step === 2 && (
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Phương thức thanh toán</h2>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                    Phương thức thanh toán
+                  </h2>
 
                   <div className="space-y-4 mb-6">
                     <div className="flex items-center">
@@ -333,9 +399,12 @@ const Checkout = () => {
                         value="card"
                         checked={paymentMethod === 'card'}
                         onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
+                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
                       />
-                      <label htmlFor="card" className="ml-3 text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="card"
+                        className="ml-3 text-sm font-medium text-gray-700"
+                      >
                         Thẻ tín dụng/ghi nợ
                       </label>
                     </div>
@@ -348,9 +417,12 @@ const Checkout = () => {
                         value="paypal"
                         checked={paymentMethod === 'paypal'}
                         onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
+                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
                       />
-                      <label htmlFor="paypal" className="ml-3 text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="paypal"
+                        className="ml-3 text-sm font-medium text-gray-700"
+                      >
                         PayPal
                       </label>
                     </div>
@@ -363,9 +435,12 @@ const Checkout = () => {
                         value="cod"
                         checked={paymentMethod === 'cod'}
                         onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="h-4 w-4 text-pink-600 focus:ring-pink-500 border-gray-300"
+                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
                       />
-                      <label htmlFor="cod" className="ml-3 text-sm font-medium text-gray-700">
+                      <label
+                        htmlFor="cod"
+                        className="ml-3 text-sm font-medium text-gray-700"
+                      >
                         Thanh toán khi nhận hàng (COD)
                       </label>
                     </div>
@@ -374,7 +449,9 @@ const Checkout = () => {
                   {paymentMethod === 'card' && (
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Số thẻ *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Số thẻ *
+                        </label>
                         <input
                           type="text"
                           name="cardNumber"
@@ -388,7 +465,9 @@ const Checkout = () => {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Ngày hết hạn *</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            Ngày hết hạn *
+                          </label>
                           <input
                             type="text"
                             name="expiryDate"
@@ -401,7 +480,9 @@ const Checkout = () => {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">CVV *</label>
+                          <label className="block text-sm font-medium text-gray-700 mb-2">
+                            CVV *
+                          </label>
                           <input
                             type="text"
                             name="cvv"
@@ -415,7 +496,9 @@ const Checkout = () => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Tên trên thẻ *</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                          Tên trên thẻ *
+                        </label>
                         <input
                           type="text"
                           name="cardName"
@@ -434,33 +517,47 @@ const Checkout = () => {
               {/* Step 3: Order Confirmation */}
               {step === 3 && (
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Xác nhận đơn hàng</h2>
+                  <h2 className="text-xl font-semibold text-gray-900 mb-6">
+                    Xác nhận đơn hàng
+                  </h2>
 
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">Thông tin giao hàng</h3>
+                      <h3 className="text-lg font-medium text-gray-900 mb-3">
+                        Thông tin giao hàng
+                      </h3>
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-700">
                           {formData.firstName} {formData.lastName}
                         </p>
-                        <p className="text-sm text-gray-700">{formData.email}</p>
-                        <p className="text-sm text-gray-700">{formData.phone}</p>
                         <p className="text-sm text-gray-700">
-                          {formData.address}, {formData.city}, {formData.zipCode}, {formData.country}
+                          {formData.email}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          {formData.phone}
+                        </p>
+                        <p className="text-sm text-gray-700">
+                          {formData.address}, {formData.city},{' '}
+                          {formData.zipCode}, {formData.country}
                         </p>
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">Phương thức thanh toán</h3>
+                      <h3 className="text-lg font-medium text-gray-900 mb-3">
+                        Phương thức thanh toán
+                      </h3>
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-700">
                           {paymentMethod === 'card' && 'Thẻ tín dụng/ghi nợ'}
                           {paymentMethod === 'paypal' && 'PayPal'}
-                          {paymentMethod === 'cod' && 'Thanh toán khi nhận hàng (COD)'}
+                          {paymentMethod === 'cod' &&
+                            'Thanh toán khi nhận hàng (COD)'}
                         </p>
                         {paymentMethod === 'card' && (
-                          <p className="text-sm text-gray-700">**** **** **** {formData.cardNumber.slice(-4)}</p>
+                          <p className="text-sm text-gray-700">
+                            **** **** **** {formData.cardNumber.slice(-4)}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -521,10 +618,18 @@ const Checkout = () => {
                 <div className="space-y-4 mb-6">
                   {cartItems.map((item) => (
                     <div key={item.sku} className="flex items-center space-x-3">
-                      <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
+                      <img
+                        src={item.image}
+                        alt={item.name}
+                        className="w-12 h-12 object-cover rounded"
+                      />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                        <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+                        <p className="text-sm font-medium text-gray-900">
+                          {item.name}
+                        </p>
+                        <p className="text-sm text-gray-500">
+                          Số lượng: {item.quantity}
+                        </p>
                       </div>
                       <p className="text-sm font-medium text-gray-900">
                         {formatVnd((item.price || 0) * (item.quantity || 0))}
@@ -541,7 +646,9 @@ const Checkout = () => {
 
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-600">Phí vận chuyển:</span>
-                    <span className="font-medium">{shipping === 0 ? 'Miễn phí' : formatVnd(shipping)}</span>
+                    <span className="font-medium">
+                      {shipping === 0 ? 'Miễn phí' : formatVnd(shipping)}
+                    </span>
                   </div>
 
                   <div className="flex justify-between text-sm">

@@ -40,8 +40,13 @@ const ProductForm = () => {
   const [imageFiles, setImageFiles] = useState([]);
   const [videoFiles, setVideoFiles] = useState([]);
   // Cloudinary folder is derived from category
-  const computedFolder = useMemo(() => `katostore/${(form.category || 'uncategorized').trim()}`, [form.category]);
-  const [variants, setVariants] = useState([{ color: '', size: '', stock: '' }]);
+  const computedFolder = useMemo(
+    () => `katostore/${(form.category || 'uncategorized').trim()}`,
+    [form.category]
+  );
+  const [variants, setVariants] = useState([
+    { color: '', size: '', stock: '' },
+  ]);
 
   const [allCategories, setAllCategories] = useState([]);
   const [addingNewCategory, setAddingNewCategory] = useState(false);
@@ -178,7 +183,10 @@ const ProductForm = () => {
           reviews: p.reviews ?? '',
         });
         setVariants(
-          (p.variants && p.variants.length ? p.variants : [{ color: '', size: '', stock: '' }]).map((v) => ({
+          (p.variants && p.variants.length
+            ? p.variants
+            : [{ color: '', size: '', stock: '' }]
+          ).map((v) => ({
             color: v.color || '',
             size: v.size || '',
             stock: v.stock ?? '',
@@ -223,7 +231,10 @@ const ProductForm = () => {
 
   // Generate and clean up preview URLs for images
   useEffect(() => {
-    const urls = (imageFiles || []).map((f) => ({ url: URL.createObjectURL(f), name: f.name }));
+    const urls = (imageFiles || []).map((f) => ({
+      url: URL.createObjectURL(f),
+      name: f.name,
+    }));
     setImagePreviews(urls);
     return () => {
       urls.forEach((u) => URL.revokeObjectURL(u.url));
@@ -232,7 +243,10 @@ const ProductForm = () => {
 
   // Generate and clean up preview URLs for videos
   useEffect(() => {
-    const urls = (videoFiles || []).map((f) => ({ url: URL.createObjectURL(f), name: f.name }));
+    const urls = (videoFiles || []).map((f) => ({
+      url: URL.createObjectURL(f),
+      name: f.name,
+    }));
     setVideoPreviews(urls);
     return () => {
       urls.forEach((u) => URL.revokeObjectURL(u.url));
@@ -243,8 +257,12 @@ const ProductForm = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Không có quyền truy cập</h1>
-          <p className="text-gray-600 mb-6">Trang này chỉ dành cho Admin/Manager</p>
+          <h1 className="text-2xl font-semibold text-gray-900 mb-2">
+            Không có quyền truy cập
+          </h1>
+          <p className="text-gray-600 mb-6">
+            Trang này chỉ dành cho Admin/Manager
+          </p>
           <button onClick={() => navigate('/')} className="btn-primary">
             Về trang chủ
           </button>
@@ -255,15 +273,22 @@ const ProductForm = () => {
 
   const onChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({ ...prev, [name]: type === 'checkbox' ? checked : value }));
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === 'checkbox' ? checked : value,
+    }));
   };
 
   const updateVariant = (index, key, value) => {
-    setVariants((prev) => prev.map((v, i) => (i === index ? { ...v, [key]: value } : v)));
+    setVariants((prev) =>
+      prev.map((v, i) => (i === index ? { ...v, [key]: value } : v))
+    );
   };
 
-  const addVariant = () => setVariants((prev) => [...prev, { color: '', size: '', stock: '' }]);
-  const removeVariant = (index) => setVariants((prev) => prev.filter((_, i) => i !== index));
+  const addVariant = () =>
+    setVariants((prev) => [...prev, { color: '', size: '', stock: '' }]);
+  const removeVariant = (index) =>
+    setVariants((prev) => prev.filter((_, i) => i !== index));
 
   const removeImageAt = (idx) => {
     setImageFiles((prev) => prev.filter((_, i) => i !== idx));
@@ -289,9 +314,14 @@ const ProductForm = () => {
       let media = undefined;
       if (imageFiles.length > 0 || videoFiles.length > 0) {
         const uploads = [];
-        const baseId = `${(form.category || 'uncategorized').toLowerCase()}/${(form.sku || 'temp').toLowerCase()}`;
+        const baseId = `${(form.category || 'uncategorized').toLowerCase()}/${(
+          form.sku || 'temp'
+        ).toLowerCase()}`;
         if (imageFiles.length > 0) {
-          const publicIds = imageFiles.map((_, idx) => `${baseId}/${(form.sku || 'temp').toLowerCase()}_${idx + 1}`);
+          const publicIds = imageFiles.map(
+            (_, idx) =>
+              `${baseId}/${(form.sku || 'temp').toLowerCase()}_${idx + 1}`
+          );
           uploads.push(
             mediaAPI.uploadMultiple(imageFiles, {
               type: 'image',
@@ -303,7 +333,8 @@ const ProductForm = () => {
         }
         if (videoFiles.length > 0) {
           const publicIds = videoFiles.map(
-            (_, idx) => `${baseId}/${(form.sku || 'temp').toLowerCase()}_video_${idx + 1}`
+            (_, idx) =>
+              `${baseId}/${(form.sku || 'temp').toLowerCase()}_video_${idx + 1}`
           );
           uploads.push(
             mediaAPI.uploadMultiple(videoFiles, {
@@ -317,8 +348,18 @@ const ProductForm = () => {
         const settled = await Promise.all(uploads);
         const flat = settled.flat();
         media = flat
-          .sort((a, b) => (a.resourceType === b.resourceType ? 0 : a.resourceType === 'image' ? -1 : 1))
-          .map((m, idx) => ({ url: m.url, type: m.resourceType, order: idx + 1 }));
+          .sort((a, b) =>
+            a.resourceType === b.resourceType
+              ? 0
+              : a.resourceType === 'image'
+              ? -1
+              : 1
+          )
+          .map((m, idx) => ({
+            url: m.url,
+            type: m.resourceType,
+            order: idx + 1,
+          }));
       }
 
       const payload = {
@@ -328,7 +369,9 @@ const ProductForm = () => {
         category: form.category,
         brand: form.brand || undefined,
         price: Number(form.price) || 0,
-        originalPrice: form.originalPrice ? Number(form.originalPrice) : undefined,
+        originalPrice: form.originalPrice
+          ? Number(form.originalPrice)
+          : undefined,
         discount: form.discount ? Number(form.discount) : undefined,
         stock: Number(form.stock) || 0,
         isActive: !!form.isActive,
@@ -354,7 +397,9 @@ const ProductForm = () => {
       navigate('/admin/products');
     } catch (err) {
       if (err?.response?.status === 401) {
-        toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.');
+        toast.error(
+          'Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.'
+        );
         navigate('/auth');
         return;
       }
@@ -362,7 +407,10 @@ const ProductForm = () => {
         toast.error('SKU đã tồn tại');
         return;
       }
-      toast.error(err?.response?.data?.message || (isEdit ? 'Cập nhật sản phẩm thất bại' : 'Tạo sản phẩm thất bại'));
+      toast.error(
+        err?.response?.data?.message ||
+          (isEdit ? 'Cập nhật sản phẩm thất bại' : 'Tạo sản phẩm thất bại')
+      );
     } finally {
       setSubmitting(false);
     }
@@ -376,14 +424,19 @@ const ProductForm = () => {
             <AdminSidebar />
           </div>
           <div className="lg:col-span-3">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">{isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-6">
+              {isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}
+            </h1>
 
             {loading ? (
               <div className="bg-white rounded-lg shadow p-6">
                 <div className="text-gray-500">Đang tải...</div>
               </div>
             ) : (
-              <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
+              <form
+                onSubmit={handleSubmit}
+                className="bg-white rounded-lg shadow p-6 space-y-6"
+              >
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -398,7 +451,8 @@ const ProductForm = () => {
                     />
                     {!isEdit && skuSuggestion && (
                       <p className="text-xs text-gray-500 mt-1">
-                        Gợi ý SKU tiếp theo: <span className="font-medium">{skuSuggestion}</span>
+                        Gợi ý SKU tiếp theo:{' '}
+                        <span className="font-medium">{skuSuggestion}</span>
                       </p>
                     )}
                   </div>
@@ -434,7 +488,7 @@ const ProductForm = () => {
                         </select>
                         <button
                           type="button"
-                          className="text-pink-600 hover:text-pink-800 whitespace-nowrap"
+                          className="text-[rgb(var(--color-primary))] hover:text-pink-800 whitespace-nowrap"
                           onClick={() => {
                             setAddingNewCategory(true);
                             setNewCategory('');
@@ -457,7 +511,8 @@ const ProductForm = () => {
                           onClick={() => {
                             const cat = (newCategory || '').trim();
                             if (!cat) return;
-                            if (!allCategories.includes(cat)) setAllCategories((prev) => [...prev, cat]);
+                            if (!allCategories.includes(cat))
+                              setAllCategories((prev) => [...prev, cat]);
                             setForm((prev) => ({ ...prev, category: cat }));
                             setAddingNewCategory(false);
                           }}
@@ -475,7 +530,9 @@ const ProductForm = () => {
                     )}
                   </div>
                   <div>
-                    <label className="block text_sm font-medium text-gray-700 mb-2">Thương hiệu</label>
+                    <label className="block text_sm font-medium text-gray-700 mb-2">
+                      Thương hiệu
+                    </label>
                     <input
                       name="brand"
                       value={form.brand}
@@ -486,7 +543,9 @@ const ProductForm = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Mô tả</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Mô tả
+                  </label>
                   <textarea
                     name="description"
                     value={form.description}
@@ -511,7 +570,9 @@ const ProductForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Giá gốc</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Giá gốc
+                    </label>
                     <input
                       name="originalPrice"
                       type="number"
@@ -522,7 +583,9 @@ const ProductForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Giảm (%)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Giảm (%)
+                    </label>
                     <input
                       name="discount"
                       type="number"
@@ -534,7 +597,9 @@ const ProductForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tồn kho</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Tồn kho
+                    </label>
                     <input
                       name="stock"
                       type="number"
@@ -548,7 +613,9 @@ const ProductForm = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ảnh (có thể nhiều)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Ảnh (có thể nhiều)
+                    </label>
                     <input
                       ref={imageInputRef}
                       type="file"
@@ -562,7 +629,12 @@ const ProductForm = () => {
                       onClick={handlePickImages}
                     >
                       <div className="flex flex-col items-center justify-center">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          className="w-8 h-8 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -577,14 +649,25 @@ const ProductForm = () => {
                           />
                         </svg>
                         <p className="mt-2 text-sm text-gray-700">
-                          Kéo thả hoặc <span className="text-pink-600 font-medium">bấm để chọn ảnh</span>
+                          Kéo thả hoặc{' '}
+                          <span className="text-[rgb(var(--color-primary))] font-medium">
+                            bấm để chọn ảnh
+                          </span>
                         </p>
-                        <p className="text-xs text-gray-500">Hỗ trợ PNG, JPG, WEBP • Có thể chọn nhiều</p>
+                        <p className="text-xs text-gray-500">
+                          Hỗ trợ PNG, JPG, WEBP • Có thể chọn nhiều
+                        </p>
                         {imageFiles.length > 0 && (
-                          <p className="mt-1 text-xs text-gray-600">Đã chọn: {imageFiles.length} file</p>
+                          <p className="mt-1 text-xs text-gray-600">
+                            Đã chọn: {imageFiles.length} file
+                          </p>
                         )}
                         <div className="mt-3 flex gap-2">
-                          <button type="button" className="btn-primary" onClick={handlePickImages}>
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            onClick={handlePickImages}
+                          >
                             Chọn ảnh
                           </button>
                           {imageFiles.length > 0 && (
@@ -603,7 +686,11 @@ const ProductForm = () => {
                       <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 md:grid-cols-6 gap-3">
                         {imagePreviews.map((p, idx) => (
                           <div key={idx} className="relative group">
-                            <img src={p.url} alt={p.name} className="w-full h-24 object-cover rounded" />
+                            <img
+                              src={p.url}
+                              alt={p.name}
+                              className="w-full h-24 object-cover rounded"
+                            />
                             <button
                               type="button"
                               onClick={(e) => {
@@ -615,7 +702,10 @@ const ProductForm = () => {
                             >
                               Xóa
                             </button>
-                            <div className="mt-1 text-xs text-gray-600 truncate" title={p.name}>
+                            <div
+                              className="mt-1 text-xs text-gray-600 truncate"
+                              title={p.name}
+                            >
                               {p.name}
                             </div>
                           </div>
@@ -624,7 +714,9 @@ const ProductForm = () => {
                     )}
                   </div>
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Video (có thể nhiều)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Video (có thể nhiều)
+                    </label>
                     <input
                       ref={videoInputRef}
                       type="file"
@@ -638,24 +730,48 @@ const ProductForm = () => {
                       onClick={handlePickVideos}
                     >
                       <div className="flex flex-col items-center justify-center">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          className="w-8 h-8 text-gray-400"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
                             strokeWidth="2"
                             d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14"
                           />
-                          <rect x="3" y="6" width="12" height="12" rx="2" ry="2" strokeWidth="2" />
+                          <rect
+                            x="3"
+                            y="6"
+                            width="12"
+                            height="12"
+                            rx="2"
+                            ry="2"
+                            strokeWidth="2"
+                          />
                         </svg>
                         <p className="mt-2 text-sm text-gray-700">
-                          Kéo thả hoặc <span className="text-pink-600 font-medium">bấm để chọn video</span>
+                          Kéo thả hoặc{' '}
+                          <span className="text-[rgb(var(--color-primary))] font-medium">
+                            bấm để chọn video
+                          </span>
                         </p>
-                        <p className="text-xs text-gray-500">Hỗ trợ MP4, WebM • Có thể chọn nhiều</p>
+                        <p className="text-xs text-gray-500">
+                          Hỗ trợ MP4, WebM • Có thể chọn nhiều
+                        </p>
                         {videoFiles.length > 0 && (
-                          <p className="mt-1 text-xs text-gray-600">Đã chọn: {videoFiles.length} file</p>
+                          <p className="mt-1 text-xs text-gray-600">
+                            Đã chọn: {videoFiles.length} file
+                          </p>
                         )}
                         <div className="mt-3 flex gap-2">
-                          <button type="button" className="btn-primary" onClick={handlePickVideos}>
+                          <button
+                            type="button"
+                            className="btn-primary"
+                            onClick={handlePickVideos}
+                          >
                             Chọn video
                           </button>
                           {videoFiles.length > 0 && (
@@ -674,7 +790,12 @@ const ProductForm = () => {
                       <div className="mt-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                         {videoPreviews.map((p, idx) => (
                           <div key={idx} className="relative group">
-                            <video src={p.url} className="w-40 h-40 rounded" controls muted />
+                            <video
+                              src={p.url}
+                              className="w-40 h-40 rounded"
+                              controls
+                              muted
+                            />
                             <button
                               type="button"
                               onClick={(e) => {
@@ -686,7 +807,10 @@ const ProductForm = () => {
                             >
                               Xóa
                             </button>
-                            <div className="mt-1 text-xs text-gray-600 truncate" title={p.name}>
+                            <div
+                              className="mt-1 text-xs text-gray-600 truncate"
+                              title={p.name}
+                            >
                               {p.name}
                             </div>
                           </div>
@@ -696,31 +820,45 @@ const ProductForm = () => {
                   </div>
                   <div className="md:col-span-3">
                     <p className="text-xs text-gray-500">
-                      Tệp sẽ được lưu tại: <span className="font-medium">{computedFolder}</span>
+                      Tệp sẽ được lưu tại:{' '}
+                      <span className="font-medium">{computedFolder}</span>
                     </p>
                   </div>
                 </div>
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-700">Biến thể (màu/kích thước/tồn)</label>
-                    <button type="button" onClick={addVariant} className="text-pink-600 hover:text-pink-800 text-sm">
+                    <label className="block text-sm font-medium text-gray-700">
+                      Biến thể (màu/kích thước/tồn)
+                    </label>
+                    <button
+                      type="button"
+                      onClick={addVariant}
+                      className="text-[rgb(var(--color-primary))] hover:text-pink-800 text-sm"
+                    >
                       + Thêm biến thể
                     </button>
                   </div>
                   <div className="space-y-3">
                     {variants.map((v, idx) => (
-                      <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-3">
+                      <div
+                        key={idx}
+                        className="grid grid-cols-1 md:grid-cols-4 gap-3"
+                      >
                         <input
                           placeholder="Màu"
                           value={v.color}
-                          onChange={(e) => updateVariant(idx, 'color', e.target.value)}
+                          onChange={(e) =>
+                            updateVariant(idx, 'color', e.target.value)
+                          }
                           className="px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
                         />
                         <input
                           placeholder="Kích thước"
                           value={v.size}
-                          onChange={(e) => updateVariant(idx, 'size', e.target.value)}
+                          onChange={(e) =>
+                            updateVariant(idx, 'size', e.target.value)
+                          }
                           className="px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
                         />
                         <input
@@ -728,7 +866,9 @@ const ProductForm = () => {
                           type="number"
                           min="0"
                           value={v.stock}
-                          onChange={(e) => updateVariant(idx, 'stock', e.target.value)}
+                          onChange={(e) =>
+                            updateVariant(idx, 'stock', e.target.value)
+                          }
                           className="px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
                         />
                         <button
@@ -745,13 +885,21 @@ const ProductForm = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
                   <div className="flex items-center space-x-2">
-                    <input id="isActive" name="isActive" type="checkbox" checked={form.isActive} onChange={onChange} />
+                    <input
+                      id="isActive"
+                      name="isActive"
+                      type="checkbox"
+                      checked={form.isActive}
+                      onChange={onChange}
+                    />
                     <label htmlFor="isActive" className="text-sm text-gray-700">
                       Hiển thị
                     </label>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Rating (0-5)</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Rating (0-5)
+                    </label>
                     <input
                       name="rating"
                       type="number"
@@ -764,7 +912,9 @@ const ProductForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Reviews</label>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      Reviews
+                    </label>
                     <input
                       name="reviews"
                       type="number"
@@ -785,7 +935,11 @@ const ProductForm = () => {
                   >
                     Hủy
                   </button>
-                  <button type="submit" className="btn-primary" disabled={submitting}>
+                  <button
+                    type="submit"
+                    className="btn-primary"
+                    disabled={submitting}
+                  >
                     {submitting
                       ? isEdit
                         ? 'Đang cập nhật...'

@@ -24,7 +24,10 @@ exports.get = async (req, res, next) => {
     const { id } = req.params;
     const order = await Order.findById(id);
     if (!order) return res.status(404).json({ message: 'Order not found' });
-    if (req.user?.role === 'customer' && String(order.userId) !== String(req.user.sub)) {
+    if (
+      req.user?.role === 'customer' &&
+      String(order.userId) !== String(req.user.sub)
+    ) {
       return res.status(403).json({ message: 'Forbidden' });
     }
     res.json(order);
@@ -36,7 +39,10 @@ exports.get = async (req, res, next) => {
 exports.create = async (req, res, next) => {
   try {
     const payload = req.body || {};
-    const subtotal = (payload.items || []).reduce((t, i) => t + (i.price || 0) * (i.quantity || 0), 0);
+    const subtotal = (payload.items || []).reduce(
+      (t, i) => t + (i.price || 0) * (i.quantity || 0),
+      0
+    );
     const shipping = payload.shipping ?? 30000;
     const tax = payload.tax ?? Math.round(subtotal * 0.1);
     const total = subtotal + shipping + tax;
@@ -75,7 +81,10 @@ exports.cancel = async (req, res, next) => {
     const { id } = req.params;
     const order = await Order.findById(id);
     if (!order) return res.status(404).json({ message: 'Order not found' });
-    if (req.user?.role === 'customer' && String(order.userId) !== String(req.user.sub)) {
+    if (
+      req.user?.role === 'customer' &&
+      String(order.userId) !== String(req.user.sub)
+    ) {
       return res.status(403).json({ message: 'Forbidden' });
     }
     if (['pending', 'processing'].includes(order.status)) {

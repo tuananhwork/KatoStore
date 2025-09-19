@@ -32,6 +32,6 @@
     @apply bg-pink-100 text-pink-800 text-xs font-medium px-2 py-1 rounded;
   }
   .link-primary {
-    @apply text-pink-600 hover:text-pink-700;
+    @apply text-[rgb(var(--color-primary))] hover:text-pink-700;
   }
 }

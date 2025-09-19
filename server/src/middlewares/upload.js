@@ -5,7 +5,12 @@ const cloudinary = require('../config/cloudinary');
 const storage = multer.memoryStorage();
 const upload = multer({ storage });
 
-async function uploadBufferToCloudinary(buffer, folder = 'katostore', resourceType = 'image', options = {}) {
+async function uploadBufferToCloudinary(
+  buffer,
+  folder = 'katostore',
+  resourceType = 'image',
+  options = {}
+) {
   return new Promise((resolve, reject) => {
     const { publicId, overwrite } = options || {};
     const uploadOptions = {
@@ -15,10 +20,13 @@ async function uploadBufferToCloudinary(buffer, folder = 'katostore', resourceTy
     };
     if (publicId) uploadOptions.public_id = publicId;
 
-    const stream = cloudinary.uploader.upload_stream(uploadOptions, (error, result) => {
-      if (error) return reject(error);
-      resolve(result);
-    });
+    const stream = cloudinary.uploader.upload_stream(
+      uploadOptions,
+      (error, result) => {
+        if (error) return reject(error);
+        resolve(result);
+      }
+    );
     streamifier.createReadStream(buffer).pipe(stream);
   });
 }

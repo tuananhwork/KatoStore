@@ -70,14 +70,12 @@ Dự án có sẵn dữ liệu sản phẩm mẫu trong `client/src/data/product
 ### Quyền hạn theo vai trò
 
 - Admin
-
   - Quản lý người dùng: xem danh sách, (tùy bạn mở rộng) cập nhật trạng thái/quyền
   - Quản lý sản phẩm: tạo/sửa/xóa, ẩn/hiển thị, upload ảnh/video lên Cloudinary, tự động gợi ý SKU
   - Quản lý đơn hàng: xem tất cả, cập nhật trạng thái
   - Xem dashboard: doanh thu, đơn hàng, khách hàng, top sản phẩm
 
 - Manager
-
   - Giống admin cho phần đơn hàng và sản phẩm (tùy cấu hình), không có full quyền người dùng như admin
   - Xem dashboard
 

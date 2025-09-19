@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { register as registerAPI } from '../api/authAPI';
+import React, { useState, useEffect } from 'react';
+import authAPI from '../api/authAPI';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -9,14 +9,43 @@ const RegisterForm = ({ onSwitch }) => {
     email: '',
     password: '',
     confirmPassword: '',
+    otp: '',
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [sendingOTP, setSendingOTP] = useState(false);
+  const [otpCooldown, setOtpCooldown] = useState(0); // seconds
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (otpCooldown <= 0) return;
+    const t = setInterval(() => setOtpCooldown((s) => s - 1), 1000);
+    return () => clearInterval(t);
+  }, [otpCooldown]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSendOTP = async () => {
+    if (!formData.email) {
+      toast.error('Vui lòng nhập email');
+      return;
+    }
+    setError('');
+    setSendingOTP(true);
+    try {
+      await authAPI.requestRegisterOTP(formData.email);
+      toast.success('Đã gửi mã OTP tới email');
+      setOtpCooldown(60); // 60s resend cooldown
+    } catch (err) {
+      const msg = err?.response?.data?.message || 'Gửi OTP thất bại';
+      setError(msg);
+      toast.error(msg);
+    } finally {
+      setSendingOTP(false);
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -28,9 +57,18 @@ const RegisterForm = ({ onSwitch }) => {
       toast.error(msg);
       return;
     }
+    if (!formData.otp) {
+      toast.error('Vui lòng nhập mã OTP');
+      return;
+    }
     setLoading(true);
     try {
-      const data = await registerAPI({ name: formData.name, email: formData.email, password: formData.password });
+      const data = await authAPI.verifyRegisterOTP({
+        name: formData.name,
+        email: formData.email,
+        password: formData.password,
+        otp: formData.otp,
+      });
       if (data?.accessToken) {
         localStorage.setItem('token', data.accessToken);
         localStorage.setItem('user', JSON.stringify(data.user));
@@ -38,10 +76,9 @@ const RegisterForm = ({ onSwitch }) => {
         navigate('/');
         return;
       }
-      toast.error('Đăng ký thất bại');
+      toast.error('Xác minh OTP thất bại');
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Đăng ký thất bại';
-      setError(msg);
+      const msg = err?.response?.data?.message || 'Xác minh OTP thất bại';
       toast.error(msg);
     } finally {
       setLoading(false);
@@ -74,7 +111,7 @@ const RegisterForm = ({ onSwitch }) => {
           <label htmlFor="email" className="block text-sm font-medium text-gray-700">
             Email
           </label>
-          <div className="mt-1">
+          <div className="mt-1 flex gap-2">
             <input
               id="email"
               name="email"
@@ -83,8 +120,34 @@ const RegisterForm = ({ onSwitch }) => {
               required
               value={formData.email}
               onChange={handleChange}
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+              className="flex-1 appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
               placeholder="Nhập email"
+            />
+            <button
+              type="button"
+              onClick={handleSendOTP}
+              disabled={sendingOTP || otpCooldown > 0}
+              className="whitespace-nowrap px-3 py-2 rounded-md border border-gray-300 text-sm bg-white hover:bg-gray-50 disabled:opacity-50"
+            >
+              {sendingOTP ? 'Đang gửi...' : otpCooldown > 0 ? `Gửi lại (${otpCooldown}s)` : 'Gửi OTP'}
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <label htmlFor="otp" className="block text-sm font-medium text-gray-700">
+            Mã OTP
+          </label>
+          <div className="mt-1">
+            <input
+              id="otp"
+              name="otp"
+              type="text"
+              required
+              value={formData.otp}
+              onChange={handleChange}
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+              placeholder="Nhập mã OTP"
             />
           </div>
         </div>
@@ -121,7 +184,7 @@ const RegisterForm = ({ onSwitch }) => {
               required
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="appearance-none block w_full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
               placeholder="Nhập lại mật khẩu"
             />
           </div>
@@ -133,7 +196,7 @@ const RegisterForm = ({ onSwitch }) => {
             disabled={loading}
             className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-lg text-white bg-pink-600 hover:bg-pink-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-pink-500 disabled:opacity-50"
           >
-            {loading ? 'Đang đăng ký...' : 'Đăng ký'}
+            {loading ? 'Đang xác minh...' : 'Đăng ký'}
           </button>
         </div>
       </form>

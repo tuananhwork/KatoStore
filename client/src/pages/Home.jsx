@@ -30,13 +30,15 @@ const Home = () => {
     <div className="min-h-screen bg-gray-50">
       <section className="bg-gradient-to-r from-pink-600 to-violet-600 text-white py-20">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold mb-6">Chào mừng đến với KatoStore</h1>
+          <h1 className="text-4xl md:text-6xl font-bold mb-6">
+            Chào mừng đến với KatoStore
+          </h1>
           <p className="text-xl md:text-2xl mb-8 text-pink-100">
             Khám phá những sản phẩm thời trang mang phong cách Vintage
           </p>
           <Link
             to="/shop"
-            className="inline-block bg-white text-pink-600 px-8 py-3 rounded-lg text-lg font-semibold hover:bg-pink-50 transition-colors"
+            className="inline-block bg-white text-[rgb(var(--color-primary))] px-8 py-3 rounded-lg text-lg font-semibold hover:bg-pink-50 transition-colors"
           >
             Mua sắm ngay
           </Link>
@@ -49,7 +51,12 @@ const Home = () => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             <div className="text-center">
               <div className="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-8 h-8 text-blue-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -63,7 +70,12 @@ const Home = () => {
             </div>
             <div className="text-center">
               <div className="bg-green-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-8 h-8 text-green-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -77,7 +89,12 @@ const Home = () => {
             </div>
             <div className="text-center">
               <div className="bg-purple-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-8 h-8 text-purple-600"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -97,7 +114,9 @@ const Home = () => {
       <section className="py-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-12">
-            <h2 className="text-3xl font-bold text-gray-900 mb-4">Sản phẩm nổi bật</h2>
+            <h2 className="text-3xl font-bold text-gray-900 mb-4">
+              Sản phẩm nổi bật
+            </h2>
             <p className="text-gray-600">Những sản phẩm được yêu thích nhất</p>
           </div>
 

@@ -81,7 +81,7 @@ const Header = () => {
           {/* Logo Section - Left */}
           <div className="flex-shrink-0">
             <Link to="/" className="flex items-center">
-              <div className="text-2xl font-bold text-pink-600">KatoStore</div>
+              <div className="text-2xl font-bold text-[rgb(var(--color-primary))]">KatoStore</div>
             </Link>
           </div>
 
@@ -98,7 +98,7 @@ const Header = () => {
                 />
                 <button
                   type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-pink-600"
+                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-[rgb(var(--color-primary-600))]"
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path
@@ -116,7 +116,10 @@ const Header = () => {
           {/* Navigation Section - Right */}
           <div className="flex items-center space-x-4">
             {/* Cart Icon */}
-            <Link to="/cart" className="relative p-2 text-gray-600 hover:text-pink-600 transition-colors">
+            <Link
+              to="/cart"
+              className="relative p-2 text-gray-600 hover:text-[rgb(var(--color-primary-600))] transition-colors"
+            >
               <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path
                   strokeLinecap="round"
@@ -151,19 +154,25 @@ const Header = () => {
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-2 text-sm text-gray-700 font-medium">{userName}</div>
-                    <div className="px-4 py-1 text-xs text-gray-500">Role: {userRole || 'N/A'}</div>
+                    {userRole === 'admin' ||
+                      (userRole === 'manager' && (
+                        <div className="px-4 py-1 text-xs text-gray-500">Role: {userRole || 'N/A'}</div>
+                      ))}
                     <hr className="my-2" />
 
                     {(userRole === 'admin' || userRole === 'manager') && (
                       <>
                         <div className="px-4 py-2 text-xs font-semibold text-gray-500">Admin</div>
-                        <Link
-                          to="/admin"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
-                          onClick={() => setUserDropdownOpen(false)}
-                        >
-                          Dashboard
-                        </Link>
+                        {userRole === 'admin' && (
+                          <Link
+                            to="/admin"
+                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+                            onClick={() => setUserDropdownOpen(false)}
+                          >
+                            Dashboard
+                          </Link>
+                        )}
+
                         <Link
                           to="/admin/products"
                           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"

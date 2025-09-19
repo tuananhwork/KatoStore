@@ -13,7 +13,12 @@ exports.list = async (req, res, next) => {
       .limit(Number(limit));
     const total = await Product.countDocuments(filter);
 
-    res.json({ items: products, total, page: Number(page), limit: Number(limit) });
+    res.json({
+      items: products,
+      total,
+      page: Number(page),
+      limit: Number(limit),
+    });
   } catch (err) {
     next(err);
   }
@@ -35,7 +40,12 @@ exports.adminList = async (req, res, next) => {
       .limit(Number(limit));
     const total = await Product.countDocuments(filter);
 
-    res.json({ items: products, total, page: Number(page), limit: Number(limit) });
+    res.json({
+      items: products,
+      total,
+      page: Number(page),
+      limit: Number(limit),
+    });
   } catch (err) {
     next(err);
   }
@@ -70,7 +80,11 @@ exports.update = async (req, res, next) => {
     const { sku } = req.params;
     const payload = req.body || {};
     if (payload.sku) delete payload.sku;
-    const product = await Product.findOneAndUpdate({ sku: sku.toLowerCase() }, payload, { new: true });
+    const product = await Product.findOneAndUpdate(
+      { sku: sku.toLowerCase() },
+      payload,
+      { new: true }
+    );
     if (!product) return res.status(404).json({ message: 'Product not found' });
     res.json(product);
   } catch (err) {
