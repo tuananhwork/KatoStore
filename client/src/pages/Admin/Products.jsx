@@ -118,22 +118,29 @@ const Products = () => {
     return ['all', ...Array.from(set)];
   }, [products]);
 
+  const toSearchKey = (str) => {
+    if (!str) return '';
+    return String(str)
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/\u0300-\u036f/g, '')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/đ/g, 'd')
+      .replace(/Đ/g, 'd');
+  };
+
   // Filter & sort products
   const filteredProducts = useMemo(() => {
     let result = Array.isArray(products) ? [...products] : [];
 
-    // search
-    const q = search.trim().toLowerCase();
+    // search (accent-insensitive)
+    const q = toSearchKey(search.trim());
     if (q) {
-      result = result.filter(
-        (p) =>
-          String(p.name || '')
-            .toLowerCase()
-            .includes(q) ||
-          String(p.sku || '')
-            .toLowerCase()
-            .includes(q)
-      );
+      result = result.filter((p) => {
+        const nameKey = toSearchKey(p.name || '');
+        const skuKey = toSearchKey(p.sku || '');
+        return nameKey.includes(q) || skuKey.includes(q);
+      });
     }
 
     // category
@@ -148,35 +155,21 @@ const Products = () => {
       result = result.filter((p) => p.isActive === false);
     }
 
-    // Apply sorting
-    if (priceSort === 'asc') {
-      result.sort((a, b) => {
-        const priceA = Number(a.price) || 0;
-        const priceB = Number(b.price) || 0;
-        return priceA - priceB;
-      });
-    } else if (priceSort === 'desc') {
-      result.sort((a, b) => {
-        const priceA = Number(a.price) || 0;
-        const priceB = Number(b.price) || 0;
-        return priceB - priceA;
-      });
-    }
+    // Combined sorting: price first (if any), then time (if any)
+    const getPrice = (p) => Number(p.price) || 0;
+    const getDate = (p) => new Date(p.createdAt || 0).getTime();
 
-    // Apply time sorting (independent of price sorting)
-    if (timeSort === 'asc') {
-      result.sort((a, b) => {
-        const dateA = new Date(a.createdAt || 0);
-        const dateB = new Date(b.createdAt || 0);
-        return dateA - dateB;
-      });
-    } else if (timeSort === 'desc') {
-      result.sort((a, b) => {
-        const dateA = new Date(a.createdAt || 0);
-        const dateB = new Date(b.createdAt || 0);
-        return dateB - dateA;
-      });
-    }
+    result.sort((a, b) => {
+      if (priceSort !== 'none') {
+        const diff = getPrice(a) - getPrice(b);
+        if (diff !== 0) return priceSort === 'asc' ? diff : -diff;
+      }
+      if (timeSort !== 'none') {
+        const tdiff = getDate(a) - getDate(b);
+        return timeSort === 'asc' ? tdiff : -tdiff;
+      }
+      return 0;
+    });
 
     return result;
   }, [products, search, category, status, priceSort, timeSort]);

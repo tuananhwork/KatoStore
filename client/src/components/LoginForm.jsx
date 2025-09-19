@@ -11,7 +11,6 @@ const LoginForm = ({ onSwitch }) => {
     remember: false,
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
   const navigate = useNavigate();
   const { syncAuth } = useAuth();
 
@@ -33,7 +32,6 @@ const LoginForm = ({ onSwitch }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
     try {
       const data = await loginAPI({
@@ -52,7 +50,6 @@ const LoginForm = ({ onSwitch }) => {
       toast.error('Đăng nhập thất bại');
     } catch (err) {
       const msg = err?.response?.data?.message || 'Đăng nhập thất bại';
-      setError(msg);
       toast.error(msg);
     } finally {
       setLoading(false);
