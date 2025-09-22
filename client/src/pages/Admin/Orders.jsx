@@ -101,6 +101,143 @@ const Orders = () => {
     document.body.style.overflow = 'unset';
   };
 
+  const buildInvoiceHtml = (order) => {
+    const rows = (order.items || [])
+      .map(
+        (it, idx) => `
+          <tr>
+            <td style="padding:8px;border:1px solid #e5e7eb">${idx + 1}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb">${it.name || ''}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb;text-align:center">${it.quantity || 0}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb;text-align:right">${formatVnd(it.price || 0)}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb;text-align:right">${formatVnd(
+              (it.price || 0) * (it.quantity || 0)
+            )}</td>
+          </tr>`
+      )
+      .join('');
+
+    const shipping = order.shippingAddress || {};
+    const orderId = String(order._id || '').slice(-6);
+
+    return `<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đơn hàng #${orderId}</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; margin: 0; padding: 24px; color: #111827; }
+    .container { max-width: 800px; margin: 0 auto; }
+    .section { margin-bottom: 16px; }
+    h1 { font-size: 20px; margin: 0 0 8px; }
+    h2 { font-size: 16px; margin: 0 0 8px; color: #374151; }
+    table { width: 100%; border-collapse: collapse; }
+    .muted { color: #6b7280; }
+    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media print {
+      body { padding: 0; }
+      .no-print { display: none; }
+      .pagebreak { page-break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="section">
+      <h1>Chi tiết đơn hàng #${orderId}</h1>
+      <div class="muted">Ngày đặt: ${new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
+    </div>
+
+    <div class="section grid pagebreak">
+      <div>
+        <h2>Khách hàng</h2>
+        <div>${shipping.fullName || 'N/A'}</div>
+        <div>${shipping.phone || 'N/A'}</div>
+      </div>
+      <div>
+        <h2>Giao hàng</h2>
+        <div>${shipping.street || ''}</div>
+        <div>${shipping.city || ''}</div>
+        <div>${shipping.postalCode || ''}</div>
+        <div>${shipping.country || ''}</div>
+      </div>
+    </div>
+
+    <div class="section pagebreak">
+      <h2>Sản phẩm</h2>
+      <table>
+        <thead>
+          <tr>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:left">#</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:left">Sản phẩm</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:center">SL</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:right">Giá</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:right">Thành tiền</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${rows}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section" style="text-align:right">
+      <h2>Tổng cộng: ${formatVnd(order.total || 0)}</h2>
+    </div>
+
+    <div class="no-print" style="margin-top:16px;text-align:right">
+      <button onclick="window.print()" style="padding:8px 12px;background:#ec4899;color:white;border:none;border-radius:8px;cursor:pointer">In</button>
+    </div>
+  </div>
+</body>
+</html>`;
+  };
+
+  const printOrder = (order) => {
+    if (!order) return;
+    const html = buildInvoiceHtml(order);
+    // Create hidden iframe to avoid about:blank tab
+    const iframe = document.createElement('iframe');
+    iframe.style.position = 'fixed';
+    iframe.style.right = '0';
+    iframe.style.bottom = '0';
+    iframe.style.width = '0';
+    iframe.style.height = '0';
+    iframe.style.border = '0';
+    iframe.setAttribute('aria-hidden', 'true');
+
+    document.body.appendChild(iframe);
+
+    const onLoadAndPrint = () => {
+      try {
+        iframe.contentWindow?.focus();
+        iframe.contentWindow?.print();
+      } catch {}
+      // Clean up after printing
+      const cleanup = () => {
+        iframe.parentNode && iframe.parentNode.removeChild(iframe);
+        window.removeEventListener('afterprint', cleanup);
+      };
+      window.addEventListener('afterprint', cleanup);
+      // Fallback cleanup
+      setTimeout(() => cleanup(), 2000);
+    };
+
+    if ('srcdoc' in iframe) {
+      iframe.onload = onLoadAndPrint;
+      iframe.srcdoc = html;
+    } else {
+      const doc = iframe.contentWindow?.document;
+      if (!doc) return;
+      doc.open();
+      doc.write(html);
+      doc.close();
+      setTimeout(onLoadAndPrint, 100);
+    }
+  };
+
   if (loading) {
     return (
       <AdminLayout>
@@ -191,6 +328,12 @@ const Orders = () => {
                           className="text-[rgb(var(--color-primary))] hover:text-pink-900 hover:underline"
                         >
                           Xem
+                        </button>
+                        <button
+                          onClick={() => printOrder(order)}
+                          className="text-[rgb(var(--color-primary))] hover:text-pink-900 hover:underline"
+                        >
+                          In
                         </button>
                       </div>
                     </td>
@@ -362,9 +505,7 @@ const Orders = () => {
                   Đóng
                 </button>
                 <button
-                  onClick={() => {
-                    window.print();
-                  }}
+                  onClick={() => printOrder(selectedOrder)}
                   className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg transition-colors"
                 >
                   In đơn hàng

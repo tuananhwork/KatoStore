@@ -8,7 +8,7 @@ const NavLink = ({ to, children }) => {
     <Link
       to={to}
       className={`block px-4 py-2 rounded-lg ${
-        active ? 'bg-pink-100 text-pink-700' : 'text-gray-700 hover:bg-gray-50'
+        active ? 'bg-pink-100 text-[rgb(var(--color-primary))]' : 'text-gray-700 hover:bg-gray-50'
       }`}
     >
       {children}
