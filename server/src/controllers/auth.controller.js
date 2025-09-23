@@ -68,7 +68,8 @@ exports.registerRequestOTP = async (req, res, next) => {
 
     return res.json({ message: 'OTP sent to email' });
   } catch (err) {
-    next(err);
+    console.error('[registerRequestOTP] ERROR >>>', err);
+    return res.status(500).json({ message: 'Server error', detail: err.message });
   }
 };
 
