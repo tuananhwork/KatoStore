@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 const crypto = require('crypto');
 const { sendMail } = require('../config/mailer');
+const RegisterOTP = require('../models/RegisterOTP');
 
 function signToken(user) {
   const payload = {
@@ -49,29 +50,14 @@ exports.registerRequestOTP = async (req, res, next) => {
     const existed = await User.findOne({ email: email.toLowerCase() });
     if (existed) return res.status(409).json({ message: 'Email already registered' });
 
-    // Use a pseudo user doc to store OTP against email if exists, otherwise create a transient doc? Simpler: upsert a stub with only email and token fields is risky.
-    // Instead, we don't store user until verify; keep OTP in memory is not persistent. We'll reuse reset token fields via a shadow document mapping by email in a separate collection ideally.
-    // For simplicity, send OTP back expecting verify request within 10 minutes; store hashed OTP in a lightweight cache by creating a temporary record in reset fields on a special temp user doc.
-
-    // Create or update a shadow record in a dedicated collection is not present. We'll send OTP without persistence and ask client to include OTP immediately.
-    // To persist securely with current model, we will create a minimal user record flagged inactive and complete on verify.
-
-    let tempUser = await User.findOne({ email: email.toLowerCase() });
-    if (!tempUser) {
-      tempUser = await User.create({
-        name: 'Pending User',
-        email: email.toLowerCase(),
-        passwordHash: await User.hashPassword(crypto.randomBytes(8).toString('hex')),
-        role: 'customer',
-        isActive: false,
-      });
-    }
-
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
-    tempUser.resetPasswordToken = otpHash;
-    tempUser.resetPasswordExpiresAt = new Date(Date.now() + 10 * 60 * 1000);
-    await tempUser.save();
+    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
+    await RegisterOTP.findOneAndUpdate(
+      { email: email.toLowerCase() },
+      { email: email.toLowerCase(), otpHash, expiresAt, attempts: 0 },
+      { upsert: true, new: true, setDefaultsOnInsert: true }
+    );
 
     const subject = 'KatoStore - Mã OTP xác minh đăng ký';
     const html = `<p>Xin chào,</p>
@@ -90,26 +76,33 @@ exports.registerVerifyOTP = async (req, res, next) => {
   try {
     const { name, email, password, otp } = req.body;
     if (!name || !email || !password || !otp) return res.status(400).json({ message: 'Missing fields' });
+    const existed = await User.findOne({ email: email.toLowerCase() });
+    if (existed) return res.status(409).json({ message: 'Email already registered' });
 
-    const user = await User.findOne({ email: email.toLowerCase() });
-    if (!user || !user.resetPasswordToken || !user.resetPasswordExpiresAt) {
-      return res.status(400).json({ message: 'Invalid or expired OTP' });
-    }
-    if (user.resetPasswordExpiresAt.getTime() < Date.now()) {
+    const otpEntry = await RegisterOTP.findOne({ email: email.toLowerCase() });
+    if (!otpEntry) return res.status(400).json({ message: 'Invalid or expired OTP' });
+    if (otpEntry.expiresAt.getTime() < Date.now()) {
+      await RegisterOTP.deleteOne({ _id: otpEntry._id });
       return res.status(400).json({ message: 'OTP expired' });
     }
     const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
-    if (otpHash !== user.resetPasswordToken) {
+    if (otpHash !== otpEntry.otpHash) {
+      // increment attempts (optional usage)
+      await RegisterOTP.updateOne({ _id: otpEntry._id }, { $inc: { attempts: 1 } });
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    user.name = name;
-    user.passwordHash = await User.hashPassword(password);
-    user.isActive = true;
-    user.emailVerifiedAt = new Date();
-    user.resetPasswordToken = undefined;
-    user.resetPasswordExpiresAt = undefined;
-    await user.save();
+    const passwordHash = await User.hashPassword(password);
+    const user = await User.create({
+      name,
+      email: email.toLowerCase(),
+      passwordHash,
+      role: 'customer',
+      isActive: true,
+      emailVerifiedAt: new Date(),
+    });
+    // cleanup
+    await RegisterOTP.deleteOne({ _id: otpEntry._id });
 
     const accessToken = signToken(user);
     return res.json({

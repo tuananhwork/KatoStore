@@ -28,18 +28,8 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    const url = error?.config?.url || '';
-
-    // Handle 401 errors globally, except for specific endpoints handled locally
+    // Handle 401 errors: let callers decide how to handle (no global toast/redirect)
     if (error.response?.status === 401) {
-      // Allow flows to surface inline error instead of redirecting
-      if (url.includes('/auth/change-password') || url.includes('/auth/me') || url.includes('/auth/login')) {
-        return Promise.reject(error);
-      }
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      toast.error('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
-      window.location.href = '/auth';
       return Promise.reject(error);
     }
 

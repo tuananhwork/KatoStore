@@ -23,14 +23,12 @@ export const useApi = () => {
 
         // Handle 409 errors (conflict)
         if (error?.response?.status === 409) {
-          const message =
-            error?.response?.data?.message || 'Dữ liệu đã tồn tại';
+          const message = error?.response?.data?.message || 'Dữ liệu đã tồn tại';
           throw new Error(message);
         }
 
         // Handle other errors
-        const message =
-          error?.response?.data?.message || error?.message || 'Có lỗi xảy ra';
+        const message = error?.response?.data?.message || error?.message || 'Có lỗi xảy ra';
         throw new Error(message);
       } finally {
         setLoading(false);

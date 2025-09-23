@@ -22,8 +22,7 @@ const Products = () => {
   const [search, setSearch] = useState(qs('q', ''));
   const [category, setCategory] = useState(qs('category', 'all'));
   const [status, setStatus] = useState(qs('status', 'all')); // all | active | inactive
-  const [priceSort, setPriceSort] = useState(qs('priceSort', 'none')); // none | asc | desc
-  const [timeSort, setTimeSort] = useState(qs('timeSort', 'desc')); // none | asc | desc
+  const [sortBy, setSortBy] = useState(qs('sortBy', 'newest')); // newest | oldest | price-asc | price-desc
 
   // Pagination
   const [page, setPage] = useState(Number(qs('page', 1)) || 1);
@@ -34,8 +33,7 @@ const Products = () => {
     if (search) sp.set('q', search);
     if (category && category !== 'all') sp.set('category', category);
     if (status && status !== 'all') sp.set('status', status);
-    if (priceSort && priceSort !== 'none') sp.set('priceSort', priceSort);
-    if (timeSort && timeSort !== 'desc') sp.set('timeSort', timeSort);
+    if (sortBy && sortBy !== 'newest') sp.set('sortBy', sortBy);
     if (page && page !== 1) sp.set('page', String(page));
     if (pageSize && pageSize !== 10) sp.set('pageSize', String(pageSize));
     const qsStr = sp.toString();
@@ -45,7 +43,7 @@ const Products = () => {
 
   useEffect(() => {
     syncQueryString();
-  }, [search, category, status, priceSort, timeSort, page, pageSize]);
+  }, [search, category, status, sortBy, page, pageSize]);
 
   const loadProducts = async (forceReload = false) => {
     // Chỉ load nếu chưa có data hoặc force reload
@@ -107,7 +105,7 @@ const Products = () => {
   // Reset to first page when filters change
   useEffect(() => {
     setPage(1);
-  }, [search, category, priceSort, timeSort, pageSize, status]);
+  }, [search, category, sortBy, pageSize, status]);
 
   // Build category options from products
   const categories = useMemo(() => {
@@ -155,24 +153,26 @@ const Products = () => {
       result = result.filter((p) => p.isActive === false);
     }
 
-    // Combined sorting: price first (if any), then time (if any)
+    // Sorting
     const getPrice = (p) => Number(p.price) || 0;
     const getDate = (p) => new Date(p.createdAt || 0).getTime();
 
     result.sort((a, b) => {
-      if (priceSort !== 'none') {
-        const diff = getPrice(a) - getPrice(b);
-        if (diff !== 0) return priceSort === 'asc' ? diff : -diff;
+      switch (sortBy) {
+        case 'price-asc':
+          return getPrice(a) - getPrice(b);
+        case 'price-desc':
+          return getPrice(b) - getPrice(a);
+        case 'oldest':
+          return getDate(a) - getDate(b);
+        case 'newest':
+        default:
+          return getDate(b) - getDate(a);
       }
-      if (timeSort !== 'none') {
-        const tdiff = getDate(a) - getDate(b);
-        return timeSort === 'asc' ? tdiff : -tdiff;
-      }
-      return 0;
     });
 
     return result;
-  }, [products, search, category, status, priceSort, timeSort]);
+  }, [products, search, category, status, sortBy]);
 
   // Pagination
   const total = filteredProducts.length;
@@ -193,7 +193,7 @@ const Products = () => {
     <AdminLayout title="Quản lý sản phẩm" description="Quản lý danh sách sản phẩm và thông tin chi tiết">
       {/* Filters */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
             <input
@@ -222,7 +222,7 @@ const Products = () => {
           </div>
 
           <div>
-            <label className="block text sm font-medium text-gray-700 mb-2">Trạng thái</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -235,30 +235,16 @@ const Products = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sắp xếp theo giá</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Sắp xếp</label>
             <select
-              value={priceSort}
-              onChange={(e) => setPriceSort(e.target.value)}
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
             >
-              <option value="none">Không sắp xếp</option>
-              <option value="asc">Giá tăng dần</option>
-              <option value="desc">Giá giảm dần</option>
-            </select>
-          </div>
-        </div>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sắp xếp theo thời gian</label>
-            <select
-              value={timeSort}
-              onChange={(e) => setTimeSort(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
-            >
-              <option value="desc">Mới nhất</option>
-              <option value="asc">Cũ nhất</option>
-              <option value="none">Không sắp xếp</option>
+              <option value="newest">Mới nhất</option>
+              <option value="oldest">Cũ nhất</option>
+              <option value="price-asc">Giá tăng</option>
+              <option value="price-desc">Giá giảm</option>
             </select>
           </div>
         </div>

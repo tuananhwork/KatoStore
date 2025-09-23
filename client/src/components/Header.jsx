@@ -4,7 +4,6 @@ import { toast } from 'react-toastify';
 import { getCart } from '../utils/cart';
 
 const Header = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [userName, setUserName] = useState('');
@@ -52,13 +51,6 @@ const Header = () => {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
-
   const handleLogout = () => {
     try {
       localStorage.removeItem('token');
@@ -83,34 +75,6 @@ const Header = () => {
             <Link to="/" className="flex items-center">
               <div className="text-2xl font-bold text-[rgb(var(--color-primary))]">KatoStore</div>
             </Link>
-          </div>
-
-          {/* Search Section - Center */}
-          <div className="flex-1 max-w-lg mx-8">
-            <form onSubmit={handleSearch} className="relative">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm sản phẩm..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-[rgb(var(--color-primary-600))]"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </form>
           </div>
 
           {/* Navigation Section - Right */}
@@ -161,15 +125,16 @@ const Header = () => {
                 {userDropdownOpen && (
                   <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
                     <div className="px-4 py-2 text-sm text-gray-700 font-medium">{userName}</div>
-                    {userRole === 'admin' ||
-                      (userRole === 'manager' && (
-                        <div className="px-4 py-1 text-xs text-gray-500">Role: {userRole || 'N/A'}</div>
-                      ))}
+                    {userRole === 'admin' && <div className="px-4 py-1 text-xs text-pink-600 font-medium">Admin</div>}
+
+                    {userRole === 'manager' && (
+                      <div className="px-4 py-1 text-xs text-blue-600 font-medium">Manager</div>
+                    )}
+
                     <hr className="my-2" />
 
                     {(userRole === 'admin' || userRole === 'manager') && (
                       <>
-                        <div className="px-4 py-2 text-xs font-semibold text-gray-500">Admin</div>
                         {userRole === 'admin' && (
                           <Link
                             to="/admin"

@@ -56,9 +56,7 @@ export const AuthProvider = ({ children }) => {
   const isAdmin = useMemo(() => hasRole(['admin', 'manager']), [user]);
 
   // Handle 401 errors
-  const handle401Error = (
-    message = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.'
-  ) => {
+  const handle401Error = (message = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.') => {
     toast.error(message);
     logout();
   };

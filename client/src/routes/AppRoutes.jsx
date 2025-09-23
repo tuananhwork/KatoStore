@@ -24,7 +24,7 @@ import { useRoleCheck } from '../hooks/useAuth.jsx';
 import { ROLES } from '../utils/constants';
 
 const AdminGuard = ({ roles = [ROLES.ADMIN, ROLES.MANAGER], children }) => {
-  const { hasAccess, loading } = useRoleCheck(roles);
+  const { hasAccess, loading } = useRoleCheck(roles, false);
 
   if (loading) {
     return (

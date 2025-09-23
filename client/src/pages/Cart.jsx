@@ -4,13 +4,30 @@ import Spinner from '../components/Spinner';
 import { getCart, updateCartItem, removeCartItem } from '../utils/cart';
 import { formatVnd } from '../utils/helpers';
 import { CART } from '../utils/constants';
+import productAPI from '../api/productAPI';
 
 const Cart = () => {
   const [loading, setLoading] = useState(true);
   const [cartItems, setCartItems] = useState([]);
+  const [products, setProducts] = useState({}); // Store full product data
 
-  const loadCart = () => {
-    setCartItems(getCart());
+  const loadCart = async () => {
+    const items = getCart();
+    setCartItems(items);
+
+    // Load full product data for variants
+    const productData = {};
+    for (const item of items) {
+      if (!productData[item.sku]) {
+        try {
+          const res = await productAPI.getProductBySku(item.sku);
+          productData[item.sku] = res;
+        } catch (error) {
+          console.error('Failed to load product:', item.sku, error);
+        }
+      }
+    }
+    setProducts(productData);
     setLoading(false);
   };
 
@@ -35,12 +52,96 @@ const Cart = () => {
     setCartItems(items);
   };
 
-  const subtotal = cartItems.reduce(
-    (total, item) => total + (item.price || 0) * (item.quantity || 0),
-    0
-  );
-  const shipping =
-    subtotal > CART.FREE_SHIPPING_THRESHOLD ? 0 : CART.DEFAULT_SHIPPING;
+  const updateVariant = (itemKey, newColor, newSize) => {
+    const item = cartItems.find((i) => i.key === itemKey);
+    if (!item) return;
+
+    const product = products[item.sku];
+    if (!product || !product.variants) return;
+
+    // Find available stock for new variant
+    const variant = product.variants.find((v) => v.color === newColor && v.size === newSize);
+    const availableStock = variant ? variant.stock : 0;
+
+    // Create new key for the variant
+    const newKey = `${item.sku}-${newColor || ''}-${newSize || ''}`;
+
+    // Remove old item and add new one
+    const items = removeCartItem(itemKey);
+    const newItem = {
+      ...item,
+      key: newKey,
+      color: newColor,
+      size: newSize,
+      stock: availableStock,
+    };
+
+    // Adjust quantity if it exceeds available stock
+    if (newItem.quantity > availableStock) {
+      newItem.quantity = availableStock;
+    }
+
+    items.push(newItem);
+    setCartItems(items);
+  };
+
+  // Get all available colors for a product
+  const getAvailableColors = (sku) => {
+    const product = products[sku];
+    if (!product || !product.variants) return [];
+
+    return [...new Set(product.variants.map((v) => v.color).filter(Boolean))];
+  };
+
+  // Get all available sizes for a product
+  const getAvailableSizes = (sku) => {
+    const product = products[sku];
+    if (!product || !product.variants) return [];
+
+    return [...new Set(product.variants.map((v) => v.size).filter(Boolean))];
+  };
+
+  // Get available sizes for a specific color
+  const getAvailableSizesForColor = (sku, color) => {
+    const product = products[sku];
+    if (!product || !product.variants) return [];
+
+    return product.variants
+      .filter((v) => v.color === color)
+      .map((v) => v.size)
+      .filter(Boolean);
+  };
+
+  // Get stock for a specific variant
+  const getVariantStock = (sku, color, size) => {
+    const product = products[sku];
+    if (!product || !product.variants) return 0;
+
+    // If no color or size selected, return product stock
+    if (!color || !size) {
+      return product.stock || 0;
+    }
+
+    const variant = product.variants.find((v) => v.color === color && v.size === size);
+    if (!variant) {
+      return 0;
+    }
+
+    // Handle different data formats from API
+    let stock = variant.stock;
+    if (typeof stock === 'object' && stock.$numberInt) {
+      stock = parseInt(stock.$numberInt);
+    } else if (typeof stock === 'string') {
+      stock = parseInt(stock);
+    } else if (typeof stock === 'number') {
+      stock = stock;
+    }
+
+    return isNaN(stock) ? 0 : stock;
+  };
+
+  const subtotal = cartItems.reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
+  const shipping = subtotal > CART.FREE_SHIPPING_THRESHOLD ? 0 : CART.DEFAULT_SHIPPING;
   const tax = Math.round(subtotal * CART.TAX_RATE);
   const total = subtotal + shipping + tax;
 
@@ -58,12 +159,8 @@ const Cart = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="text-center py-12">
             <div className="text-gray-400 text-6xl mb-4">🛒</div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Giỏ hàng trống
-            </h1>
-            <p className="text-gray-600 mb-8">
-              Bạn chưa có sản phẩm nào trong giỏ hàng
-            </p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">Giỏ hàng trống</h1>
+            <p className="text-gray-600 mb-8">Bạn chưa có sản phẩm nào trong giỏ hàng</p>
             <Link
               to="/shop"
               className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition-colors"
@@ -81,9 +178,7 @@ const Cart = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Giỏ hàng</h1>
-          <p className="text-gray-600">
-            Kiểm tra và chỉnh sửa sản phẩm trong giỏ hàng
-          </p>
+          <p className="text-gray-600">Kiểm tra và chỉnh sửa sản phẩm trong giỏ hàng</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -91,111 +186,98 @@ const Cart = () => {
           <div className="lg:col-span-2">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
               <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-semibold text-gray-900">
-                  Sản phẩm ({cartItems.length})
-                </h2>
+                <h2 className="text-lg font-semibold text-gray-900">Sản phẩm ({cartItems.length})</h2>
               </div>
               <div className="divide-y divide-gray-200">
-                {cartItems.map((item) => (
-                  <div key={item.key} className="p-6">
-                    <div className="flex items-center space-x-4">
-                      <div className="flex-shrink-0">
-                        <img
-                          src={item.image || '/api/placeholder/100/100'}
-                          alt={item.name}
-                          className="h-20 w-20 rounded-lg object-cover"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm font-medium text-gray-900 line-clamp-2">
-                          {item.name}
-                        </h3>
-                        <p className="text-sm text-gray-500">SKU: {item.sku}</p>
-                        {item.color && (
-                          <p className="text-sm text-gray-500">
-                            Màu: {item.color}
-                          </p>
-                        )}
-                        {item.size && (
-                          <p className="text-sm text-gray-500">
-                            Size: {item.size}
-                          </p>
-                        )}
-                      </div>
+                {cartItems.map((item) => {
+                  const availableColors = getAvailableColors(item.sku);
+                  const availableSizes = getAvailableSizes(item.sku);
+                  const sizesForColor = getAvailableSizesForColor(item.sku, item.color);
+
+                  return (
+                    <div key={item.key} className="p-6">
                       <div className="flex items-center space-x-4">
-                        <div className="text-right">
-                          <p className="text-sm font-medium text-gray-900">
-                            {formatVnd(item.price)}
-                          </p>
-                          <p className="text-sm text-gray-500">
-                            Còn {item.stock} sản phẩm
-                          </p>
+                        <div className="flex-shrink-0">
+                          <img
+                            src={item.image || '/api/placeholder/100/100'}
+                            alt={item.name}
+                            className="h-20 w-20 rounded-lg object-cover"
+                          />
                         </div>
-                        <div className="flex items-center space-x-2">
-                          <button
-                            onClick={() =>
-                              updateQuantity(
-                                item.key,
-                                item.quantity - 1,
-                                item.stock
-                              )
-                            }
-                            disabled={item.quantity <= 1}
-                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                        <div className="flex-1 min-w-0">
+                          <h3 className="text-sm font-medium text-gray-900 line-clamp-2">{item.name}</h3>
+                          <p className="text-sm text-gray-500">SKU: {item.sku}</p>
+
+                          {/* Display current variant info */}
+                          <div className="mt-2 flex items-center space-x-4 text-xs text-gray-600">
+                            {item.color && (
+                              <span className="bg-gray-100 px-2 py-1 rounded">
+                                Màu: <span className="font-medium">{item.color}</span>
+                              </span>
+                            )}
+                            {item.size && (
+                              <span className="bg-gray-100 px-2 py-1 rounded">
+                                Size: <span className="font-medium">{item.size}</span>
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <div className="flex items-center space-x-4">
+                          <div className="text-right">
+                            <p className="text-sm font-medium text-gray-900">{formatVnd(item.price)}</p>
+                            <p className="text-sm text-gray-500">
+                              Còn {getVariantStock(item.sku, item.color, item.size)} sản phẩm
+                            </p>
+                          </div>
+                          <div className="flex items-center space-x-2">
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.key,
+                                  item.quantity - 1,
+                                  getVariantStock(item.sku, item.color, item.size)
+                                )
+                              }
+                              disabled={item.quantity <= 1}
+                              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M20 12H4"
-                              />
-                            </svg>
-                          </button>
-                          <span className="w-12 text-center text-sm font-medium">
-                            {item.quantity}
-                          </span>
-                          <button
-                            onClick={() =>
-                              updateQuantity(
-                                item.key,
-                                item.quantity + 1,
-                                item.stock
-                              )
-                            }
-                            disabled={item.quantity >= (item.stock || 9999)}
-                            className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                          >
-                            <svg
-                              className="w-4 h-4"
-                              fill="none"
-                              stroke="currentColor"
-                              viewBox="0 0 24 24"
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
+                              </svg>
+                            </button>
+                            <span className="w-12 text-center text-sm font-medium">{item.quantity}</span>
+                            <button
+                              onClick={() =>
+                                updateQuantity(
+                                  item.key,
+                                  item.quantity + 1,
+                                  getVariantStock(item.sku, item.color, item.size)
+                                )
+                              }
+                              disabled={item.quantity >= getVariantStock(item.sku, item.color, item.size)}
+                              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                              <path
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                                strokeWidth={2}
-                                d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                              />
-                            </svg>
+                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path
+                                  strokeLinecap="round"
+                                  strokeLinejoin="round"
+                                  strokeWidth={2}
+                                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
+                                />
+                              </svg>
+                            </button>
+                          </div>
+                          <button
+                            onClick={() => removeItem(item.key)}
+                            className="text-red-600 hover:text-red-900 text-sm font-medium"
+                          >
+                            Xóa
                           </button>
                         </div>
-                        <button
-                          onClick={() => removeItem(item.key)}
-                          className="text-red-600 hover:text-red-900 text-sm font-medium"
-                        >
-                          Xóa
-                        </button>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>
@@ -203,9 +285,7 @@ const Cart = () => {
           {/* Order Summary */}
           <div className="lg:col-span-1">
             <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">
-                Tóm tắt đơn hàng
-              </h2>
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">Tóm tắt đơn hàng</h2>
               <div className="space-y-3">
                 <div className="flex justify-between">
                   <span className="text-gray-600">Tạm tính</span>
@@ -213,9 +293,7 @@ const Cart = () => {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Phí vận chuyển</span>
-                  <span className="font-medium">
-                    {shipping === 0 ? 'Miễn phí' : formatVnd(shipping)}
-                  </span>
+                  <span className="font-medium">{shipping === 0 ? 'Miễn phí' : formatVnd(shipping)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-gray-600">Thuế (10%)</span>
@@ -223,12 +301,8 @@ const Cart = () => {
                 </div>
                 <div className="border-t border-gray-200 pt-3">
                   <div className="flex justify-between">
-                    <span className="text-lg font-semibold text-gray-900">
-                      Tổng cộng
-                    </span>
-                    <span className="text-lg font-semibold text-gray-900">
-                      {formatVnd(total)}
-                    </span>
+                    <span className="text-lg font-semibold text-gray-900">Tổng cộng</span>
+                    <span className="text-lg font-semibold text-gray-900">{formatVnd(total)}</span>
                   </div>
                 </div>
               </div>
@@ -236,9 +310,7 @@ const Cart = () => {
               {subtotal < CART.FREE_SHIPPING_THRESHOLD && (
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
-                    Mua thêm{' '}
-                    {formatVnd(CART.FREE_SHIPPING_THRESHOLD - subtotal)} để được
-                    miễn phí vận chuyển!
+                    Mua thêm {formatVnd(CART.FREE_SHIPPING_THRESHOLD - subtotal)} để được miễn phí vận chuyển!
                   </p>
                 </div>
               )}

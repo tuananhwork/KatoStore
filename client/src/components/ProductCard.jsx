@@ -1,25 +1,22 @@
 import React from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { addToCart } from '../utils/cart';
-import { toast } from 'react-toastify';
+import { Link } from 'react-router-dom';
+// import { addToCart } from '../utils/cart';
+// import { toast } from 'react-toastify';
 
 const ProductCard = ({ product }) => {
-  const navigate = useNavigate();
   const { sku, name, price, media } = product;
   const rating = product.rating || 0;
   const reviews = product.reviews || 0;
 
   const imageUrl =
     Array.isArray(media) && media.length
-      ? media.find((m) => m.type === 'image' && m.order === 1)?.url ||
-        media[0].url
+      ? media.find((m) => m.type === 'image' && m.order === 1)?.url || media[0].url
       : '/api/placeholder/300/300';
 
-  const onQuickAdd = () => {
-    addToCart(product, { quantity: 1 });
-    toast.success('Đã thêm vào giỏ hàng');
-    navigate('/cart');
-  };
+  // const onQuickAdd = () => {
+  //   addToCart(product, { quantity: 1 });
+  //   toast.success('Đã thêm vào giỏ hàng');
+  // };
 
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden group">
@@ -34,24 +31,25 @@ const ProductCard = ({ product }) => {
         </Link>
 
         {/* Add to Cart Button */}
-        <button
+        {/* <button
           onClick={onQuickAdd}
           className="absolute bottom-2 right-2 bg-pink-600 text-white p-2 rounded-full hover:bg-pink-700 transition-colors opacity-0 group-hover:opacity-100"
         >
           <svg
-            className="w-4 h-4"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-6 h-6"
             fill="none"
-            stroke="currentColor"
             viewBox="0 0 24 24"
+            stroke="currentColor"
+            strokeWidth={2}
           >
             <path
               strokeLinecap="round"
               strokeLinejoin="round"
-              strokeWidth={2}
-              d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-2.5 5M7 13l2.5 5m6-5v6a2 2 0 01-2 2H9a2 2 0 01-2-2v-6m8 0V9a2 2 0 00-2-2H9a2 2 0 00-2 2v4.01"
+              d="M2.25 2.25h1.386c.51 0 .955.343 1.087.835l.383 1.437m0 0L6.75 12.75h10.5l2.25-7.5H5.106m0 0L4.5 4.5m2.25 15a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
             />
           </svg>
-        </button>
+        </button> */}
       </div>
 
       {/* Product Info */}
@@ -68,9 +66,7 @@ const ProductCard = ({ product }) => {
             {[...Array(5)].map((_, i) => (
               <svg
                 key={i}
-                className={`w-4 h-4 ${
-                  i < rating ? 'text-yellow-400' : 'text-gray-300'
-                }`}
+                className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >

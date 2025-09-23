@@ -58,11 +58,10 @@ const Dashboard = () => {
         users = usersRes.items;
       }
 
-      // Calculate revenue from orders
-      const revenue = orders.reduce(
-        (sum, order) => sum + (order.total || 0),
-        0
-      );
+      // Calculate revenue only from delivered orders
+      const revenue = orders
+        .filter((order) => order.status === 'delivered')
+        .reduce((sum, order) => sum + (order.total || 0), 0);
 
       // Count customers (users with role 'customer')
       const customers = users.filter((user) => user.role === 'customer');
@@ -111,12 +110,7 @@ const Dashboard = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-blue-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -128,9 +122,7 @@ const Dashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Tổng đơn hàng</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats.totalOrders}
-              </p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.totalOrders}</p>
             </div>
           </div>
         </div>
@@ -139,12 +131,7 @@ const Dashboard = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-green-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -156,9 +143,7 @@ const Dashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Doanh thu</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {formatVnd(stats.revenue)}
-              </p>
+              <p className="text-2xl font-semibold text-gray-900">{formatVnd(stats.revenue)}</p>
             </div>
           </div>
         </div>
@@ -167,12 +152,7 @@ const Dashboard = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-purple-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -184,9 +164,7 @@ const Dashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Khách hàng</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats.totalCustomers}
-              </p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.totalCustomers}</p>
             </div>
           </div>
         </div>
@@ -195,12 +173,7 @@ const Dashboard = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-orange-100 rounded-lg flex items-center justify-center">
-                <svg
-                  className="w-5 h-5 text-orange-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
+                <svg className="w-5 h-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -212,9 +185,7 @@ const Dashboard = () => {
             </div>
             <div className="ml-4">
               <p className="text-sm font-medium text-gray-600">Sản phẩm</p>
-              <p className="text-2xl font-semibold text-gray-900">
-                {stats.totalProducts}
-              </p>
+              <p className="text-2xl font-semibold text-gray-900">{stats.totalProducts}</p>
             </div>
           </div>
         </div>

@@ -45,14 +45,18 @@ const Orders = () => {
 
   const getStatusColor = (status) => {
     switch (status) {
-      case 'delivered':
-        return 'bg-green-100 text-green-800';
-      case 'processing':
-        return 'bg-yellow-100 text-yellow-800';
       case 'pending':
         return 'bg-pink-100 text-pink-800';
+      case 'processing':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'shipped':
+        return 'bg-blue-100 text-blue-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
       case 'cancelled':
         return 'bg-red-100 text-red-800';
+      case 'refunded':
+        return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
@@ -60,14 +64,18 @@ const Orders = () => {
 
   const getStatusText = (status) => {
     switch (status) {
-      case 'delivered':
-        return 'Đã giao';
-      case 'processing':
-        return 'Đang xử lý';
       case 'pending':
         return 'Chờ xác nhận';
+      case 'processing':
+        return 'Đang xử lý';
+      case 'shipped':
+        return 'Đã gửi hàng';
+      case 'delivered':
+        return 'Đã giao';
       case 'cancelled':
         return 'Đã hủy';
+      case 'refunded':
+        return 'Đã hoàn tiền';
       default:
         return 'Không xác định';
     }
@@ -85,13 +93,6 @@ const Orders = () => {
       }
       toast.error('Cập nhật trạng thái thất bại');
     }
-  };
-
-  const handleViewOrder = (order) => {
-    setSelectedOrder(order);
-    setShowOrderDetail(true);
-    // Ẩn scroll của body khi modal mở
-    document.body.style.overflow = 'hidden';
   };
 
   const handleCloseOrderDetail = () => {
@@ -118,14 +119,13 @@ const Orders = () => {
       .join('');
 
     const shipping = order.shippingAddress || {};
-    const orderId = String(order._id || '').slice(-6);
 
     return `<!doctype html>
 <html>
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Đơn hàng #${orderId}</title>
+  <title>Đơn hàng #${String(order._id || '').slice(-6)}</title>
   <style>
     * { box-sizing: border-box; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; margin: 0; padding: 24px; color: #111827; }
@@ -146,7 +146,7 @@ const Orders = () => {
 <body>
   <div class="container">
     <div class="section">
-      <h1>Chi tiết đơn hàng #${orderId}</h1>
+      <h1>Chi tiết đơn hàng #${String(order._id || '').slice(-6)}</h1>
       <div class="muted">Ngày đặt: ${new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
     </div>
 
@@ -184,6 +184,9 @@ const Orders = () => {
     </div>
 
     <div class="section" style="text-align:right">
+      <div class="muted">Tạm tính: <strong>${formatVnd(order.subtotal || 0)}</strong></div>
+      <div class="muted">Thuế: <strong>${formatVnd(order.tax || 0)}</strong></div>
+      <div class="muted">Phí vận chuyển: <strong>${formatVnd(order.shipping || 0)}</strong></div>
       <h2>Tổng cộng: ${formatVnd(order.total || 0)}</h2>
     </div>
 
@@ -198,44 +201,20 @@ const Orders = () => {
   const printOrder = (order) => {
     if (!order) return;
     const html = buildInvoiceHtml(order);
-    // Create hidden iframe to avoid about:blank tab
-    const iframe = document.createElement('iframe');
-    iframe.style.position = 'fixed';
-    iframe.style.right = '0';
-    iframe.style.bottom = '0';
-    iframe.style.width = '0';
-    iframe.style.height = '0';
-    iframe.style.border = '0';
-    iframe.setAttribute('aria-hidden', 'true');
-
-    document.body.appendChild(iframe);
-
-    const onLoadAndPrint = () => {
-      try {
-        iframe.contentWindow?.focus();
-        iframe.contentWindow?.print();
-      } catch {}
-      // Clean up after printing
-      const cleanup = () => {
-        iframe.parentNode && iframe.parentNode.removeChild(iframe);
-        window.removeEventListener('afterprint', cleanup);
-      };
-      window.addEventListener('afterprint', cleanup);
-      // Fallback cleanup
-      setTimeout(() => cleanup(), 2000);
-    };
-
-    if ('srcdoc' in iframe) {
-      iframe.onload = onLoadAndPrint;
-      iframe.srcdoc = html;
-    } else {
-      const doc = iframe.contentWindow?.document;
-      if (!doc) return;
-      doc.open();
-      doc.write(html);
-      doc.close();
-      setTimeout(onLoadAndPrint, 100);
+    const win = window.open('', '_blank');
+    if (!win) {
+      toast.error('Không thể mở cửa sổ in');
+      return;
     }
+    win.document.open();
+    win.document.write(html);
+    win.document.close();
+    try {
+      win.history.replaceState(null, '', `/print/order/${order._id}`);
+    } catch {
+      // ignore
+    }
+    win.focus();
   };
 
   if (loading) {
@@ -273,9 +252,6 @@ const Orders = () => {
                   Tổng tiền
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Trạng thái
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Ngày đặt
                 </th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -303,11 +279,6 @@ const Orders = () => {
                       {order.shippingAddress?.phone || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatVnd(order.total)}</td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium rounded-full ${getStatusColor(order.status)}`}>
-                        {getStatusText(order.status)}
-                      </span>
-                    </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                       {new Date(order.createdAt).toLocaleDateString('vi-VN')}
                     </td>
@@ -320,15 +291,11 @@ const Orders = () => {
                         >
                           <option value="pending">Chờ xác nhận</option>
                           <option value="processing">Đang xử lý</option>
+                          <option value="shipped">Đã gửi hàng</option>
                           <option value="delivered">Đã giao</option>
                           <option value="cancelled">Đã hủy</option>
+                          <option value="refunded">Đã hoàn tiền</option>
                         </select>
-                        <button
-                          onClick={() => handleViewOrder(order)}
-                          className="text-[rgb(var(--color-primary))] hover:text-pink-900 hover:underline"
-                        >
-                          Xem
-                        </button>
                         <button
                           onClick={() => printOrder(order)}
                           className="text-[rgb(var(--color-primary))] hover:text-pink-900 hover:underline"
@@ -398,10 +365,27 @@ const Orders = () => {
                       </p>
                     </div>
                     <div>
-                      <label className="block text-sm font-medium text-pink-700">Tổng tiền</label>
-                      <p className="text-lg text-[rgb(var(--color-primary))] font-bold">
-                        {formatVnd(selectedOrder.total)}
-                      </p>
+                      <label className="block text-sm font-medium text-pink-700">Thanh toán</label>
+                      <div className="text-sm text-gray-900 space-y-1">
+                        <div>
+                          <span className="text-gray-600">Tạm tính: </span>
+                          <span className="font-medium">{formatVnd(selectedOrder.subtotal || 0)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Thuế: </span>
+                          <span className="font-medium">{formatVnd(selectedOrder.tax || 0)}</span>
+                        </div>
+                        <div>
+                          <span className="text-gray-600">Phí vận chuyển: </span>
+                          <span className="font-medium">{formatVnd(selectedOrder.shipping || 0)}</span>
+                        </div>
+                        <div className="pt-1 border-t">
+                          <span className="text-gray-600">Tổng cộng: </span>
+                          <span className="text-[rgb(var(--color-primary))] font-bold">
+                            {formatVnd(selectedOrder.total || 0)}
+                          </span>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -495,21 +479,6 @@ const Orders = () => {
                     </table>
                   </div>
                 </div>
-              </div>
-
-              <div className="mt-6 flex justify-end space-x-3 print:hidden">
-                <button
-                  onClick={handleCloseOrderDetail}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-6 py-2 rounded-lg transition-colors"
-                >
-                  Đóng
-                </button>
-                <button
-                  onClick={() => printOrder(selectedOrder)}
-                  className="bg-pink-600 hover:bg-pink-700 text-white px-6 py-2 rounded-lg transition-colors"
-                >
-                  In đơn hàng
-                </button>
               </div>
             </div>
           </div>

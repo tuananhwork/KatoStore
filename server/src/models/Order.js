@@ -7,6 +7,8 @@ const OrderItemSchema = new mongoose.Schema(
     price: { type: Number, required: true, min: 0 },
     quantity: { type: Number, required: true, min: 1 },
     image: { type: String, trim: true },
+    color: { type: String, trim: true },
+    size: { type: String, trim: true },
   },
   { _id: false }
 );
@@ -35,14 +37,7 @@ const OrderSchema = new mongoose.Schema(
 
     status: {
       type: String,
-      enum: [
-        'pending',
-        'processing',
-        'shipped',
-        'delivered',
-        'cancelled',
-        'refunded',
-      ],
+      enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled', 'refunded'],
       default: 'pending',
       index: true,
     },
