@@ -4,12 +4,12 @@ import { toast } from 'react-toastify';
 import { getCart } from '../utils/cart';
 import NotificationBell from './NotificationBell';
 import UserMenu from './UserMenu';
+import authAPI from '../api/authAPI';
 
 const Header = () => {
-  const [searchQuery, setSearchQuery] = useState('');
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [userName, setUserName] = useState('');
-  const [avatar, setAvatar] = useState('');
+  const [avatar, setAvatar] = useState('/images/Avatar/avt.jpg');
   const [userRole, setUserRole] = useState('');
   const [cartCount, setCartCount] = useState(0);
   const navigate = useNavigate();
@@ -22,7 +22,6 @@ const Header = () => {
       const user = userRaw ? JSON.parse(userRaw) : null;
       setIsLoggedIn(!!token && !!user);
       setUserName(user?.name || user?.email || 'User');
-      setAvatar(user?.avatar);
       setUserRole(user?.role || '');
     } catch {
       setIsLoggedIn(false);
@@ -42,16 +41,22 @@ const Header = () => {
   };
 
   useEffect(() => {
+    const fetchAvt = async () => {
+      try {
+        const u = await authAPI.getMe();
+        setAvatar(u.avatar);
+      } catch (error) {
+        console.log(error);
+      }
+    };
+    fetchAvt();
+  }, []); // Add dependency array to prevent infinite loop
+
+  useEffect(() => {
     syncAuthFromStorage();
     syncCart();
   }, [location]);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (searchQuery.trim()) {
-      navigate(`/shop?search=${encodeURIComponent(searchQuery.trim())}`);
-    }
-  };
 
   const handleLogout = () => {
     try {
@@ -74,34 +79,6 @@ const Header = () => {
             <Link to="/" className="flex items-center">
               <div className="text-2xl font-bold text-[rgb(var(--color-primary))]">KatoStore</div>
             </Link>
-          </div>
-
-          {/* Search Section - Center */}
-          <div className="flex-1 max-w-lg mx-8">
-            <form onSubmit={handleSearch} className="relative">
-              <div className="relative">
-                <input
-                  type="text"
-                  placeholder="Tìm kiếm sản phẩm..."
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-4 pr-12 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-500 focus:border-transparent outline-none"
-                />
-                <button
-                  type="submit"
-                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1 text-gray-400 hover:text-[rgb(var(--color-primary-600))]"
-                >
-                  <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                    />
-                  </svg>
-                </button>
-              </div>
-            </form>
           </div>
 
           {/* Navigation Section - Right */}

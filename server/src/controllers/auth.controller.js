@@ -53,10 +53,10 @@ exports.registerRequestOTP = async (req, res, next) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
     const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-    await RegisterOTP.findOneAndUpdate(
+    await RegisterOTP.updateOne(
       { email: email.toLowerCase() },
-      { email: email.toLowerCase(), otpHash, expiresAt, attempts: 0 },
-      { upsert: true, new: true, setDefaultsOnInsert: true }
+      { $set: { otpHash, expiresAt, attempts: 0 } },
+      { upsert: true }
     );
 
     const subject = 'KatoStore - Mã OTP xác minh đăng ký';

@@ -27,7 +27,7 @@ const Profile = () => {
     address: '',
     dateOfBirth: '',
     gender: 'other',
-    avatar: 'https://avatar.iran.liara.run/public/73',
+    avatar: '/images/Avatar/avt.jpg',
   });
   const [orders, setOrders] = useState([]);
 
