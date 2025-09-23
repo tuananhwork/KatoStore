@@ -51,18 +51,11 @@ const Users = () => {
 
   if (!hasAccess) {
     return (
-      <AdminLayout
-        title="Không có quyền truy cập"
-        description="Bạn cần quyền admin để truy cập trang này."
-      >
+      <AdminLayout title="Không có quyền truy cập" description="Bạn cần quyền admin để truy cập trang này.">
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">
-              Không có quyền truy cập
-            </h1>
-            <p className="text-gray-600">
-              Bạn cần quyền admin để truy cập trang này.
-            </p>
+            <h1 className="text-2xl font-bold text-gray-900 mb-4">Không có quyền truy cập</h1>
+            <p className="text-gray-600">Bạn cần quyền admin để truy cập trang này.</p>
           </div>
         </div>
       </AdminLayout>
@@ -111,25 +104,18 @@ const Users = () => {
   };
 
   return (
-    <AdminLayout
-      title="Quản lý người dùng"
-      description="Quản lý tài khoản và quyền hạn người dùng"
-    >
+    <AdminLayout title="Quản lý người dùng" description="Quản lý tài khoản và quyền hạn người dùng">
       {/* Users Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">
-            Danh sách người dùng ({total})
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">Danh sách người dùng ({total})</h2>
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Tên
-                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Email
                 </th>
@@ -160,24 +146,13 @@ const Users = () => {
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">
-                          {user.name || 'N/A'}
-                        </div>
-                        <div className="text-sm text-gray-500">
-                          {user.email}
-                        </div>
+                        <div className="text-sm font-medium text-gray-900">{user.name || 'N/A'}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    {user.email}
-                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span
-                      className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleColor(
-                        user.role
-                      )}`}
-                    >
+                    <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleColor(user.role)}`}>
                       {getRoleText(user.role)}
                     </span>
                   </td>
@@ -187,9 +162,7 @@ const Users = () => {
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        user.isActive !== false
-                          ? 'bg-green-100 text-green-800'
-                          : 'bg-red-100 text-red-800'
+                        user.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                       }`}
                     >
                       {user.isActive !== false ? 'Hoạt động' : 'Bị khóa'}
@@ -197,12 +170,8 @@ const Users = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-[rgb(var(--color-primary))] hover:text-pink-900">
-                        Sửa
-                      </button>
-                      <button className="text-red-600 hover:text-red-900">
-                        Khóa
-                      </button>
+                      <button className="text-[rgb(var(--color-primary))] hover:text-pink-900">Sửa</button>
+                      <button className="text-red-600 hover:text-red-900">Khóa</button>
                     </div>
                   </td>
                 </tr>
