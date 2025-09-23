@@ -153,10 +153,28 @@ exports.me = async (req, res, next) => {
   }
 };
 
+const cloudinary = require('../config/cloudinary');
+
+function extractPublicIdFromUrl(url) {
+  try {
+    // Cloudinary URL format: https://res.cloudinary.com/<cloud>/image/upload/v<ver>/<folder>/<name>.<ext>
+    const parts = url.split('/');
+    const uploadIdx = parts.findIndex((p) => p === 'upload');
+    if (uploadIdx === -1) return null;
+    const publicIdWithExt = parts.slice(uploadIdx + 2).join('/');
+    const noVer = publicIdWithExt.replace(/v\d+\//, '');
+    return noVer.replace(/\.[^/.]+$/, '');
+  } catch {
+    return null;
+  }
+}
+
 exports.updateMe = async (req, res, next) => {
   try {
     const userId = req.user.sub;
     const { name, phone, avatar, dateOfBirth, gender, address } = req.body;
+
+    const current = await User.findById(userId).select('avatar');
 
     const update = {};
     if (typeof name === 'string') update.name = name;
@@ -171,6 +189,17 @@ exports.updateMe = async (req, res, next) => {
       select: '_id name email role phone avatar dateOfBirth gender address',
     });
     if (!updated) return res.status(404).json({ message: 'User not found' });
+
+    // If avatar changed, delete old one in Cloudinary (best-effort)
+    try {
+      if (avatar && current?.avatar && current.avatar !== avatar) {
+        const publicId = extractPublicIdFromUrl(current.avatar);
+        if (publicId) {
+          await cloudinary.uploader.destroy(publicId, { invalidate: true });
+        }
+      }
+    } catch {}
+
     return res.json(updated);
   } catch (err) {
     next(err);

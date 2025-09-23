@@ -8,8 +8,7 @@ const Product = require('../src/models/Product');
 
 async function uploadLocalFile(filePath, folder) {
   const ext = path.extname(filePath).toLowerCase();
-  const resourceType =
-    ext === '.mp4' || ext === '.mov' || ext === '.webm' ? 'video' : 'image';
+  const resourceType = ext === '.mp4' || ext === '.mov' || ext === '.webm' ? 'video' : 'image';
   return cloudinary.uploader.upload(filePath, {
     folder,
     resource_type: resourceType,
@@ -23,19 +22,17 @@ async function run() {
     process.exit(1);
   }
   const repoRoot = path.resolve(__dirname, '..', '..');
-  const productsJsonPath = path.join(
-    repoRoot,
-    'client',
-    'src',
-    'data',
-    'products.json'
-  );
+  const productsJsonPath = path.join(repoRoot, 'client', 'src', 'data', 'products.json');
   const imagesRoot = path.join(repoRoot, 'client', 'public'); // so JSON urls like /images/... resolve
 
   await mongoose.connect(MONGO_URI, {
     dbName: process.env.MONGO_DB || 'katostore',
   });
   console.log('MongoDB connected');
+
+  // Wipe existing products before import
+  const { deletedCount } = await Product.deleteMany({});
+  console.log(`Cleared ${deletedCount} existing products`);
 
   const raw = fs.readFileSync(productsJsonPath, 'utf-8');
   const products = JSON.parse(raw);
@@ -77,14 +74,8 @@ async function run() {
         isActive: true,
       };
 
-      const existing = await Product.findOne({ sku: payload.sku });
-      if (existing) {
-        await Product.updateOne({ sku: payload.sku }, payload);
-        console.log('Updated:', payload.sku);
-      } else {
-        await Product.create(payload);
-        console.log('Inserted:', payload.sku);
-      }
+      await Product.create(payload);
+      console.log('Inserted:', payload.sku);
     } catch (e) {
       console.error('Failed to import product', p?.sku, e.message);
     }

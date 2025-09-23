@@ -8,6 +8,7 @@ const adminRoutes = require('./routes/admin.routes');
 const productRoutes = require('./routes/product.routes');
 const orderRoutes = require('./routes/order.routes');
 const mediaRoutes = require('./routes/media.routes');
+const notificationRoutes = require('./routes/notification.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 function createApp() {
@@ -27,6 +28,7 @@ function createApp() {
   app.use('/products', productRoutes);
   app.use('/orders', orderRoutes);
   app.use('/media', mediaRoutes);
+  app.use('/notifications', notificationRoutes);
 
   app.use(errorHandler);
 

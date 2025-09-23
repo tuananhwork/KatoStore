@@ -89,3 +89,25 @@ export const formatDate = (date) => {
     day: '2-digit',
   });
 };
+
+/**
+ * Map backend order status to Vietnamese text
+ */
+export const getOrderStatusText = (status) => {
+  switch (status) {
+    case 'pending':
+      return 'Chờ xác nhận';
+    case 'processing':
+      return 'Đang xử lý';
+    case 'shipped':
+      return 'Đã gửi hàng';
+    case 'delivered':
+      return 'Đã giao';
+    case 'cancelled':
+      return 'Đã hủy';
+    case 'refunded':
+      return 'Đã hoàn tiền';
+    default:
+      return 'Không xác định';
+  }
+};

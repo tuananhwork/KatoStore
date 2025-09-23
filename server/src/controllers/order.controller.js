@@ -1,5 +1,27 @@
 const Order = require('../models/Order');
 const Product = require('../models/Product');
+const Notification = require('../models/Notification');
+const User = require('../models/User');
+const { publishToUser, publishToManyUserIds } = require('../services/notificationStream');
+
+function getOrderStatusTextVi(status) {
+  switch (status) {
+    case 'pending':
+      return 'Chờ xác nhận';
+    case 'processing':
+      return 'Đang xử lý';
+    case 'shipped':
+      return 'Đã gửi hàng';
+    case 'delivered':
+      return 'Đã giao';
+    case 'cancelled':
+      return 'Đã hủy';
+    case 'refunded':
+      return 'Đã hoàn tiền';
+    default:
+      return 'Không xác định';
+  }
+}
 
 exports.list = async (req, res, next) => {
   try {
@@ -53,6 +75,31 @@ exports.create = async (req, res, next) => {
       shippingAddress: payload.shippingAddress || {},
       paymentMethod: payload.paymentMethod || 'cod',
     });
+
+    // Notify admins/managers about new order (create per-recipient notifications)
+    try {
+      const admins = await User.find({ role: { $in: ['admin', 'manager'] } }, { _id: 1 });
+      const docs = admins.map((u) => ({
+        userId: u._id,
+        type: 'order-created',
+        title: 'Đơn hàng mới',
+        message: `Đơn mới #${String(order._id).slice(-6)} từ ${order?.shippingAddress?.fullName || 'khách hàng'}`,
+        orderId: order._id,
+        meta: { customerId: req.user?.sub },
+      }));
+      if (docs.length) {
+        const created = await Notification.insertMany(docs);
+        // Publish SSE to admin/manager recipients
+        publishToManyUserIds(
+          admins.map((a) => a._id),
+          {
+            type: 'notification',
+            items: created,
+          }
+        );
+      }
+    } catch (_) {}
+
     res.status(201).json(order);
   } catch (err) {
     next(err);
@@ -101,6 +148,24 @@ exports.updateStatus = async (req, res, next) => {
     }
 
     await order.save();
+
+    // Notify customer about status change
+    try {
+      const statusVi = getOrderStatusTextVi(status);
+      const created = await Notification.create({
+        userId: order.userId,
+        type: 'order-status-changed',
+        title: 'Cập nhật đơn hàng',
+        message: `Đơn #${String(order._id).slice(-6)} đã chuyển sang trạng thái ${statusVi}`,
+        orderId: order._id,
+        meta: { prev, next: status },
+      });
+      publishToUser(String(order.userId), {
+        type: 'notification',
+        items: [created],
+      });
+    } catch (_) {}
+
     res.json(order);
   } catch (err) {
     next(err);

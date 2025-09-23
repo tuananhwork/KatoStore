@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import { toast } from 'react-toastify';
 import Spinner from '../components/Spinner';
 import orderAPI from '../api/orderAPI';
 import mediaAPI from '../api/mediaAPI';
 import authAPI from '../api/authAPI';
 import apiClient from '../api/client';
+import { getOrderStatusText } from '../utils/helpers';
 
 const Profile = () => {
   const [loading, setLoading] = useState(false);
@@ -32,6 +32,19 @@ const Profile = () => {
   const [orders, setOrders] = useState([]);
 
   const baseURL = import.meta.env.VITE_API_URL || '/api';
+
+  useEffect(() => {
+    // Initialize tab from query param
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const tab = params.get('tab');
+      if (tab && ['profile', 'orders', 'wishlist', 'settings'].includes(tab)) {
+        setActiveTab(tab);
+      }
+    } catch {
+      // ignore
+    }
+  }, []);
 
   useEffect(() => {
     const fetchProfile = async () => {
@@ -107,7 +120,7 @@ const Profile = () => {
     }
     setUploadingAvatar(true);
     try {
-      const [result] = await mediaAPI.uploadMultiple([file], {
+      const [result] = await mediaAPI.uploadAvatarMultiple([file], {
         type: 'image',
         folder: 'katostore/avatars',
       });
@@ -234,32 +247,23 @@ const Profile = () => {
     }).format(v || 0);
   const getStatusBadge = (status) => {
     switch (status) {
-      case 'delivered':
-        return 'bg-green-100 text-green-800';
-      case 'processing':
-        return 'bg-yellow-100 text-yellow-800';
       case 'pending':
         return 'bg-pink-100 text-pink-800';
+      case 'processing':
+        return 'bg-yellow-100 text-yellow-800';
+      case 'shipped':
+        return 'bg-blue-100 text-blue-800';
+      case 'delivered':
+        return 'bg-green-100 text-green-800';
       case 'cancelled':
         return 'bg-red-100 text-red-800';
+      case 'refunded':
+        return 'bg-purple-100 text-purple-800';
       default:
         return 'bg-gray-100 text-gray-800';
     }
   };
-  const getStatusText = (status) => {
-    switch (status) {
-      case 'delivered':
-        return 'Đã giao';
-      case 'processing':
-        return 'Đang xử lý';
-      case 'pending':
-        return 'Chờ xác nhận';
-      case 'cancelled':
-        return 'Đã hủy';
-      default:
-        return 'Không xác định';
-    }
-  };
+  const getStatusText = getOrderStatusText;
 
   if (loading) {
     return (
@@ -318,7 +322,7 @@ const Profile = () => {
                 />
 
                 <h3 className="text-lg font-semibold text-gray-900 mt-4">{userInfo.name || 'Người dùng'}</h3>
-                <p className="text-sm text-gray-500">{userInfo.email}</p>
+                <p className="text-sm text-gray-500 break-words">{userInfo.email}</p>
               </div>
 
               <nav className="space-y-2">
@@ -402,14 +406,14 @@ const Profile = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+                      <label className="block text_sm font-medium text-gray-700 mb-2">Số điện thoại</label>
                       <input
                         type="tel"
                         name="phone"
                         value={userInfo.phone}
                         onChange={handleInputChange}
                         disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                        className="w_full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                       />
                     </div>
 
@@ -526,7 +530,7 @@ const Profile = () => {
 
             {/* Wishlist Tab */}
             {activeTab === 'wishlist' && (
-              <div className="bg-white rounded-lg shadow">
+              <div className="bg_white rounded-lg shadow">
                 <div className="px-6 py-4 border-b border-gray-200">
                   <h2 className="text-xl font-semibold text-gray-900">Danh sách yêu thích</h2>
                 </div>
@@ -562,7 +566,7 @@ const Profile = () => {
                         onClick={() => setShowChangePassword(true)}
                         className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                       >
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify_between">
                           <div>
                             <h4 className="font-medium text-gray-900">Đổi mật khẩu</h4>
                             <p className="text-sm text-gray-500">Cập nhật mật khẩu của bạn</p>
@@ -574,7 +578,7 @@ const Profile = () => {
                       </button>
 
                       <button className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center justify-between">
+                        <div className="flex items-center justify_between">
                           <div>
                             <h4 className="font-medium text-gray-900">Xác thực 2 bước</h4>
                             <p className="text-sm text-gray-500">Bảo mật tài khoản với 2FA</p>
@@ -590,7 +594,7 @@ const Profile = () => {
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Thông báo</h3>
                     <div className="space-y-4">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify_between">
                         <div>
                           <h4 className="font-medium text-gray-900">Email thông báo</h4>
                           <p className="text-sm text-gray-500">Nhận thông báo qua email</p>
@@ -602,7 +606,7 @@ const Profile = () => {
                         />
                       </div>
 
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify_between">
                         <div>
                           <h4 className="font-medium text-gray-900">SMS thông báo</h4>
                           <p className="text-sm text-gray-500">Nhận thông báo qua SMS</p>
@@ -618,7 +622,7 @@ const Profile = () => {
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Tài khoản</h3>
                     <button className="w-full text-left p-4 border border-red-200 rounded-lg hover:bg-red-50 transition-colors text-red-600">
-                      <div className="flex items-center justify-between">
+                      <div className="flex items-center justify_between">
                         <div>
                           <h4 className="font-medium">Xóa tài khoản</h4>
                           <p className="text-sm">Xóa vĩnh viễn tài khoản của bạn</p>

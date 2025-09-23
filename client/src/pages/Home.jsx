@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import productAPI from '../api/productAPI';
+import Spinner from '../components/Spinner';
 
 const Home = () => {
   const [products, setProducts] = useState([]);
@@ -111,7 +112,7 @@ const Home = () => {
           </div>
 
           {loading ? (
-            <div className="text-center text-gray-500">Đang tải...</div>
+            <Spinner />
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (
