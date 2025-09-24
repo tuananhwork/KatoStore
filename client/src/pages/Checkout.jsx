@@ -12,7 +12,7 @@ const Checkout = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState('card');
+  const [paymentMethod, setPaymentMethod] = useState('cod');
   const [confirmChecked, setConfirmChecked] = useState(false);
 
   const [formData, setFormData] = useState({

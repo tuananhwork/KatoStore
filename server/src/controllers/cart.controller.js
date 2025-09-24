@@ -47,9 +47,11 @@ exports.addOrUpdateItem = async (req, res, next) => {
     const key = `${sku}-${color || ''}-${size || ''}`;
     const idx = items.findIndex((i) => `${i.sku}-${i.color || ''}-${i.size || ''}` === key);
     if (idx >= 0) {
-      items[idx].quantity = Math.max(1, Number(quantity));
+      const current = Number(items[idx].quantity || 0);
+      const add = Math.max(1, Number(quantity || 1));
+      items[idx].quantity = current + add;
     } else {
-      items.push({ sku, name: product.name, price, quantity: Math.max(1, Number(quantity)), image, color, size });
+      items.push({ sku, name: product.name, price, quantity: Math.max(1, Number(quantity || 1)), image, color, size });
     }
     cart.items = items;
     await cart.save();

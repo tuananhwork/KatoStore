@@ -107,7 +107,7 @@ exports.create = async (req, res, next) => {
 };
 
 async function adjustStockForOrder(order, direction = -1) {
-  // direction -1: decrement on shipped, +1: increment on unship/cancel
+  // direction -1: decrement on shipped/delivered, +1: increment on unship/cancel
   for (const item of order.items || []) {
     const product = await Product.findOne({ sku: item.sku });
     if (!product) continue;
@@ -138,11 +138,14 @@ exports.updateStatus = async (req, res, next) => {
     const prev = order.status;
     order.status = status;
 
-    // Transition to shipped: decrement stock (once)
-    if (status === 'shipped' && prev !== 'shipped') {
+    const isFinalOrShip = (s) => s === 'shipped' || s === 'delivered';
+
+    // Decrement when moving into shipped or delivered from a non-final/non-shipped state
+    if (isFinalOrShip(status) && !isFinalOrShip(prev)) {
       await adjustStockForOrder(order, -1);
     }
-    // Transition away from shipped (and not delivered): restore stock
+
+    // Restore when moving out of shipped to a non-final state (not delivered)
     if (prev === 'shipped' && status !== 'shipped' && status !== 'delivered') {
       await adjustStockForOrder(order, +1);
     }

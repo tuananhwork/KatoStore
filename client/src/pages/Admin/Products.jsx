@@ -8,6 +8,7 @@ import { useAuth } from '../../hooks/useAuth.jsx';
 import { formatVnd, parseApiResponse, calculatePagination, normalizeText } from '../../utils/helpers';
 import { handleError } from '../../utils/toast';
 import { Link } from 'react-router-dom';
+import { getTotalStock } from '../../utils/variants';
 
 const Products = () => {
   const { handle401Error } = useAuth();
@@ -306,15 +307,26 @@ const Products = () => {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.sku}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.category}</td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatVnd(product.price)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.stock || 0}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{getTotalStock(product)}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       onClick={() => handleToggleVisibility(product.sku)}
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        product.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                      }`}
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium relative cursor-pointer
+                        transition-all duration-200 hover:shadow-md hover:scale-105
+                        ${
+                          product.isActive !== false
+                            ? 'bg-green-100 text-green-800 hover:bg-green-200'
+                            : 'bg-red-100 text-red-800 hover:bg-red-200'
+                        }
+                        group`}
                     >
                       {product.isActive !== false ? 'Hiển thị' : 'Ẩn'}
+                      <span
+                        className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs
+                        opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap"
+                      >
+                        Bấm để thay đổi
+                      </span>
                     </button>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">

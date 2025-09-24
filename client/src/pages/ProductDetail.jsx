@@ -6,7 +6,13 @@ import ProductCard from '../components/ProductCard';
 import { addToCart } from '../utils/cart';
 import { toast } from 'react-toastify';
 import { formatVnd } from '../utils/helpers';
-import { getAvailableColors, getAvailableSizes, getAvailableSizesForColor, getVariantStock } from '../utils/variants';
+import {
+  getAvailableColors,
+  getAvailableSizes,
+  getVariantStock,
+  filterColorsBySize,
+  filterSizesByColor,
+} from '../utils/variants';
 import { useAuth } from '../hooks/useAuth';
 
 const ProductDetail = () => {
@@ -49,13 +55,14 @@ const ProductDetail = () => {
     return product.media.filter((m) => m.type === 'image').sort((a, b) => (a.order || 0) - (b.order || 0));
   }, [product]);
 
-  // Use variant utilities instead of inline logic
-  const availableColors = useMemo(() => getAvailableColors(product), [product]);
-  const availableSizes = useMemo(() => getAvailableSizes(product), [product]);
-  const availableSizesForColor = useMemo(
-    () => getAvailableSizesForColor(product, selectedColor),
-    [product, selectedColor]
-  );
+  // All available options
+  const allColors = useMemo(() => getAvailableColors(product), [product]);
+  const allSizes = useMemo(() => getAvailableSizes(product), [product]);
+
+  // Use shared helpers to filter options dynamically
+  const colorsFiltered = useMemo(() => filterColorsBySize(product, selectedSize), [product, selectedSize]);
+  const sizesFiltered = useMemo(() => filterSizesByColor(product, selectedColor), [product, selectedColor]);
+
   const selectedVariantStock = useMemo(
     () => getVariantStock(product, selectedColor, selectedSize),
     [product, selectedColor, selectedSize]
@@ -81,12 +88,24 @@ const ProductDetail = () => {
 
   const handleColorChange = (color) => {
     setSelectedColor(color);
-    // Reset size when color changes
-    setSelectedSize('');
+    // If current size is incompatible with new color, clear it
+    if (selectedSize) {
+      const stillValid = (product?.variants || []).some(
+        (v) => v.color === color && v.size === selectedSize && (v.stock || 0) > 0
+      );
+      if (!stillValid) setSelectedSize('');
+    }
   };
 
   const handleSizeChange = (size) => {
     setSelectedSize(size);
+    // If current color is incompatible with new size, clear it
+    if (selectedColor) {
+      const stillValid = (product?.variants || []).some(
+        (v) => v.size === size && v.color === selectedColor && (v.stock || 0) > 0
+      );
+      if (!stillValid) setSelectedColor('');
+    }
   };
 
   const handleAddToCart = async () => {
@@ -98,14 +117,17 @@ const ProductDetail = () => {
 
     if (!product) return;
 
-    if (availableColors.length > 0 && !selectedColor) {
-      toast.info('Vui lòng chọn màu');
-      return;
+    if ((product.variants || []).length > 0) {
+      if (!selectedColor) {
+        toast.info('Vui lòng chọn màu');
+        return;
+      }
+      if (!selectedSize) {
+        toast.info('Vui lòng chọn kích thước');
+        return;
+      }
     }
-    if (availableSizes.length > 0 && !selectedSize) {
-      toast.info('Vui lòng chọn kích thước');
-      return;
-    }
+
     await addToCart(product, {
       quantity,
       color: selectedColor || undefined,
@@ -193,11 +215,11 @@ const ProductDetail = () => {
             </div>
 
             {/* Color Selection */}
-            {availableColors.length > 0 && (
+            {allColors.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-900 mb-3">Màu sắc:</h3>
                 <div className="flex flex-wrap gap-2">
-                  {availableColors.map((color) => (
+                  {colorsFiltered.map((color) => (
                     <button
                       key={color}
                       onClick={() => handleColorChange(color)}
@@ -215,43 +237,24 @@ const ProductDetail = () => {
             )}
 
             {/* Size Selection */}
-            {availableSizes.length > 0 && (
+            {allSizes.length > 0 && (
               <div className="mb-6">
                 <h3 className="text-sm font-medium text-gray-900 mb-3">Kích thước:</h3>
                 <div className="flex flex-wrap gap-2">
-                  {selectedColor
-                    ? // Show sizes for selected color only
-                      availableSizesForColor.map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => handleSizeChange(size)}
-                          className={`px-3 py-1 rounded border text-sm ${
-                            selectedSize === size
-                              ? 'border-pink-600 text-[rgb(var(--color-primary))] bg-pink-50'
-                              : 'border-gray-300 text-gray-700 hover:border-gray-400'
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))
-                    : // Show all sizes if no color selected
-                      availableSizes.map((size) => (
-                        <button
-                          key={size}
-                          onClick={() => handleSizeChange(size)}
-                          className={`px-3 py-1 rounded border text-sm ${
-                            selectedSize === size
-                              ? 'border-pink-600 text-[rgb(var(--color-primary))] bg-pink-50'
-                              : 'border-gray-300 text-gray-700 hover:border-gray-400'
-                          }`}
-                        >
-                          {size}
-                        </button>
-                      ))}
+                  {sizesFiltered.map((size) => (
+                    <button
+                      key={size}
+                      onClick={() => handleSizeChange(size)}
+                      className={`px-3 py-1 rounded border text-sm ${
+                        selectedSize === size
+                          ? 'border-pink-600 text-[rgb(var(--color-primary))] bg-pink-50'
+                          : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                      }`}
+                    >
+                      {size}
+                    </button>
+                  ))}
                 </div>
-                {availableColors.length > 0 && !selectedColor && (
-                  <p className="text-xs text-gray-500 mt-2">Vui lòng chọn màu trước</p>
-                )}
               </div>
             )}
 

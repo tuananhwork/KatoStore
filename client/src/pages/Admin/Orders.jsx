@@ -7,6 +7,8 @@ import { useAuth } from '../../hooks/useAuth.jsx';
 import { formatVnd, getOrderStatusText, parseApiResponse } from '../../utils/helpers';
 import { handleError } from '../../utils/toast';
 import { Link } from 'react-router-dom';
+import productAPI from '../../api/productAPI';
+import { getVariantStock, getTotalStock } from '../../utils/variants';
 
 const Orders = () => {
   const { handle401Error } = useAuth();
@@ -51,10 +53,12 @@ const Orders = () => {
     }
   };
 
-  const buildInvoiceHtml = (order) => {
+  const buildInvoiceHtml = (order, skuToStockLeft = {}) => {
     const rows = (order.items || [])
-      .map(
-        (it, idx) => `
+      .map((it, idx) => {
+        const key = `${it.sku}-${it.color || ''}-${it.size || ''}`;
+        const left = skuToStockLeft[key];
+        return `
           <tr>
             <td style="padding:8px;border:1px solid #e5e7eb">${idx + 1}</td>
             <td style="padding:8px;border:1px solid #e5e7eb">${it.name || ''}</td>
@@ -66,8 +70,9 @@ const Orders = () => {
             <td style="padding:8px;border:1px solid #e5e7eb;text-align:right">${formatVnd(
               (it.price || 0) * (it.quantity || 0)
             )}</td>
-          </tr>`
-      )
+            <td style="padding:8px;border:1px solid #e5e7eb;text-align:right">${left == null ? '' : `Còn: ${left}`}</td>
+          </tr>`;
+      })
       .join('');
 
     const shipping = order.shippingAddress || {};
@@ -132,6 +137,7 @@ const Orders = () => {
             <th style="padding:8px;border:1px solid #e5e7eb;text-align:center">SL</th>
             <th style="padding:8px;border:1px solid #e5e7eb;text-align:right">Giá</th>
             <th style="padding:8px;border:1px solid #e5e7eb;text-align:right">Thành tiền</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:right">Tồn còn</th>
           </tr>
         </thead>
         <tbody>
@@ -155,9 +161,24 @@ const Orders = () => {
 </html>`;
   };
 
-  const printOrder = (order) => {
+  const printOrder = async (order) => {
     if (!order) return;
-    const html = buildInvoiceHtml(order);
+    // Fetch latest stock per item
+    const skuToStockLeft = {};
+    try {
+      for (const it of order.items || []) {
+        const p = await productAPI.getProductBySku(it.sku);
+        if (it.color && it.size) {
+          skuToStockLeft[`${it.sku}-${it.color || ''}-${it.size || ''}`] = getVariantStock(p, it.color, it.size);
+        } else {
+          skuToStockLeft[`${it.sku}--`] = getTotalStock(p);
+        }
+      }
+    } catch {
+      // ignore fetch errors for stock display
+    }
+
+    const html = buildInvoiceHtml(order, skuToStockLeft);
     const win = window.open('', '_blank');
     if (!win) {
       toast.error('Không thể mở cửa sổ in');
