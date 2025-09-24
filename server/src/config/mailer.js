@@ -1,14 +1,11 @@
 const nodemailer = require('nodemailer');
+const sgTransport = require('nodemailer-sendgrid');
 
-const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,
-  port: process.env.SMTP_PORT,
-  secure: false, // vì dùng port 587
-  auth: {
-    user: process.env.SMTP_USER,
-    pass: process.env.SMTP_PASS,
-  },
-});
+const transporter = nodemailer.createTransport(
+  sgTransport({
+    apiKey: process.env.SENDGRID_API_KEY,
+  })
+);
 
 async function sendMail({ to, subject, html }) {
   const from = process.env.MAIL_FROM || 'no-reply@katostore.local';
