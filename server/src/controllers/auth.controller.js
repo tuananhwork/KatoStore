@@ -72,8 +72,8 @@ exports.register = async (req, res, next) => {
 
 exports.registerRequestOTP = async (req, res, next) => {
   try {
-    const { email, name, password } = req.body || {};
-    if (!email || !name || !password) return res.status(400).json({ message: 'Missing fields' });
+    const { email } = req.body || {};
+    if (!email) return res.status(400).json({ message: 'Missing email' });
     const existed = await User.findOne({ email: email.toLowerCase() });
     if (existed) return res.status(409).json({ message: 'Email already registered' });
 
@@ -87,7 +87,12 @@ exports.registerRequestOTP = async (req, res, next) => {
       { upsert: true }
     );
 
-    await sendMail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
+    const subject = 'KatoStore - Mã OTP đăng ký tài khoản';
+    const html = `<p>Xin chào,</p>
+      <p>Mã OTP đăng ký tài khoản của bạn là:</p>
+      <p style="font-size:22px;font-weight:bold;letter-spacing:4px">${otp}</p>
+      <p>Mã có hiệu lực trong 10 phút.</p>`;
+    await sendMail({ to: email, subject, html });
 
     res.json({ message: 'OTP sent' });
   } catch (err) {
