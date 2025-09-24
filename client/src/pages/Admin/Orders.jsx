@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth.jsx';
 import { formatVnd, getOrderStatusText, parseApiResponse } from '../../utils/helpers';
 import { handleError } from '../../utils/toast';
+import { Link } from 'react-router-dom';
 
 const Orders = () => {
   const { handle401Error } = useAuth();
@@ -57,6 +58,9 @@ const Orders = () => {
           <tr>
             <td style="padding:8px;border:1px solid #e5e7eb">${idx + 1}</td>
             <td style="padding:8px;border:1px solid #e5e7eb">${it.name || ''}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb">${it.sku || ''}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb">${it.color || ''}</td>
+            <td style="padding:8px;border:1px solid #e5e7eb">${it.size || ''}</td>
             <td style="padding:8px;border:1px solid #e5e7eb;text-align:center">${it.quantity || 0}</td>
             <td style="padding:8px;border:1px solid #e5e7eb;text-align:right">${formatVnd(it.price || 0)}</td>
             <td style="padding:8px;border:1px solid #e5e7eb;text-align:right">${formatVnd(
@@ -77,7 +81,7 @@ const Orders = () => {
   <style>
     * { box-sizing: border-box; }
     body { font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji"; margin: 0; padding: 24px; color: #111827; }
-    .container { max-width: 800px; margin: 0 auto; }
+    .container { max-width: 1000px; margin: 0 auto; }
     .section { margin-bottom: 16px; }
     h1 { font-size: 20px; margin: 0 0 8px; }
     h2 { font-size: 16px; margin: 0 0 8px; color: #374151; }
@@ -96,6 +100,8 @@ const Orders = () => {
     <div class="section">
       <h1>Chi tiết đơn hàng #${String(order._id || '').slice(-6)}</h1>
       <div class="muted">Ngày đặt: ${new Date(order.createdAt).toLocaleDateString('vi-VN')}</div>
+      <div class="muted">Trạng thái: <strong>${getOrderStatusText(order.status) || order.status}</strong></div>
+      <div class="muted">Thanh toán: <strong>${(order.paymentMethod || '').toUpperCase()}</strong></div>
     </div>
 
     <div class="section grid pagebreak">
@@ -120,6 +126,9 @@ const Orders = () => {
           <tr>
             <th style="padding:8px;border:1px solid #e5e7eb;text-align:left">#</th>
             <th style="padding:8px;border:1px solid #e5e7eb;text-align:left">Sản phẩm</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:left">SKU</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:left">Màu</th>
+            <th style="padding:8px;border:1px solid #e5e7eb;text-align:left">Size</th>
             <th style="padding:8px;border:1px solid #e5e7eb;text-align:center">SL</th>
             <th style="padding:8px;border:1px solid #e5e7eb;text-align:right">Giá</th>
             <th style="padding:8px;border:1px solid #e5e7eb;text-align:right">Thành tiền</th>
@@ -250,12 +259,20 @@ const Orders = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                      <button
-                        onClick={() => printOrder(order)}
-                        className="text-[rgb(var(--color-primary))] hover:text-pink-900 hover:underline"
-                      >
-                        In
-                      </button>
+                      <div className="flex items-center space-x-4">
+                        <Link
+                          to={`/admin/order/${order._id}`}
+                          className="text-[rgb(var(--color-primary))] hover:text-pink-900 hover:underline"
+                        >
+                          Xem
+                        </Link>
+                        <button
+                          onClick={() => printOrder(order)}
+                          className="text-[rgb(var(--color-primary))] hover:text-pink-900 hover:underline"
+                        >
+                          In
+                        </button>
+                      </div>
                     </td>
                   </tr>
                 ))

@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Spinner from '../components/Spinner';
 import { getCart, clearCart } from '../utils/cart';
 import orderAPI from '../api/orderAPI';
+import paymentAPI from '../api/paymentAPI';
 import { toast } from 'react-toastify';
 import { formatVnd } from '../utils/helpers';
 import { handleError } from '../utils/toast';
@@ -12,6 +13,7 @@ const Checkout = () => {
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState('card');
+  const [confirmChecked, setConfirmChecked] = useState(false);
 
   const [formData, setFormData] = useState({
     // Shipping Info
@@ -48,11 +50,16 @@ const Checkout = () => {
     })();
   }, []);
 
-  // Guard: if cart loaded and empty, redirect to /
+  // Reset confirmation checkbox whenever step changes
+  useEffect(() => {
+    setConfirmChecked(false);
+  }, [step]);
+
+  // Guard: if cart loaded and empty, redirect to /cart
   useEffect(() => {
     if (cartLoaded && cartItems.length === 0) {
-      toast.info('Giỏ hàng trống.');
-      navigate('/', { replace: true });
+      toast.info('Giỏ hàng trống. Vui lòng thêm sản phẩm trước khi thanh toán.');
+      navigate('/cart', { replace: true });
     }
   }, [cartLoaded, cartItems, navigate]);
 
@@ -120,7 +127,11 @@ const Checkout = () => {
     e.preventDefault();
     if (itemsArray.length === 0) {
       toast.info('Giỏ hàng trống');
-      navigate('/', { replace: true });
+      navigate('/cart', { replace: true });
+      return;
+    }
+    if (!confirmChecked) {
+      toast.info('Vui lòng xác nhận thông tin đơn hàng trước khi đặt.');
       return;
     }
     const err = validateAll();
@@ -154,7 +165,17 @@ const Checkout = () => {
         },
         paymentMethod,
       };
-      await orderAPI.createOrder(payload);
+      const created = await orderAPI.createOrder(payload);
+      // VNPay redirect flow
+      if (paymentMethod === 'vnpay' && created?._id) {
+        const { paymentUrl } = await paymentAPI.vnpayCreate(created._id);
+        if (paymentUrl) {
+          // do not clear cart yet; clear after return/IPN
+          window.location.href = paymentUrl;
+          return;
+        }
+      }
+      // Other methods: treat as success
       await clearCart();
       toast.success('Đặt hàng thành công');
       navigate(`/profile?tab=orders`);
@@ -363,36 +384,6 @@ const Checkout = () => {
                     <div className="flex items-center">
                       <input
                         type="radio"
-                        id="card"
-                        name="paymentMethod"
-                        value="card"
-                        checked={paymentMethod === 'card'}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
-                      />
-                      <label htmlFor="card" className="ml-3 text-sm font-medium text-gray-700">
-                        Thẻ tín dụng/ghi nợ
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
-                        id="paypal"
-                        name="paymentMethod"
-                        value="paypal"
-                        checked={paymentMethod === 'paypal'}
-                        onChange={(e) => setPaymentMethod(e.target.value)}
-                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
-                      />
-                      <label htmlFor="paypal" className="ml-3 text-sm font-medium text-gray-700">
-                        PayPal
-                      </label>
-                    </div>
-
-                    <div className="flex items-center">
-                      <input
-                        type="radio"
                         id="cod"
                         name="paymentMethod"
                         value="cod"
@@ -402,6 +393,51 @@ const Checkout = () => {
                       />
                       <label htmlFor="cod" className="ml-3 text-sm font-medium text-gray-700">
                         Thanh toán khi nhận hàng (COD)
+                      </label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="vnpay"
+                        name="paymentMethod"
+                        value="vnpay"
+                        checked={paymentMethod === 'vnpay'}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
+                      />
+                      <label htmlFor="vnpay" className="ml-3 text-sm font-medium text-gray-700">
+                        VNPAY
+                      </label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="momo"
+                        name="paymentMethod"
+                        value="momo"
+                        checked={paymentMethod === 'momo'}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
+                      />
+                      <label htmlFor="momo" className="ml-3 text-sm font-medium text-gray-700">
+                        MOMO
+                      </label>
+                    </div>
+
+                    <div className="flex items-center">
+                      <input
+                        type="radio"
+                        id="card"
+                        name="paymentMethod"
+                        value="card"
+                        checked={paymentMethod === 'card'}
+                        onChange={(e) => setPaymentMethod(e.target.value)}
+                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
+                      />
+                      <label htmlFor="card" className="ml-3 text-sm font-medium text-gray-700">
+                        Thẻ tín dụng hoặc ghi nợ
                       </label>
                     </div>
                   </div>
@@ -458,7 +494,7 @@ const Checkout = () => {
                           onChange={handleInputChange}
                           required
                           className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
-                          placeholder="Nhập tên trên thẻ"
+                          placeholder="NGUYEN VAN A"
                         />
                       </div>
                     </div>
@@ -490,15 +526,28 @@ const Checkout = () => {
                       <h3 className="text-lg font-medium text-gray-900 mb-3">Phương thức thanh toán</h3>
                       <div className="bg-gray-50 p-4 rounded-lg">
                         <p className="text-sm text-gray-700">
-                          {paymentMethod === 'card' && 'Thẻ tín dụng/ghi nợ'}
-                          {paymentMethod === 'paypal' && 'PayPal'}
                           {paymentMethod === 'cod' && 'Thanh toán khi nhận hàng (COD)'}
+                          {paymentMethod === 'vnpay' && 'VNPAY'}
+                          {paymentMethod === 'momo' && 'MOMO'}
+                          {paymentMethod === 'card' && 'Thẻ tín dụng/ghi nợ'}
                         </p>
                         {paymentMethod === 'card' && (
                           <p className="text-sm text-gray-700">**** **** **** {formData.cardNumber.slice(-4)}</p>
                         )}
                       </div>
                     </div>
+                  </div>
+
+                  <div className="mt-6">
+                    <label className="inline-flex items-center">
+                      <input
+                        type="checkbox"
+                        className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300 rounded"
+                        checked={confirmChecked}
+                        onChange={(e) => setConfirmChecked(e.target.checked)}
+                      />
+                      <span className="ml-2 text-sm text-gray-700">Tôi xác nhận thông tin đơn hàng là chính xác</span>
+                    </label>
                   </div>
                 </div>
               )}
@@ -527,7 +576,7 @@ const Checkout = () => {
                   ) : (
                     <button
                       type="submit"
-                      disabled={loading}
+                      disabled={loading || !confirmChecked}
                       className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? (

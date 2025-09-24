@@ -17,6 +17,10 @@ const Header = () => {
 
   const syncCart = async () => {
     try {
+      if (!isLoggedIn) {
+        setCartCount(0);
+        return;
+      }
       const items = await getCart();
       const count = items.reduce((s, i) => s + (i.quantity || 0), 0);
       setCartCount(count);
@@ -46,13 +50,13 @@ const Header = () => {
   // FIXED: Remove syncAuth from dependency, only sync on location change
   useEffect(() => {
     syncCart();
-  }, [location]); // FIXED: Only depend on location
+  }, [location, isLoggedIn]); // include auth state
 
   // FIXED: Separate useEffect for initial sync
   useEffect(() => {
     syncAuth();
-    syncCart();
-  }, []); // FIXED: Only run once on mount
+    if (isLoggedIn) syncCart();
+  }, []); // Only run once on mount
 
   // Update cart badge immediately on cart storage changes (same-tab dispatch)
   useEffect(() => {
@@ -67,14 +71,16 @@ const Header = () => {
     };
     window.addEventListener('storage', handleStorage);
     return () => window.removeEventListener('storage', handleStorage);
-  }, []);
+  }, [isLoggedIn]);
 
   const handleLogout = () => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     syncAuth();
     toast.success('Đã đăng xuất');
-    navigate('/');
+    navigate('/auth?mode=login');
   };
 
   return (

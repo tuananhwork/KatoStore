@@ -25,11 +25,11 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Sync auth state from localStorage
+  // Sync auth state from storage (localStorage or sessionStorage)
   const syncAuth = useCallback(() => {
     try {
-      const token = localStorage.getItem('token');
-      const userRaw = localStorage.getItem('user');
+      const token = localStorage.getItem('token') || sessionStorage.getItem('token');
+      const userRaw = localStorage.getItem('user') || sessionStorage.getItem('user');
       const parsedUser = userRaw ? JSON.parse(userRaw) : null;
 
       const loggedIn = !!(token && parsedUser);
@@ -68,9 +68,11 @@ export const AuthProvider = ({ children }) => {
   const logout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     setIsLoggedIn(false);
     setUser(null);
-    navigate('/');
+    navigate('/auth');
   }, [navigate]);
 
   // Listen to storage changes - FIXED: Remove syncAuth from dependency

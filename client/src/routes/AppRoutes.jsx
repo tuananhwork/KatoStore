@@ -20,6 +20,7 @@ import AdminProducts from '../pages/Admin/Products';
 import AdminOrders from '../pages/Admin/Orders';
 import AdminUsers from '../pages/Admin/Users';
 import AdminProductForm from '../pages/Admin/ProductForm';
+import AdminOrderDetail from '../pages/Admin/OrderDetail';
 import { useRoleCheck } from '../hooks/useAuth.jsx';
 import { ROLES } from '../utils/constants';
 import { useAuth } from '../hooks/useAuth.jsx';
@@ -192,6 +193,17 @@ const AppRoutes = () => {
           <Layout showFooter={false}>
             <AdminGuard>
               <AdminOrders />
+            </AdminGuard>
+          </Layout>
+        }
+      />
+
+      <Route
+        path="/admin/order/:id"
+        element={
+          <Layout showFooter={false}>
+            <AdminGuard>
+              <AdminOrderDetail />
             </AdminGuard>
           </Layout>
         }
