@@ -44,19 +44,23 @@ const Header = () => {
     const fetchAvt = async () => {
       try {
         const u = await authAPI.getMe();
-        setAvatar(u.avatar);
-      } catch (error) {
-        console.log(error);
+        if (u?.avatar) {
+          setAvatar(u.avatar);
+        }
+      } catch (e) {
+        // có thể ignore lỗi 401
       }
     };
-    fetchAvt();
-  }, []); // Add dependency array to prevent infinite loop
+
+    if (isLoggedIn) {
+      fetchAvt();
+    }
+  }, [isLoggedIn]);
 
   useEffect(() => {
     syncAuthFromStorage();
     syncCart();
   }, [location]);
-
 
   const handleLogout = () => {
     try {
