@@ -4,6 +4,8 @@ import Spinner from '../components/Spinner';
 import { getCart, clearCart } from '../utils/cart';
 import orderAPI from '../api/orderAPI';
 import { toast } from 'react-toastify';
+import { formatVnd } from '../utils/helpers';
+import { handleError } from '../utils/toast';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -36,18 +38,29 @@ const Checkout = () => {
   });
 
   const [cartItems, setCartItems] = useState([]);
+  const [cartLoaded, setCartLoaded] = useState(false);
 
   useEffect(() => {
-    setCartItems(getCart());
+    (async () => {
+      const items = await getCart();
+      setCartItems(Array.isArray(items) ? items : []);
+      setCartLoaded(true);
+    })();
   }, []);
 
-  const formatVnd = (v) =>
-    new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(v || 0);
+  // Guard: if cart loaded and empty, redirect to /
+  useEffect(() => {
+    if (cartLoaded && cartItems.length === 0) {
+      toast.info('Giỏ hàng trống.');
+      navigate('/', { replace: true });
+    }
+  }, [cartLoaded, cartItems, navigate]);
 
-  const subtotal = cartItems.reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
+  // Remove duplicate formatVnd function
+  // Use formatVnd from utils/helpers
+
+  const itemsArray = Array.isArray(cartItems) ? cartItems : [];
+  const subtotal = itemsArray.reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
   const shipping = subtotal > 2000000 ? 0 : 30000;
   const tax = Math.round(subtotal * 0.1);
   const total = subtotal + shipping + tax;
@@ -105,8 +118,9 @@ const Checkout = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (cartItems.length === 0) {
+    if (itemsArray.length === 0) {
       toast.info('Giỏ hàng trống');
+      navigate('/', { replace: true });
       return;
     }
     const err = validateAll();
@@ -118,20 +132,18 @@ const Checkout = () => {
     setLoading(true);
     try {
       const payload = {
-        items: cartItems.map((i) => ({
+        items: itemsArray.map((i) => ({
           sku: i.sku,
           name: i.name,
           price: i.price,
           quantity: i.quantity,
           image: i.image,
-          color: i.color || undefined,
-          size: i.size || undefined,
+          color: i.color,
+          size: i.size,
         })),
-        subtotal,
         shipping,
         tax,
         total,
-        paymentMethod,
         shippingAddress: {
           fullName: `${formData.firstName} ${formData.lastName}`.trim(),
           phone: formData.phone,
@@ -140,13 +152,14 @@ const Checkout = () => {
           postalCode: formData.zipCode,
           country: formData.country,
         },
+        paymentMethod,
       };
       await orderAPI.createOrder(payload);
-      clearCart();
+      await clearCart();
       toast.success('Đặt hàng thành công');
-      navigate('/');
+      navigate(`/profile?tab=orders`);
     } catch (err) {
-      toast.error(err?.response?.data?.message || 'Đặt hàng thất bại');
+      handleError(err, 'Không thể tạo đơn hàng');
     } finally {
       setLoading(false);
     }

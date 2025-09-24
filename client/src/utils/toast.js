@@ -1,32 +1,29 @@
 import { toast } from 'react-toastify';
 
+export const showToast = {
+  success: (message) => toast.success(message),
+  error: (message) => toast.error(message),
+  info: (message) => toast.info(message),
+  warning: (message) => toast.warning(message),
+};
+
 /**
- * Centralized error handling utility
+ * Smart error handler - avoids duplicate toasts
+ * Skips statuses already handled by API interceptor
  */
-export const handleApiError = (error, customMessage = null) => {
-  // If it's already handled by interceptor, don't show toast again
-  if (error.response?.status === 401 || error.response?.status === 403) {
-    return;
+export const handleError = (error, customMessage = null) => {
+  // If already handled by interceptor, don't show toast
+  if (error?.response?.status === 401 || error?.response?.status === 403 || error?.response?.status === 409) {
+    return error?.response?.data?.message || customMessage;
   }
 
-  let message = customMessage;
-
-  if (!message) {
-    if (error.response?.data?.message) {
-      message = error.response.data.message;
-    } else if (error.message) {
-      message = error.message;
-    } else {
-      message = 'Có lỗi xảy ra';
-    }
-  }
-
-  toast.error(message);
+  const message = customMessage || error?.response?.data?.message || error?.message || 'Có lỗi xảy ra';
+  showToast.error(message);
   return message;
 };
 
 /**
- * Handle specific error types
+ * Handle specific error types with Vietnamese messages
  */
 export const handleSpecificError = (error, context = '') => {
   const status = error.response?.status;

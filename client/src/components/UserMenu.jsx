@@ -1,19 +1,13 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useClickOutside } from '../hooks/useClickOutside';
 
 const UserMenu = ({ userName, avatar, userRole, onLogout }) => {
   const [open, setOpen] = useState(false);
-  const ref = useRef(null);
   const userInitial = userName ? userName.charAt(0).toUpperCase() : 'U';
 
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      const el = ref.current;
-      if (el && !el.contains(event.target)) setOpen(false);
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
-  }, []);
+  // Use shared click outside hook
+  const ref = useClickOutside(() => setOpen(false));
 
   return (
     <div className="relative" ref={ref}>

@@ -5,10 +5,14 @@ import Spinner from '../components/Spinner';
 import ProductCard from '../components/ProductCard';
 import { addToCart } from '../utils/cart';
 import { toast } from 'react-toastify';
+import { formatVnd } from '../utils/helpers';
+import { getAvailableColors, getAvailableSizes, getAvailableSizesForColor, getVariantStock } from '../utils/variants';
+import { useAuth } from '../hooks/useAuth';
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [loading, setLoading] = useState(true);
   const [products, setProducts] = useState([]);
   const [product, setProduct] = useState(null);
@@ -45,55 +49,17 @@ const ProductDetail = () => {
     return product.media.filter((m) => m.type === 'image').sort((a, b) => (a.order || 0) - (b.order || 0));
   }, [product]);
 
-  // Get all available colors
-  const availableColors = useMemo(() => {
-    if (!product || !Array.isArray(product.variants)) return [];
-    return Array.from(new Set(product.variants.map((v) => v.color).filter(Boolean)));
-  }, [product]);
-
-  // Get all available sizes
-  const availableSizes = useMemo(() => {
-    if (!product || !Array.isArray(product.variants)) return [];
-    return Array.from(new Set(product.variants.map((v) => v.size).filter(Boolean)));
-  }, [product]);
-
-  // Get available sizes for selected color
-  const availableSizesForColor = useMemo(() => {
-    if (!product || !Array.isArray(product.variants) || !selectedColor) return [];
-    return product.variants
-      .filter((v) => v.color === selectedColor)
-      .map((v) => v.size)
-      .filter(Boolean);
-  }, [product, selectedColor]);
-
-  // Get available colors for selected size
-  // const availableColorsForSize = useMemo(() => {
-  //   if (!product || !Array.isArray(product.variants) || !selectedSize) return [];
-  //   return product.variants
-  //     .filter((v) => v.size === selectedSize)
-  //     .map((v) => v.color)
-  //     .filter(Boolean);
-  // }, [product, selectedSize]);
-
-  // Get stock for selected variant
-  const selectedVariantStock = useMemo(() => {
-    if (!product || !Array.isArray(product.variants)) {
-      return product?.stock || 0;
-    }
-
-    // If no variants, return product stock
-    if (product.variants.length === 0) {
-      return product.stock || 0;
-    }
-
-    // If variants exist but no color/size selected, return 0
-    if (!selectedColor || !selectedSize) {
-      return 0;
-    }
-
-    const variant = product.variants.find((v) => v.color === selectedColor && v.size === selectedSize);
-    return variant ? variant.stock : 0;
-  }, [product, selectedColor, selectedSize]);
+  // Use variant utilities instead of inline logic
+  const availableColors = useMemo(() => getAvailableColors(product), [product]);
+  const availableSizes = useMemo(() => getAvailableSizes(product), [product]);
+  const availableSizesForColor = useMemo(
+    () => getAvailableSizesForColor(product, selectedColor),
+    [product, selectedColor]
+  );
+  const selectedVariantStock = useMemo(
+    () => getVariantStock(product, selectedColor, selectedSize),
+    [product, selectedColor, selectedSize]
+  );
 
   // Check if user can add to cart
   const canAddToCart = useMemo(() => {
@@ -123,8 +89,15 @@ const ProductDetail = () => {
     setSelectedSize(size);
   };
 
-  const handleAddToCart = () => {
+  const handleAddToCart = async () => {
+    if (!isLoggedIn) {
+      toast.info('Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+      navigate('/auth');
+      return;
+    }
+
     if (!product) return;
+
     if (availableColors.length > 0 && !selectedColor) {
       toast.info('Vui lòng chọn màu');
       return;
@@ -133,13 +106,12 @@ const ProductDetail = () => {
       toast.info('Vui lòng chọn kích thước');
       return;
     }
-    addToCart(product, {
+    await addToCart(product, {
       quantity,
       color: selectedColor || undefined,
       size: selectedSize || undefined,
     });
     toast.success('Đã thêm vào giỏ hàng');
-    navigate('/cart');
   };
 
   const handleQuantityChange = (change) => {
@@ -157,12 +129,6 @@ const ProductDetail = () => {
       </div>
     );
   }
-
-  const formatVnd = (v) =>
-    new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(v);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -317,8 +283,12 @@ const ProductDetail = () => {
             </div>
 
             <div className="space-y-3">
-              <button onClick={handleAddToCart} className="w-full btn-primary" disabled={!canAddToCart}>
-                {!canAddToCart ? 'Vui lòng chọn màu và size' : 'Thêm vào giỏ hàng'}
+              <button onClick={handleAddToCart} className="w-full btn-primary" disabled={isLoggedIn && !canAddToCart}>
+                {!isLoggedIn
+                  ? 'Đăng nhập để mua hàng'
+                  : !canAddToCart
+                  ? 'Vui lòng chọn màu và size'
+                  : 'Thêm vào giỏ hàng'}
               </button>
             </div>
           </div>

@@ -1,84 +1,66 @@
-// Simple cart utilities using localStorage
-const STORAGE_KEY = 'cart:';
+import cartAPI from '../api/cartAPI';
 
-function getUserKey() {
+export async function getCart() {
   try {
-    const raw = localStorage.getItem('user');
-    const user = raw ? JSON.parse(raw) : null;
-    return STORAGE_KEY + (user?._id || user?.id || 'guest');
-  } catch {
-    return STORAGE_KEY + 'guest';
-  }
-}
-
-export function getCart() {
-  try {
-    const key = getUserKey();
-    const raw = localStorage.getItem(key);
-    const parsed = raw ? JSON.parse(raw) : [];
-    return Array.isArray(parsed) ? parsed : [];
+    const data = await cartAPI.getMine();
+    const items = Array.isArray(data?.items) ? data.items : [];
+    // Normalize to include key used by UI
+    return items.map((i) => ({
+      ...i,
+      key: `${i.sku}-${i.color || ''}-${i.size || ''}`,
+    }));
   } catch {
     return [];
   }
 }
 
-export function setCart(items) {
+export async function setCart(items) {
   try {
-    const key = getUserKey();
-    localStorage.setItem(key, JSON.stringify(items || []));
-    window.dispatchEvent(new StorageEvent('storage', { key }));
+    const normalized = (items || []).map((i) => ({
+      sku: i.sku,
+      name: i.name,
+      price: i.price,
+      quantity: i.quantity,
+      image: i.image,
+      color: i.color,
+      size: i.size,
+    }));
+    const data = await cartAPI.replace(normalized);
+    const result = Array.isArray(data?.items) ? data.items : [];
+    // Optional: emit a custom event to notify components
+    window.dispatchEvent(new StorageEvent('storage', { key: 'cart:remote' }));
+    return result.map((i) => ({ ...i, key: `${i.sku}-${i.color || ''}-${i.size || ''}` }));
   } catch {
-    // ignore
+    return [];
   }
 }
 
-export function addToCart(product, options = {}) {
-  const { sku, name, price, media, stock } = product;
+export async function addToCart(product, options = {}) {
+  const { sku } = product;
   const { quantity = 1, color = undefined, size = undefined } = options;
-  const items = getCart();
-  const image = media && media.length > 0 ? media[0].url : '';
-  const key = `${sku}-${color || ''}-${size || ''}`;
-  const index = items.findIndex((i) => i.key === key);
-  if (index >= 0) {
-    const newQty = Math.min((items[index].quantity || 0) + quantity, stock || 9999);
-    items[index] = { ...items[index], quantity: newQty };
-  } else {
-    items.push({
-      key,
-      sku,
-      name,
-      price,
-      image,
-      quantity: Math.min(quantity, stock || 9999),
-      color, // Thêm color
-      size, // Thêm size
-      stock: stock || 0,
-    });
-  }
-  setCart(items);
-  return items;
+  const data = await cartAPI.addOrUpdateItem({ sku, quantity, color, size });
+  window.dispatchEvent(new StorageEvent('storage', { key: 'cart:remote' }));
+  const items = Array.isArray(data?.items) ? data.items : [];
+  return items.map((i) => ({ ...i, key: `${i.sku}-${i.color || ''}-${i.size || ''}` }));
 }
 
-export function updateCartItem(key, quantity) {
-  const items = getCart();
-  const index = items.findIndex((i) => i.key === key);
-  if (index >= 0) {
-    if (quantity <= 0) {
-      items.splice(index, 1);
-    } else {
-      items[index] = { ...items[index], quantity };
-    }
-    setCart(items);
-  }
-  return items;
+export async function updateCartItem(key, quantity) {
+  const data = await cartAPI.updateQuantity(key, quantity);
+  window.dispatchEvent(new StorageEvent('storage', { key: 'cart:remote' }));
+  const items = Array.isArray(data?.items) ? data.items : [];
+  return items.map((i) => ({ ...i, key: `${i.sku}-${i.color || ''}-${i.size || ''}` }));
 }
 
-export function removeCartItem(key) {
-  const items = getCart().filter((i) => i.key !== key);
-  setCart(items);
-  return items;
+export async function removeCartItem(key) {
+  const data = await cartAPI.removeItem(key);
+  window.dispatchEvent(new StorageEvent('storage', { key: 'cart:remote' }));
+  const items = Array.isArray(data?.items) ? data.items : [];
+  return items.map((i) => ({ ...i, key: `${i.sku}-${i.color || ''}-${i.size || ''}` }));
 }
 
-export function clearCart() {
-  setCart([]);
+export async function clearCart() {
+  const data = await cartAPI.clear();
+  window.dispatchEvent(new StorageEvent('storage', { key: 'cart:remote' }));
+  const items = Array.isArray(data?.items) ? data.items : [];
+  return items.map((i) => ({ ...i, key: `${i.sku}-${i.color || ''}-${i.size || ''}` }));
 }

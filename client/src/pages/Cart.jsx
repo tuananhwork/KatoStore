@@ -5,6 +5,7 @@ import { getCart, updateCartItem, removeCartItem } from '../utils/cart';
 import { formatVnd } from '../utils/helpers';
 import { CART } from '../utils/constants';
 import productAPI from '../api/productAPI';
+import { getVariantStock } from '../utils/variants';
 
 const Cart = () => {
   const [loading, setLoading] = useState(true);
@@ -12,7 +13,7 @@ const Cart = () => {
   const [products, setProducts] = useState({}); // Store full product data
 
   const loadCart = async () => {
-    const items = getCart();
+    const items = await getCart();
     setCartItems(items);
 
     // Load full product data for variants
@@ -40,105 +41,19 @@ const Cart = () => {
     return () => window.removeEventListener('storage', onStorage);
   }, []);
 
-  const updateQuantity = (key, newQuantity, stock) => {
+  const updateQuantity = async (key, newQuantity, stock) => {
     if (newQuantity < 1) return;
     const clamped = Math.min(newQuantity, stock || 9999);
-    const items = updateCartItem(key, clamped);
+    const items = await updateCartItem(key, clamped);
     setCartItems(items);
   };
 
-  const removeItem = (key) => {
-    const items = removeCartItem(key);
+  const removeItem = async (key) => {
+    const items = await removeCartItem(key);
     setCartItems(items);
   };
 
-  const updateVariant = (itemKey, newColor, newSize) => {
-    const item = cartItems.find((i) => i.key === itemKey);
-    if (!item) return;
-
-    const product = products[item.sku];
-    if (!product || !product.variants) return;
-
-    // Find available stock for new variant
-    const variant = product.variants.find((v) => v.color === newColor && v.size === newSize);
-    const availableStock = variant ? variant.stock : 0;
-
-    // Create new key for the variant
-    const newKey = `${item.sku}-${newColor || ''}-${newSize || ''}`;
-
-    // Remove old item and add new one
-    const items = removeCartItem(itemKey);
-    const newItem = {
-      ...item,
-      key: newKey,
-      color: newColor,
-      size: newSize,
-      stock: availableStock,
-    };
-
-    // Adjust quantity if it exceeds available stock
-    if (newItem.quantity > availableStock) {
-      newItem.quantity = availableStock;
-    }
-
-    items.push(newItem);
-    setCartItems(items);
-  };
-
-  // Get all available colors for a product
-  const getAvailableColors = (sku) => {
-    const product = products[sku];
-    if (!product || !product.variants) return [];
-
-    return [...new Set(product.variants.map((v) => v.color).filter(Boolean))];
-  };
-
-  // Get all available sizes for a product
-  const getAvailableSizes = (sku) => {
-    const product = products[sku];
-    if (!product || !product.variants) return [];
-
-    return [...new Set(product.variants.map((v) => v.size).filter(Boolean))];
-  };
-
-  // Get available sizes for a specific color
-  const getAvailableSizesForColor = (sku, color) => {
-    const product = products[sku];
-    if (!product || !product.variants) return [];
-
-    return product.variants
-      .filter((v) => v.color === color)
-      .map((v) => v.size)
-      .filter(Boolean);
-  };
-
-  // Get stock for a specific variant
-  const getVariantStock = (sku, color, size) => {
-    const product = products[sku];
-    if (!product || !product.variants) return 0;
-
-    // If no color or size selected, return product stock
-    if (!color || !size) {
-      return product.stock || 0;
-    }
-
-    const variant = product.variants.find((v) => v.color === color && v.size === size);
-    if (!variant) {
-      return 0;
-    }
-
-    // Handle different data formats from API
-    let stock = variant.stock;
-    if (typeof stock === 'object' && stock.$numberInt) {
-      stock = parseInt(stock.$numberInt);
-    } else if (typeof stock === 'string') {
-      stock = parseInt(stock);
-    } else if (typeof stock === 'number') {
-      stock = stock;
-    }
-
-    return isNaN(stock) ? 0 : stock;
-  };
+  const getVariantStockForProduct = (sku, color, size) => getVariantStock(products[sku], color, size);
 
   const subtotal = cartItems.reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
   const shipping = subtotal > CART.FREE_SHIPPING_THRESHOLD ? 0 : CART.DEFAULT_SHIPPING;
@@ -190,10 +105,6 @@ const Cart = () => {
               </div>
               <div className="divide-y divide-gray-200">
                 {cartItems.map((item) => {
-                  const availableColors = getAvailableColors(item.sku);
-                  const availableSizes = getAvailableSizes(item.sku);
-                  const sizesForColor = getAvailableSizesForColor(item.sku, item.color);
-
                   return (
                     <div key={item.key} className="p-6">
                       <div className="flex items-center space-x-4">
@@ -226,7 +137,7 @@ const Cart = () => {
                           <div className="text-right">
                             <p className="text-sm font-medium text-gray-900">{formatVnd(item.price)}</p>
                             <p className="text-sm text-gray-500">
-                              Còn {getVariantStock(item.sku, item.color, item.size)} sản phẩm
+                              Còn {getVariantStockForProduct(item.sku, item.color, item.size)} sản phẩm
                             </p>
                           </div>
                           <div className="flex items-center space-x-2">
@@ -235,7 +146,7 @@ const Cart = () => {
                                 updateQuantity(
                                   item.key,
                                   item.quantity - 1,
-                                  getVariantStock(item.sku, item.color, item.size)
+                                  getVariantStockForProduct(item.sku, item.color, item.size)
                                 )
                               }
                               disabled={item.quantity <= 1}
@@ -251,10 +162,10 @@ const Cart = () => {
                                 updateQuantity(
                                   item.key,
                                   item.quantity + 1,
-                                  getVariantStock(item.sku, item.color, item.size)
+                                  getVariantStockForProduct(item.sku, item.color, item.size)
                                 )
                               }
-                              disabled={item.quantity >= getVariantStock(item.sku, item.color, item.size)}
+                              disabled={item.quantity >= getVariantStockForProduct(item.sku, item.color, item.size)}
                               className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
                               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

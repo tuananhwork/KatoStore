@@ -1,5 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 const NavLink = ({ to, children }) => {
   const location = useLocation();
@@ -17,14 +18,7 @@ const NavLink = ({ to, children }) => {
 };
 
 const AdminSidebar = () => {
-  const user = useMemo(() => {
-    try {
-      const raw = localStorage.getItem('user');
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  }, []);
+  const { user } = useAuth();
   const role = user?.role;
 
   return (

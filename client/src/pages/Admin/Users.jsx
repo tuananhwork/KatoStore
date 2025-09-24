@@ -4,7 +4,8 @@ import AdminLayout from '../../components/AdminLayout';
 import userAPI from '../../api/userAPI';
 import Pagination from '../../components/Pagination';
 import { useAuth, useRoleCheck } from '../../hooks/useAuth.jsx';
-import { calculatePagination } from '../../utils/helpers';
+import { calculatePagination, parseApiResponse } from '../../utils/helpers';
+import { handleError } from '../../utils/toast';
 import { ROLES } from '../../utils/constants';
 
 const Users = () => {
@@ -22,23 +23,14 @@ const Users = () => {
     setLoading(true);
     try {
       const res = await userAPI.getUsers();
-
-      // Parse data correctly based on API response structure
-      const parsedUsers = Array.isArray(res)
-        ? res
-        : Array.isArray(res?.users)
-        ? res.users
-        : Array.isArray(res?.data)
-        ? res.data
-        : [];
-
+      const parsedUsers = parseApiResponse(res); // Use helper
       setUsers(parsedUsers);
-    } catch (err) {
-      console.error('Error loading users:', err);
-      if (err?.response?.status === 401) {
+    } catch (error) {
+      if (error?.response?.status === 401) {
         handle401Error();
         return;
       }
+      handleError(error, 'Không thể tải danh sách người dùng');
       setUsers([]);
     } finally {
       setLoading(false);

@@ -42,6 +42,27 @@ export const parseApiResponse = (response) => {
 };
 
 /**
+ * Extract single item from API response
+ */
+export const parseApiItem = (response) => {
+  if (response?.data) return response.data;
+  if (response?.item) return response.item;
+  return response;
+};
+
+/**
+ * Safe API call wrapper with error handling
+ */
+export const safeApiCall = async (apiFunction, ...args) => {
+  try {
+    const response = await apiFunction(...args);
+    return { success: true, data: response, error: null };
+  } catch (error) {
+    return { success: false, data: null, error };
+  }
+};
+
+/**
  * Calculate pagination info
  */
 export const calculatePagination = (total, page, pageSize) => {

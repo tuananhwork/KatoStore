@@ -6,9 +6,12 @@ import orderAPI from '../api/orderAPI';
 import mediaAPI from '../api/mediaAPI';
 import authAPI from '../api/authAPI';
 import apiClient from '../api/client';
-import { getOrderStatusText } from '../utils/helpers';
+import { getOrderStatusText, formatVnd, parseApiResponse } from '../utils/helpers';
+import { handleError } from '../utils/toast';
+import { useAuth } from '../hooks/useAuth';
 
 const Profile = () => {
+  const { user, syncAuth } = useAuth();
   const [loading, setLoading] = useState(false);
   const [ordersLoading, setOrdersLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('profile');
@@ -48,8 +51,7 @@ const Profile = () => {
 
   useEffect(() => {
     const fetchProfile = async () => {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-      if (!token) {
+      if (!user) {
         toast.info('Vui lòng đăng nhập');
         navigate('/auth?mode=login');
         return;
@@ -68,8 +70,7 @@ const Profile = () => {
           address: u.address?.street || prev.address,
         }));
       } catch (err) {
-        const msg = err?.response?.data?.message || 'Không thể tải thông tin người dùng';
-        toast.error(msg);
+        handleError(err, 'Không thể tải thông tin người dùng');
         if (err?.response?.status === 401) {
           navigate('/auth?mode=login');
         }
@@ -78,24 +79,17 @@ const Profile = () => {
       }
     };
     fetchProfile();
-  }, [navigate, baseURL]);
+  }, [navigate, baseURL, user]);
 
   useEffect(() => {
     const loadOrders = async () => {
       setOrdersLoading(true);
       try {
         const res = await orderAPI.getMyOrders();
-        const data = Array.isArray(res)
-          ? res
-          : Array.isArray(res?.orders)
-          ? res.orders
-          : Array.isArray(res?.items)
-          ? res.items
-          : Array.isArray(res?.data)
-          ? res.data
-          : [];
+        const data = parseApiResponse(res); // Use helper
         setOrders(data);
-      } catch {
+      } catch (error) {
+        handleError(error, 'Không thể tải danh sách đơn hàng');
         setOrders([]);
       } finally {
         setOrdersLoading(false);
@@ -149,15 +143,14 @@ const Profile = () => {
         toast.error('Tải ảnh thất bại');
       }
     } catch (e) {
-      toast.error(e?.response?.data?.message || 'Tải ảnh thất bại');
+      handleError(e, 'Tải ảnh thất bại');
     } finally {
       setUploadingAvatar(false);
     }
   };
 
   const handleSaveProfile = async () => {
-    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-    if (!token) {
+    if (!user) {
       toast.info('Vui lòng đăng nhập');
       navigate('/auth?mode=login');
       return;
@@ -184,23 +177,16 @@ const Profile = () => {
         gender: u.gender || 'other',
         address: u.address?.street || prev.address,
       }));
-      // Sync avatar to localStorage user
-      try {
-        const raw = localStorage.getItem('user');
-        const lu = raw ? JSON.parse(raw) : null;
-        if (lu) {
-          lu.avatar = u.avatar || userInfo.avatar;
-          localStorage.setItem('user', JSON.stringify(lu));
-          window.dispatchEvent(new StorageEvent('storage', { key: 'user' }));
-        }
-      } catch {
-        // ignore localStorage sync errors
-      }
+
+      // FIXED: Use setTimeout to avoid immediate re-render
+      setTimeout(() => {
+        syncAuth();
+      }, 0);
+
       setIsEditing(false);
       toast.success('Cập nhật hồ sơ thành công');
-    } catch (err) {
-      const msg = err?.response?.data?.message || 'Cập nhật hồ sơ thất bại';
-      toast.error(msg);
+    } catch (error) {
+      handleError(error, 'Cập nhật hồ sơ thất bại');
     } finally {
       setLoading(false);
     }
@@ -226,8 +212,7 @@ const Profile = () => {
       setPwForm({ currentPassword: '', newPassword: '', confirmPassword: '' });
       setShowChangePassword(false);
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Đổi mật khẩu thất bại';
-      toast.error(msg);
+      handleError(err, 'Đổi mật khẩu thất bại');
     } finally {
       setPwSubmitting(false);
     }
@@ -240,11 +225,6 @@ const Profile = () => {
     { id: 'settings', name: 'Cài đặt', icon: '⚙️' },
   ];
 
-  const formatVnd = (v) =>
-    new Intl.NumberFormat('vi-VN', {
-      style: 'currency',
-      currency: 'VND',
-    }).format(v || 0);
   const getStatusBadge = (status) => {
     switch (status) {
       case 'pending':
@@ -305,7 +285,7 @@ const Profile = () => {
                   </button>
                   {isEditing && (
                     <button
-                      onClick={() => setUserInfo((prev) => ({ ...prev, avatar: '' }))}
+                      onClick={() => setUserInfo((prev) => ({ ...prev, avatar: '/images/Avatar/avt.jpg' }))}
                       className="px-3 py-1 text-sm text-red-600 hover:text-red-800"
                       disabled={uploadingAvatar}
                     >

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import authAPI from '../api/authAPI';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
+import { handleError } from '../utils/toast';
 
 const RegisterForm = ({ onSwitch }) => {
   const [formData, setFormData] = useState({
@@ -40,9 +41,8 @@ const RegisterForm = ({ onSwitch }) => {
       toast.success('Đã gửi mã OTP tới email');
       setOtpCooldown(60); // 60s resend cooldown
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Gửi OTP thất bại';
+      const msg = handleError(err, 'Gửi OTP thất bại');
       setError(msg);
-      toast.error(msg);
     } finally {
       setSendingOTP(false);
     }
@@ -78,8 +78,8 @@ const RegisterForm = ({ onSwitch }) => {
       }
       toast.error('Xác minh OTP thất bại');
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Xác minh OTP thất bại';
-      toast.error(msg);
+      const msg = handleError(err, 'Xác minh OTP thất bại');
+      setError(msg);
     } finally {
       setLoading(false);
     }
@@ -88,7 +88,6 @@ const RegisterForm = ({ onSwitch }) => {
   return (
     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
       <form className="space-y-6" onSubmit={handleSubmit}>
-        {error && <div className="text-sm text-red-600">{error}</div>}
         <div>
           <label htmlFor="name" className="block text-sm font-medium text-gray-700">
             Họ và tên

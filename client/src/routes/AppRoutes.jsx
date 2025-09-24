@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route, Link } from 'react-router-dom';
+import { Routes, Route, Link, Navigate } from 'react-router-dom';
 
 // Layout
 import Layout from '../components/Layout';
@@ -22,6 +22,7 @@ import AdminUsers from '../pages/Admin/Users';
 import AdminProductForm from '../pages/Admin/ProductForm';
 import { useRoleCheck } from '../hooks/useAuth.jsx';
 import { ROLES } from '../utils/constants';
+import { useAuth } from '../hooks/useAuth.jsx';
 
 const AdminGuard = ({ roles = [ROLES.ADMIN, ROLES.MANAGER], children }) => {
   const { hasAccess, loading } = useRoleCheck(roles, false);
@@ -36,15 +37,33 @@ const AdminGuard = ({ roles = [ROLES.ADMIN, ROLES.MANAGER], children }) => {
 
   if (!hasAccess) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-4">Không có quyền truy cập</h1>
-          <p className="text-gray-600">Bạn cần quyền quản trị để truy cập trang này.</p>
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">404</h1>
+          <p className="text-gray-600 mb-8">Trang không tồn tại</p>
+          <Link to="/" className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition-colors">
+            Về trang chủ
+          </Link>
         </div>
       </div>
     );
   }
 
+  return children;
+};
+
+const RequireAuth = ({ children }) => {
+  const { isLoggedIn, loading } = useAuth();
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <Spinner size="lg" />
+      </div>
+    );
+  }
+  if (!isLoggedIn) {
+    return <Navigate to="/auth" replace />;
+  }
   return children;
 };
 
@@ -83,7 +102,9 @@ const AppRoutes = () => {
         path="/cart"
         element={
           <Layout>
-            <Cart />
+            <RequireAuth>
+              <Cart />
+            </RequireAuth>
           </Layout>
         }
       />
@@ -92,7 +113,9 @@ const AppRoutes = () => {
         path="/checkout"
         element={
           <Layout>
-            <Checkout />
+            <RequireAuth>
+              <Checkout />
+            </RequireAuth>
           </Layout>
         }
       />
@@ -101,7 +124,9 @@ const AppRoutes = () => {
         path="/profile"
         element={
           <Layout>
-            <Profile />
+            <RequireAuth>
+              <Profile />
+            </RequireAuth>
           </Layout>
         }
       />

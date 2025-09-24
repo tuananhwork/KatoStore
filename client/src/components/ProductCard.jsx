@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-// import { addToCart } from '../utils/cart';
-// import { toast } from 'react-toastify';
+import { formatVnd } from '../utils/helpers';
 
 const ProductCard = ({ product }) => {
   const { sku, name, price, media } = product;
@@ -29,27 +28,6 @@ const ProductCard = ({ product }) => {
             className="w-full h-60 object-cover hover:scale-105 transition-transform duration-300"
           />
         </Link>
-
-        {/* Add to Cart Button */}
-        {/* <button
-          onClick={onQuickAdd}
-          className="absolute bottom-2 right-2 bg-pink-600 text-white p-2 rounded-full hover:bg-pink-700 transition-colors opacity-0 group-hover:opacity-100"
-        >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-6 h-6"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-            strokeWidth={2}
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              d="M2.25 2.25h1.386c.51 0 .955.343 1.087.835l.383 1.437m0 0L6.75 12.75h10.5l2.25-7.5H5.106m0 0L4.5 4.5m2.25 15a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z"
-            />
-          </svg>
-        </button> */}
       </div>
 
       {/* Product Info */}
@@ -80,12 +58,7 @@ const ProductCard = ({ product }) => {
         {/* Price */}
         <div className="mt-3 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-lg font-bold text-gray-900">
-              {new Intl.NumberFormat('vi-VN', {
-                style: 'currency',
-                currency: 'VND',
-              }).format(price)}
-            </span>
+            <span className="text-lg font-bold text-gray-900">{formatVnd(price)}</span>
           </div>
         </div>
       </div>

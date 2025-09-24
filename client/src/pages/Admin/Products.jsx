@@ -5,7 +5,8 @@ import productAPI from '../../api/productAPI';
 import Pagination from '../../components/Pagination';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth.jsx';
-import { formatVnd, parseApiResponse, calculatePagination } from '../../utils/helpers';
+import { formatVnd, parseApiResponse, calculatePagination, normalizeText } from '../../utils/helpers';
+import { handleError } from '../../utils/toast';
 import { Link } from 'react-router-dom';
 
 const Products = () => {
@@ -61,11 +62,12 @@ const Products = () => {
       if (status === 'inactive') params.isActive = false;
       const res = await productAPI.adminListProducts(params);
       setProducts(parseApiResponse(res));
-    } catch (err) {
-      if (err?.response?.status === 401) {
+    } catch (error) {
+      if (error?.response?.status === 401) {
         handle401Error();
         return;
       }
+      handleError(error, 'Không thể tải danh sách sản phẩm');
       setProducts([]);
     } finally {
       setLoading(false);
@@ -81,10 +83,11 @@ const Products = () => {
     try {
       await productAPI.deleteProduct(sku);
       await loadProducts(true); // Force reload
-    } catch (err) {
-      if (err?.response?.status === 401) {
+    } catch (error) {
+      if (error?.response?.status === 401) {
         handle401Error();
       }
+      handleError(error, 'Xóa sản phẩm thất bại');
     }
   };
 
@@ -93,12 +96,12 @@ const Products = () => {
       await productAPI.toggleProductVisibility(sku);
       await loadProducts(true); // Force reload
       toast.success('Đã cập nhật trạng thái hiển thị');
-    } catch (err) {
-      if (err?.response?.status === 401) {
+    } catch (error) {
+      if (error?.response?.status === 401) {
         handle401Error();
         return;
       }
-      toast.error('Cập nhật trạng thái thất bại');
+      handleError(error, 'Cập nhật trạng thái thất bại');
     }
   };
 
@@ -116,27 +119,16 @@ const Products = () => {
     return ['all', ...Array.from(set)];
   }, [products]);
 
-  const toSearchKey = (str) => {
-    if (!str) return '';
-    return String(str)
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/\u0300-\u036f/g, '')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/đ/g, 'd')
-      .replace(/Đ/g, 'd');
-  };
-
-  // Filter & sort products
+  // Use normalizeText helper instead of toSearchKey
   const filteredProducts = useMemo(() => {
     let result = Array.isArray(products) ? [...products] : [];
 
     // search (accent-insensitive)
-    const q = toSearchKey(search.trim());
+    const q = normalizeText(search.trim());
     if (q) {
       result = result.filter((p) => {
-        const nameKey = toSearchKey(p.name || '');
-        const skuKey = toSearchKey(p.sku || '');
+        const nameKey = normalizeText(p.name || '');
+        const skuKey = normalizeText(p.sku || '');
         return nameKey.includes(q) || skuKey.includes(q);
       });
     }

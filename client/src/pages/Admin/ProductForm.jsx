@@ -5,19 +5,15 @@ import AdminSidebar from '../../components/AdminSidebar';
 import mediaAPI from '../../api/mediaAPI';
 import productAPI from '../../api/productAPI';
 import { useRef } from 'react';
+import { parseApiResponse, normalizeText } from '../../utils/helpers';
+import { handleError } from '../../utils/toast';
+import { useAuth } from '../../hooks/useAuth';
 
 const ProductForm = () => {
   const navigate = useNavigate();
   const { sku: routeSku } = useParams();
   const isEdit = !!routeSku;
-  const user = useMemo(() => {
-    try {
-      const raw = localStorage.getItem('user');
-      return raw ? JSON.parse(raw) : null;
-    } catch {
-      return null;
-    }
-  }, []);
+  const { user } = useAuth(); // Use useAuth instead of manual localStorage
   const role = user?.role;
 
   const [loading, setLoading] = useState(isEdit);
@@ -87,13 +83,7 @@ const ProductForm = () => {
     []
   );
 
-  const normalize = (text) =>
-    String(text || '')
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/đ/g, 'd')
-      .replace(/[^a-z0-9]+/g, '');
+  const normalize = (text) => normalizeText(text); // Use helper
 
   const getPrefixFromCategory = (category) => {
     if (!category) return '';
@@ -109,13 +99,7 @@ const ProductForm = () => {
       const prefix = getPrefixFromCategory(category);
       if (!prefix) return '';
       const res = await productAPI.listProducts();
-      const items = Array.isArray(res?.items)
-        ? res.items
-        : Array.isArray(res?.data)
-        ? res.data
-        : Array.isArray(res)
-        ? res
-        : [];
+      const items = parseApiResponse(res); // Use helper
       const nums = items
         .map((p) => String(p?.sku || ''))
         .filter((s) => s.startsWith(`${prefix}-`))
@@ -140,18 +124,13 @@ const ProductForm = () => {
     (async () => {
       try {
         const res = await productAPI.listProducts();
-        const items = Array.isArray(res?.data)
-          ? res.data
-          : Array.isArray(res?.items)
-          ? res.items
-          : Array.isArray(res)
-          ? res
-          : [];
+        const items = parseApiResponse(res); // Use helper
         if (mounted) {
           const set = new Set(items.map((p) => p.category).filter(Boolean));
           setAllCategories(Array.from(set));
         }
-      } catch {
+      } catch (error) {
+        handleError(error, 'Không thể tải danh mục');
         if (mounted) setAllCategories([]);
       }
     })();
@@ -192,8 +171,8 @@ const ProductForm = () => {
           : [];
         setExistingImagePreviews(imgs.map((m) => ({ url: m.url, name: m.url.split('/').pop() })));
         setExistingVideoPreviews(vids.map((m) => ({ url: m.url, name: m.url.split('/').pop() })));
-      } catch {
-        toast.error('Không tải được sản phẩm');
+      } catch (error) {
+        handleError(error, 'Không tải được sản phẩm');
       } finally {
         if (mounted) setLoading(false);
       }
@@ -373,17 +352,17 @@ const ProductForm = () => {
         toast.success('Tạo sản phẩm thành công');
       }
       navigate('/admin/products');
-    } catch (err) {
-      if (err?.response?.status === 401) {
+    } catch (error) {
+      if (error?.response?.status === 401) {
         toast.error('Phiên đăng nhập không hợp lệ hoặc đã hết hạn. Vui lòng đăng nhập lại.');
         navigate('/auth');
         return;
       }
-      if (err?.response?.status === 409) {
+      if (error?.response?.status === 409) {
         toast.error('SKU đã tồn tại');
         return;
       }
-      toast.error(err?.response?.data?.message || (isEdit ? 'Cập nhật sản phẩm thất bại' : 'Tạo sản phẩm thất bại'));
+      handleError(error, isEdit ? 'Cập nhật sản phẩm thất bại' : 'Tạo sản phẩm thất bại');
     } finally {
       setSubmitting(false);
     }

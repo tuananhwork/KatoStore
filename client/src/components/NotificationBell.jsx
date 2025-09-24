@@ -1,16 +1,20 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useClickOutside } from '../hooks/useClickOutside';
 import notificationAPI from '../api/notificationAPI';
+import { Bell } from 'lucide-react';
 
 const NotificationBell = ({ isLoggedIn, userRole }) => {
   const [notifOpen, setNotifOpen] = useState(false);
   const [notifs, setNotifs] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const notifRef = useRef(null);
   const sseRef = useRef(null);
   const tokenRef = useRef(null);
   const navigate = useNavigate();
+
+  // Use shared click outside hook
+  const notifRef = useClickOutside(() => setNotifOpen(false));
 
   const syncTokenFromStorage = () => {
     try {
@@ -97,19 +101,6 @@ const NotificationBell = ({ isLoggedIn, userRole }) => {
   };
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      const notifEl = notifRef.current;
-      if (notifEl && !notifEl.contains(event.target)) {
-        setNotifOpen(false);
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, []);
-
-  useEffect(() => {
     syncTokenFromStorage();
     if (isLoggedIn) {
       loadNotifications();
@@ -120,7 +111,7 @@ const NotificationBell = ({ isLoggedIn, userRole }) => {
       setUnreadCount(0);
     }
     return () => {
-      if (!isLoggedIn) stopSse();
+      stopSse();
     };
   }, [isLoggedIn]);
 
@@ -128,58 +119,38 @@ const NotificationBell = ({ isLoggedIn, userRole }) => {
     <div className="relative" ref={notifRef}>
       <button
         onClick={() => setNotifOpen((o) => !o)}
-        className="relative p-2 text-gray-600 hover:text-[rgb(var(--color-primary-600))] transition-colors"
+        className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
       >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          className="w-6 h-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V4a2 2 0 10-4 0v1.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"
-          />
-        </svg>
+        <Bell className="w-6 h-6" />
         {unreadCount > 0 && (
-          <span className="absolute -top-1 -right-1 bg-pink-500 text-white text-xs rounded-full h-5 min-w-[1.25rem] px-1 flex items-center justify-center">
-            {unreadCount}
+          <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+            {unreadCount > 99 ? '99+' : unreadCount}
           </span>
         )}
       </button>
+
       {notifOpen && (
-        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-          <div className="px-4 py-2 text-sm font-semibold text-gray-700 flex items-center justify-between">
-            <span>Thông báo</span>
-            <button className="text-xs text-[rgb(var(--color-primary))] hover:underline" onClick={loadNotifications}>
-              Làm mới
-            </button>
-          </div>
-          <div className="max-h-80 overflow-auto divide-y divide-gray-100">
-            {notifs.length === 0 ? (
-              <div className="px-4 py-6 text-sm text-gray-500">Chưa có thông báo</div>
-            ) : (
-              notifs.map((n) => (
-                <button
-                  key={n._id}
-                  onClick={() => handleNotifClick(n)}
-                  className={`w-full text-left px-4 py-3 text-sm hover:bg-gray-50 ${
-                    n.read ? 'text-gray-600' : 'text-gray-900'
+        <div className="absolute right-0 mt-2 w-80 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50 max-h-96 overflow-y-auto">
+          <div className="px-4 py-2 text-sm font-medium text-gray-900 border-b border-gray-200">Thông báo</div>
+          {notifs.length === 0 ? (
+            <div className="px-4 py-8 text-center text-gray-500 text-sm">Không có thông báo</div>
+          ) : (
+            <div className="py-2">
+              {notifs.map((notif) => (
+                <div
+                  key={notif._id}
+                  onClick={() => handleNotifClick(notif)}
+                  className={`px-4 py-3 hover:bg-gray-50 cursor-pointer border-l-4 ${
+                    notif.read ? 'border-transparent' : 'border-blue-500'
                   }`}
                 >
-                  <div className="flex items-start justify-between">
-                    <div className="font-medium truncate pr-2">{n.title || 'Thông báo'}</div>
-                    {!n.read && <span className="ml-2 inline-block w-2 h-2 rounded-full bg-red-500" />}
-                  </div>
-                  <div className="text-gray-600 mt-1">{n.message}</div>
-                  <div className="text-xs text-gray-500 mt-1">{new Date(n.createdAt).toLocaleString('vi-VN')}</div>
-                </button>
-              ))
-            )}
-          </div>
+                  <div className="text-sm font-medium text-gray-900">{notif.title}</div>
+                  <div className="text-xs text-gray-600 mt-1">{notif.message}</div>
+                  <div className="text-xs text-gray-400 mt-1">{new Date(notif.createdAt).toLocaleString('vi-VN')}</div>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       )}
     </div>

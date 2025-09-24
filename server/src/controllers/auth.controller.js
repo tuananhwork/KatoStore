@@ -15,9 +15,34 @@ function signToken(user) {
   return token;
 }
 
+function signRefreshToken(user) {
+  const payload = {
+    sub: user._id.toString(),
+    type: 'refresh',
+  };
+  const token = jwt.sign(payload, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'dev_secret_change_me', {
+    expiresIn: process.env.REFRESH_TOKEN_TTL || '30d',
+  });
+  return token;
+}
+
+function setRefreshCookie(res, token, remember = true) {
+  const isProd = process.env.NODE_ENV === 'production';
+  const cookieOptions = {
+    httpOnly: true,
+    sameSite: isProd ? 'none' : 'lax',
+    secure: isProd,
+    path: '/auth',
+  };
+  if (remember) {
+    cookieOptions.maxAge = 1000 * 60 * 60 * 24 * 30; // 30 days
+  }
+  res.cookie('rt', token, cookieOptions);
+}
+
 exports.register = async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    const { name, email, password, remember = true } = req.body;
     if (!name || !email || !password) return res.status(400).json({ message: 'Missing fields' });
     const existed = await User.findOne({ email: email.toLowerCase() });
     if (existed) return res.status(409).json({ message: 'Email already registered' });
@@ -29,6 +54,8 @@ exports.register = async (req, res, next) => {
       role: 'customer',
     });
     const accessToken = signToken(user);
+    const refreshToken = signRefreshToken(user);
+    setRefreshCookie(res, refreshToken, remember);
     return res.status(201).json({
       user: {
         id: user._id,
@@ -45,37 +72,32 @@ exports.register = async (req, res, next) => {
 
 exports.registerRequestOTP = async (req, res, next) => {
   try {
-    const { email } = req.body;
-    if (!email) return res.status(400).json({ message: 'Missing email' });
+    const { email, name, password } = req.body || {};
+    if (!email || !name || !password) return res.status(400).json({ message: 'Missing fields' });
     const existed = await User.findOne({ email: email.toLowerCase() });
     if (existed) return res.status(409).json({ message: 'Email already registered' });
 
-    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otp = String(Math.floor(100000 + Math.random() * 900000));
     const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
-    const expiresAt = new Date(Date.now() + 10 * 60 * 1000);
-    await RegisterOTP.updateOne(
+    const expiresAt = new Date(Date.now() + 1000 * 60 * 10); // 10 minutes
+
+    await RegisterOTP.findOneAndUpdate(
       { email: email.toLowerCase() },
-      { $set: { otpHash, expiresAt, attempts: 0 } },
+      { email: email.toLowerCase(), otpHash, expiresAt, attempts: 0 },
       { upsert: true }
     );
 
-    const subject = 'KatoStore - Mã OTP xác minh đăng ký';
-    const html = `<p>Xin chào,</p>
-      <p>Mã OTP xác minh đăng ký của bạn là:</p>
-      <p style="font-size:22px;font-weight:bold;letter-spacing:4px">${otp}</p>
-      <p>Mã có hiệu lực trong 10 phút.</p>`;
-    await sendMail({ to: email.toLowerCase(), subject, html });
+    await sendMail(email, 'Your OTP Code', `Your OTP is: ${otp}`);
 
-    return res.json({ message: 'OTP sent to email' });
+    res.json({ message: 'OTP sent' });
   } catch (err) {
-    console.error('[registerRequestOTP] ERROR >>>', err);
-    return res.status(500).json({ message: 'Server error', detail: err.message });
+    next(err);
   }
 };
 
 exports.registerVerifyOTP = async (req, res, next) => {
   try {
-    const { name, email, password, otp } = req.body;
+    const { name, email, password, otp, remember = true } = req.body;
     if (!name || !email || !password || !otp) return res.status(400).json({ message: 'Missing fields' });
     const existed = await User.findOne({ email: email.toLowerCase() });
     if (existed) return res.status(409).json({ message: 'Email already registered' });
@@ -88,7 +110,6 @@ exports.registerVerifyOTP = async (req, res, next) => {
     }
     const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
     if (otpHash !== otpEntry.otpHash) {
-      // increment attempts (optional usage)
       await RegisterOTP.updateOne({ _id: otpEntry._id }, { $inc: { attempts: 1 } });
       return res.status(400).json({ message: 'Invalid OTP' });
     }
@@ -102,10 +123,12 @@ exports.registerVerifyOTP = async (req, res, next) => {
       isActive: true,
       emailVerifiedAt: new Date(),
     });
-    // cleanup
     await RegisterOTP.deleteOne({ _id: otpEntry._id });
 
     const accessToken = signToken(user);
+    const refreshToken = signRefreshToken(user);
+    setRefreshCookie(res, refreshToken, remember);
+
     return res.json({
       user: {
         id: user._id,
@@ -122,12 +145,14 @@ exports.registerVerifyOTP = async (req, res, next) => {
 
 exports.login = async (req, res, next) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, remember = true } = req.body;
     const user = await User.findOne({ email: email.toLowerCase() });
     if (!user) return res.status(401).json({ message: 'Invalid credentials' });
     const ok = await user.comparePassword(password);
     if (!ok) return res.status(401).json({ message: 'Invalid credentials' });
     const accessToken = signToken(user);
+    const refreshToken = signRefreshToken(user);
+    setRefreshCookie(res, refreshToken, remember);
     return res.json({
       user: {
         id: user._id,
@@ -137,6 +162,40 @@ exports.login = async (req, res, next) => {
       },
       accessToken,
     });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.refresh = async (req, res, next) => {
+  try {
+    const token = req.cookies?.rt || req.body?.refreshToken;
+    if (!token) return res.status(401).json({ message: 'Unauthorized' });
+    let payload;
+    try {
+      payload = jwt.verify(token, process.env.JWT_REFRESH_SECRET || process.env.JWT_SECRET || 'dev_secret_change_me');
+    } catch (e) {
+      return res.status(401).json({ message: 'Invalid token' });
+    }
+    if (payload?.type !== 'refresh') return res.status(401).json({ message: 'Invalid token' });
+    const user = await User.findById(payload.sub);
+    if (!user) return res.status(401).json({ message: 'Unauthorized' });
+
+    const accessToken = signToken(user);
+    // Optional: rotate refresh token
+    const newRefreshToken = signRefreshToken(user);
+    setRefreshCookie(res, newRefreshToken);
+
+    res.json({ accessToken });
+  } catch (err) {
+    next(err);
+  }
+};
+
+exports.logout = async (req, res, next) => {
+  try {
+    res.clearCookie('rt', { path: '/auth' });
+    return res.json({ message: 'Logged out' });
   } catch (err) {
     next(err);
   }
@@ -283,8 +342,4 @@ exports.resetPasswordWithOTP = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-};
-
-exports.logout = async (req, res) => {
-  return res.json({ message: 'Logged out' });
 };

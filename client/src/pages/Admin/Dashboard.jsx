@@ -3,7 +3,8 @@ import AdminLayout from '../../components/AdminLayout';
 import productAPI from '../../api/productAPI';
 import orderAPI from '../../api/orderAPI';
 import userAPI from '../../api/userAPI';
-import { formatVnd } from '../../utils/helpers';
+import { formatVnd, parseApiResponse } from '../../utils/helpers';
+import { handleError } from '../../utils/toast';
 
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
@@ -22,41 +23,10 @@ const Dashboard = () => {
         userAPI.getUsers(),
       ]);
 
-      // Parse orders
-      let orders = [];
-      if (Array.isArray(ordersRes)) {
-        orders = ordersRes;
-      } else if (ordersRes && Array.isArray(ordersRes.orders)) {
-        orders = ordersRes.orders;
-      } else if (ordersRes && Array.isArray(ordersRes.data)) {
-        orders = ordersRes.data;
-      } else if (ordersRes && Array.isArray(ordersRes.items)) {
-        orders = ordersRes.items;
-      }
-
-      // Parse products
-      let products = [];
-      if (Array.isArray(productsRes)) {
-        products = productsRes;
-      } else if (productsRes && Array.isArray(productsRes.products)) {
-        products = productsRes.products;
-      } else if (productsRes && Array.isArray(productsRes.data)) {
-        products = productsRes.data;
-      } else if (productsRes && Array.isArray(productsRes.items)) {
-        products = productsRes.items;
-      }
-
-      // Parse users
-      let users = [];
-      if (Array.isArray(usersRes)) {
-        users = usersRes;
-      } else if (usersRes && Array.isArray(usersRes.users)) {
-        users = usersRes.users;
-      } else if (usersRes && Array.isArray(usersRes.data)) {
-        users = usersRes.data;
-      } else if (usersRes && Array.isArray(usersRes.items)) {
-        users = usersRes.items;
-      }
+      // Use parseApiResponse helper
+      const orders = parseApiResponse(ordersRes);
+      const products = parseApiResponse(productsRes);
+      const users = parseApiResponse(usersRes);
 
       // Calculate revenue only from delivered orders
       const revenue = orders
@@ -74,8 +44,8 @@ const Dashboard = () => {
       };
 
       setStats(newStats);
-    } catch (err) {
-      console.error('Error loading dashboard data:', err);
+    } catch (error) {
+      handleError(error, 'Không thể tải dữ liệu dashboard');
       // Set default values on error
       setStats({
         totalOrders: 0,

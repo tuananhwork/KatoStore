@@ -9,6 +9,7 @@ const productRoutes = require('./routes/product.routes');
 const orderRoutes = require('./routes/order.routes');
 const mediaRoutes = require('./routes/media.routes');
 const notificationRoutes = require('./routes/notification.routes');
+const cartRoutes = require('./routes/cart.routes');
 const errorHandler = require('./middlewares/errorHandler');
 
 function createApp() {
@@ -29,6 +30,7 @@ function createApp() {
   app.use('/orders', orderRoutes);
   app.use('/media', mediaRoutes);
   app.use('/notifications', notificationRoutes);
+  app.use('/cart', cartRoutes);
 
   app.use(errorHandler);
 

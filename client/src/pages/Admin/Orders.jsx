@@ -4,11 +4,11 @@ import AdminLayout from '../../components/AdminLayout';
 import orderAPI from '../../api/orderAPI';
 import { toast } from 'react-toastify';
 import { useAuth } from '../../hooks/useAuth.jsx';
-import { formatVnd, getOrderStatusText } from '../../utils/helpers';
+import { formatVnd, getOrderStatusText, parseApiResponse } from '../../utils/helpers';
+import { handleError } from '../../utils/toast';
 
 const Orders = () => {
   const { handle401Error } = useAuth();
-
   const [loading, setLoading] = useState(true);
   const [orders, setOrders] = useState([]);
 
@@ -16,21 +16,14 @@ const Orders = () => {
     setLoading(true);
     try {
       const res = await orderAPI.getAllOrders();
-      const data = Array.isArray(res)
-        ? res
-        : Array.isArray(res?.orders)
-        ? res.orders
-        : Array.isArray(res?.items)
-        ? res.items
-        : Array.isArray(res?.data)
-        ? res.data
-        : [];
+      const data = parseApiResponse(res); // Use helper
       setOrders(data);
-    } catch (err) {
-      if (err?.response?.status === 401) {
+    } catch (error) {
+      if (error?.response?.status === 401) {
         handle401Error();
         return;
       }
+      handleError(error, 'Không thể tải danh sách đơn hàng');
       setOrders([]);
     } finally {
       setLoading(false);
@@ -48,12 +41,12 @@ const Orders = () => {
       await orderAPI.updateOrderStatus(orderId, status);
       await loadOrders();
       toast.success('Đã cập nhật trạng thái đơn hàng');
-    } catch (err) {
-      if (err?.response?.status === 401) {
+    } catch (error) {
+      if (error?.response?.status === 401) {
         handle401Error();
         return;
       }
-      toast.error('Cập nhật trạng thái thất bại');
+      handleError(error, 'Cập nhật trạng thái thất bại');
     }
   };
 

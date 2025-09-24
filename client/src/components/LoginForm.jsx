@@ -3,6 +3,7 @@ import authAPI, { login as loginAPI } from '../api/authAPI';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useAuth } from '../hooks/useAuth.jsx';
+import { handleError } from '../utils/toast';
 
 const LoginForm = ({ onSwitch }) => {
   const [formData, setFormData] = useState({
@@ -37,10 +38,20 @@ const LoginForm = ({ onSwitch }) => {
       const data = await loginAPI({
         email: formData.email,
         password: formData.password,
+        remember: !!formData.remember,
       });
       if (data?.accessToken) {
-        localStorage.setItem('token', data.accessToken);
-        localStorage.setItem('user', JSON.stringify(data.user));
+        // Persist token/user depending on remember
+        if (formData.remember) {
+          localStorage.setItem('token', data.accessToken);
+          localStorage.setItem('user', JSON.stringify(data.user));
+        } else {
+          sessionStorage.setItem('token', data.accessToken);
+          sessionStorage.setItem('user', JSON.stringify(data.user));
+          // Also clear any stale localStorage
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+        }
         // Immediately sync auth context in the same tab
         syncAuth();
         toast.success('Đăng nhập thành công');
@@ -49,8 +60,7 @@ const LoginForm = ({ onSwitch }) => {
       }
       toast.error('Đăng nhập thất bại');
     } catch (err) {
-      const msg = err?.response?.data?.message || 'Đăng nhập thất bại';
-      toast.error(msg);
+      handleError(err, 'Đăng nhập thất bại');
     } finally {
       setLoading(false);
     }

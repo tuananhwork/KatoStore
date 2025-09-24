@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, createContext, useContext } from 'react';
+import { useState, useEffect, useMemo, useCallback, createContext, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 
@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   // Sync auth state from localStorage
-  const syncAuth = () => {
+  const syncAuth = useCallback(() => {
     try {
       const token = localStorage.getItem('token');
       const userRaw = localStorage.getItem('user');
@@ -41,59 +41,65 @@ export const AuthProvider = ({ children }) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  // Check if user has required role
-  const hasRole = (requiredRoles) => {
-    if (!user?.role) return false;
-    if (Array.isArray(requiredRoles)) {
-      return requiredRoles.includes(user.role);
-    }
-    return user.role === requiredRoles;
-  };
+  // Check if user has required role - memoized
+  const hasRole = useCallback(
+    (requiredRoles) => {
+      if (!user?.role) return false;
+      if (Array.isArray(requiredRoles)) {
+        return requiredRoles.includes(user.role);
+      }
+      return user.role === requiredRoles;
+    },
+    [user?.role]
+  );
 
   // Check if user is admin or manager
-  const isAdmin = useMemo(() => hasRole(['admin', 'manager']), [user]);
+  const isAdmin = useMemo(() => hasRole(['admin', 'manager']), [hasRole]);
 
-  // Handle 401 errors
-  const handle401Error = (message = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.') => {
+  // Handle 401 errors - memoized
+  const handle401Error = useCallback((message = 'Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.') => {
     toast.error(message);
     logout();
-  };
+  }, []);
 
-  // Logout function
-  const logout = () => {
+  // Logout function - memoized
+  const logout = useCallback(() => {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     setIsLoggedIn(false);
     setUser(null);
-    navigate('/auth');
-  };
+    navigate('/');
+  }, [navigate]);
 
-  // Listen to storage changes
+  // Listen to storage changes - FIXED: Remove syncAuth from dependency
   useEffect(() => {
-    syncAuth();
+    syncAuth(); // Initial sync
 
     const handleStorageChange = (e) => {
       if (e.key === 'token' || e.key === 'user') {
-        syncAuth();
+        syncAuth(); // Sync when storage changes
       }
     };
 
     window.addEventListener('storage', handleStorageChange);
     return () => window.removeEventListener('storage', handleStorageChange);
-  }, []);
+  }, []); // FIXED: Empty dependency array
 
-  const value = {
-    isLoggedIn,
-    user,
-    loading,
-    hasRole,
-    isAdmin,
-    handle401Error,
-    logout,
-    syncAuth,
-  };
+  const value = useMemo(
+    () => ({
+      isLoggedIn,
+      user,
+      loading,
+      hasRole,
+      isAdmin,
+      handle401Error,
+      logout,
+      syncAuth,
+    }),
+    [isLoggedIn, user, loading, hasRole, isAdmin, handle401Error, logout, syncAuth]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };
@@ -105,7 +111,7 @@ export const useRoleCheck = (requiredRoles, redirectOnFail = true) => {
   const { user, hasRole, handle401Error, loading } = useAuth();
 
   useEffect(() => {
-    if (loading) return; // đợi sync xong
+    if (loading) return;
     if (!user) return;
 
     if (!hasRole(requiredRoles)) {

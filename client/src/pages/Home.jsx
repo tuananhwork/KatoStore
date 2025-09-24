@@ -1,40 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import ProductCard from '../components/ProductCard';
 import productAPI from '../api/productAPI';
 import Spinner from '../components/Spinner';
+import { parseApiResponse } from '../utils/helpers';
+import { useApiState } from '../hooks/useApi';
 
 const Home = () => {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  // Memoize the API function to prevent re-creation on every render
+  const fetchProducts = useCallback(() => productAPI.listProducts({ limit: 20 }), []);
 
-  useEffect(() => {
-    let isMounted = true;
-    (async () => {
-      try {
-        const res = await productAPI.listProducts({ limit: 20 });
-        const data = Array.isArray(res)
-          ? res
-          : Array.isArray(res?.products)
-          ? res.products
-          : Array.isArray(res?.items)
-          ? res.items
-          : Array.isArray(res?.data)
-          ? res.data
-          : [];
-        if (isMounted) setProducts(data);
-      } catch {
-        if (isMounted) setProducts([]);
-      } finally {
-        if (isMounted) setLoading(false);
-      }
-    })();
-    return () => {
-      isMounted = false;
-    };
-  }, []);
+  const { data: products, loading, error } = useApiState(fetchProducts, parseApiResponse);
 
-  const featuredProducts = products.slice(0, 4);
+  const featuredProducts = products?.slice(0, 4) || [];
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -113,6 +91,10 @@ const Home = () => {
 
           {loading ? (
             <Spinner />
+          ) : error ? (
+            <div className="text-center py-12">
+              <p className="text-gray-500">Không thể tải sản phẩm. Vui lòng thử lại sau.</p>
+            </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
               {featuredProducts.map((product) => (

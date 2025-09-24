@@ -10,33 +10,8 @@ export const register = async (payload) => {
   return res.data;
 };
 
-export const requestRegisterOTP = async (email) => {
-  const res = await apiClient.post('/auth/register/request-otp', { email });
-  return res.data;
-};
-
-export const verifyRegisterOTP = async (payload) => {
-  const res = await apiClient.post('/auth/register/verify-otp', payload);
-  return res.data;
-};
-
-export const getMe = async () => {
-  const res = await apiClient.get('/auth/me');
-  return res.data;
-};
-
-export const changePassword = async (payload) => {
-  const res = await apiClient.post('/auth/change-password', payload);
-  return res.data;
-};
-
-export const forgotPassword = async (email) => {
-  const res = await apiClient.post('/auth/forgot-password', { email });
-  return res.data;
-};
-
-export const resetPasswordWithOTP = async (payload) => {
-  const res = await apiClient.post('/auth/reset-password-otp', payload);
+export const refresh = async () => {
+  const res = await apiClient.post('/auth/refresh');
   return res.data;
 };
 
@@ -45,20 +20,15 @@ export const logout = async () => {
   return res.data;
 };
 
-export const refreshToken = async () => {
-  const res = await apiClient.post('/auth/refresh');
-  return res.data;
-};
-
-export default {
+const authAPI = {
   login,
   register,
-  requestRegisterOTP,
-  verifyRegisterOTP,
-  getMe,
-  changePassword,
-  forgotPassword,
-  resetPasswordWithOTP,
+  refresh,
   logout,
-  refreshToken,
+  getMe: async () => {
+    const res = await apiClient.get('/auth/me');
+    return res.data;
+  },
 };
+
+export default authAPI;
