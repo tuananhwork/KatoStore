@@ -6,14 +6,15 @@ import { handleError } from '../utils/toast';
 
 const RegisterForm = ({ onSwitch }) => {
   const [formData, setFormData] = useState({
-    name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     password: '',
     confirmPassword: '',
     otp: '',
   });
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [, setError] = useState('');
   const [sendingOTP, setSendingOTP] = useState(false);
   const [otpCooldown, setOtpCooldown] = useState(0); // seconds
   const navigate = useNavigate();
@@ -51,6 +52,12 @@ const RegisterForm = ({ onSwitch }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    if (!formData.firstName.trim() || !formData.lastName.trim()) {
+      const msg = 'Vui lòng nhập đầy đủ Họ và Tên';
+      setError(msg);
+      toast.error(msg);
+      return;
+    }
     if (formData.password !== formData.confirmPassword) {
       const msg = 'Mật khẩu xác nhận không khớp';
       setError(msg);
@@ -63,8 +70,9 @@ const RegisterForm = ({ onSwitch }) => {
     }
     setLoading(true);
     try {
+      const fullName = `${formData.firstName} ${formData.lastName}`.trim();
       const data = await authAPI.verifyRegisterOTP({
-        name: formData.name,
+        name: fullName,
         email: formData.email,
         password: formData.password,
         otp: formData.otp,
@@ -88,21 +96,40 @@ const RegisterForm = ({ onSwitch }) => {
   return (
     <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
       <form className="space-y-6" onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-            Họ và tên
-          </label>
-          <div className="mt-1">
-            <input
-              id="name"
-              name="name"
-              type="text"
-              required
-              value={formData.name}
-              onChange={handleChange}
-              className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
-              placeholder="Nhập họ và tên"
-            />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <div>
+            <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
+              Họ
+            </label>
+            <div className="mt-1">
+              <input
+                id="firstName"
+                name="firstName"
+                type="text"
+                required
+                value={formData.firstName}
+                onChange={handleChange}
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                placeholder="Nhập họ"
+              />
+            </div>
+          </div>
+          <div>
+            <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
+              Tên
+            </label>
+            <div className="mt-1">
+              <input
+                id="lastName"
+                name="lastName"
+                type="text"
+                required
+                value={formData.lastName}
+                onChange={handleChange}
+                className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md placeholder-gray-400 focus:outline-none focus:ring-pink-500 focus:border-pink-500 sm:text-sm"
+                placeholder="Nhập tên"
+              />
+            </div>
           </div>
         </div>
 

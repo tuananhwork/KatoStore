@@ -7,9 +7,12 @@ import paymentAPI from '../api/paymentAPI';
 import { toast } from 'react-toastify';
 import { formatVnd } from '../utils/helpers';
 import { handleError } from '../utils/toast';
+import authAPI from '../api/authAPI';
+import { useAuth } from '../hooks/useAuth';
 
 const Checkout = () => {
   const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
   const [loading, setLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [paymentMethod, setPaymentMethod] = useState('cod');
@@ -49,6 +52,38 @@ const Checkout = () => {
       setCartLoaded(true);
     })();
   }, []);
+
+  // Prefill form from user profile (only fill empty fields)
+  useEffect(() => {
+    let mounted = true;
+    const prefill = (u) => {
+      if (!u) return;
+      setFormData((prev) => ({
+        ...prev,
+        firstName: prev.firstName || u.firstName || '',
+        lastName: prev.lastName || u.lastName || '',
+        email: prev.email || u.email || '',
+        phone: prev.phone || u.phone || '',
+        address: prev.address || u.address?.street || '',
+        city: prev.city || u.address?.city || '',
+        zipCode: prev.zipCode || u.address?.postalCode || '',
+        country: prev.country || u.address?.country || 'Vietnam',
+      }));
+    };
+    (async () => {
+      if (!isLoggedIn) return;
+      try {
+        const u = await authAPI.getMe();
+        if (!mounted) return;
+        prefill(u);
+      } catch {
+        // ignore prefill errors
+      }
+    })();
+    return () => {
+      mounted = false;
+    };
+  }, [isLoggedIn]);
 
   // Reset confirmation checkbox whenever step changes
   useEffect(() => {
@@ -292,30 +327,32 @@ const Checkout = () => {
                     </div>
                   </div>
 
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
-                      placeholder="Nhập email"
-                    />
-                  </div>
+                  <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                      <input
+                        type="email"
+                        name="email"
+                        value={formData.email}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                        placeholder="Nhập email"
+                      />
+                    </div>
 
-                  <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại *</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone}
-                      onChange={handleInputChange}
-                      required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
-                      placeholder="Nhập số điện thoại"
-                    />
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại *</label>
+                      <input
+                        type="tel"
+                        name="phone"
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                        required
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                        placeholder="Nhập số điện thoại"
+                      />
+                    </div>
                   </div>
 
                   <div className="mt-4">

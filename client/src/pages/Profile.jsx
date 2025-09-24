@@ -25,9 +25,14 @@ const Profile = () => {
 
   const [userInfo, setUserInfo] = useState({
     name: '',
+    firstName: '',
+    lastName: '',
     email: '',
     phone: '',
-    address: '',
+    addressStreet: '',
+    city: '',
+    postalCode: '',
+    country: 'Vietnam',
     dateOfBirth: '',
     gender: 'other',
     avatar: '/images/Avatar/avt.jpg',
@@ -62,12 +67,17 @@ const Profile = () => {
         setUserInfo((prev) => ({
           ...prev,
           name: u.name || prev.name,
+          firstName: u.firstName || prev.firstName,
+          lastName: u.lastName || prev.lastName,
           email: u.email || prev.email,
           phone: u.phone || '',
           avatar: u.avatar || prev.avatar,
           dateOfBirth: u.dateOfBirth ? String(u.dateOfBirth).slice(0, 10) : '',
           gender: u.gender || 'other',
-          address: u.address?.street || prev.address,
+          addressStreet: u.address?.street || prev.addressStreet,
+          city: u.address?.city || prev.city,
+          postalCode: u.address?.postalCode || prev.postalCode,
+          country: u.address?.country || prev.country,
         }));
       } catch (err) {
         handleError(err, 'Không thể tải thông tin người dùng');
@@ -158,27 +168,41 @@ const Profile = () => {
     setLoading(true);
     try {
       const payload = {
-        name: userInfo.name,
+        name: userInfo.name || `${userInfo.firstName} ${userInfo.lastName}`.trim(),
+        firstName: userInfo.firstName || undefined,
+        lastName: userInfo.lastName || undefined,
         phone: userInfo.phone || undefined,
         avatar: userInfo.avatar || undefined,
         dateOfBirth: userInfo.dateOfBirth || undefined,
         gender: userInfo.gender,
-        address: userInfo.address ? { street: userInfo.address } : undefined,
+        address:
+          userInfo.addressStreet || userInfo.city || userInfo.postalCode || userInfo.country
+            ? {
+                street: userInfo.addressStreet || undefined,
+                city: userInfo.city || undefined,
+                postalCode: userInfo.postalCode || undefined,
+                country: userInfo.country || undefined,
+              }
+            : undefined,
       };
       const res = await apiClient.patch(`/auth/me`, payload);
       const u = res.data || {};
       setUserInfo((prev) => ({
         ...prev,
         name: u.name || prev.name,
+        firstName: u.firstName || prev.firstName,
+        lastName: u.lastName || prev.lastName,
         email: u.email || prev.email,
         phone: u.phone || '',
         avatar: u.avatar || prev.avatar,
         dateOfBirth: u.dateOfBirth ? String(u.dateOfBirth).slice(0, 10) : '',
         gender: u.gender || 'other',
-        address: u.address?.street || prev.address,
+        addressStreet: u.address?.street || prev.addressStreet,
+        city: u.address?.city || prev.city,
+        postalCode: u.address?.postalCode || prev.postalCode,
+        country: u.address?.country || prev.country,
       }));
 
-      // FIXED: Use setTimeout to avoid immediate re-render
       setTimeout(() => {
         syncAuth();
       }, 0);
@@ -362,7 +386,31 @@ const Profile = () => {
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Họ và tên</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Họ</label>
+                      <input
+                        type="text"
+                        name="firstName"
+                        value={userInfo.firstName}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Tên</label>
+                      <input
+                        type="text"
+                        name="lastName"
+                        value={userInfo.lastName}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                      />
+                    </div>
+
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Họ và tên (hiển thị)</label>
                       <input
                         type="text"
                         name="name"
@@ -386,14 +434,14 @@ const Profile = () => {
                     </div>
 
                     <div>
-                      <label className="block text_sm font-medium text-gray-700 mb-2">Số điện thoại</label>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
                       <input
                         type="tel"
                         name="phone"
                         value={userInfo.phone}
                         onChange={handleInputChange}
                         disabled={!isEditing}
-                        className="w_full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
                       />
                     </div>
 
@@ -425,16 +473,54 @@ const Profile = () => {
                     </div>
                   </div>
 
-                  <div className="mt-6">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ</label>
-                    <textarea
-                      name="address"
-                      value={userInfo.address}
-                      onChange={handleInputChange}
-                      disabled={!isEditing}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                    />
+                  <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div className="md:col-span-2">
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ (số nhà, đường)</label>
+                      <input
+                        type="text"
+                        name="addressStreet"
+                        value={userInfo.addressStreet}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Thành phố</label>
+                      <input
+                        type="text"
+                        name="city"
+                        value={userInfo.city}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Mã bưu điện</label>
+                      <input
+                        type="text"
+                        name="postalCode"
+                        value={userInfo.postalCode}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">Quốc gia</label>
+                      <select
+                        name="country"
+                        value={userInfo.country}
+                        onChange={handleInputChange}
+                        disabled={!isEditing}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                      >
+                        <option value="Vietnam">Việt Nam</option>
+                        <option value="USA">Hoa Kỳ</option>
+                        <option value="UK">Anh</option>
+                      </select>
+                    </div>
                   </div>
                 </div>
               </div>

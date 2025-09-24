@@ -204,7 +204,7 @@ exports.logout = async (req, res, next) => {
 exports.me = async (req, res, next) => {
   try {
     const user = await User.findById(req.user.sub).select(
-      '_id name email role phone avatar dateOfBirth gender address'
+      '_id name firstName lastName email role phone avatar dateOfBirth gender address'
     );
     if (!user) return res.status(401).json({ message: 'Unauthorized' });
     return res.json(user);
@@ -232,21 +232,31 @@ function extractPublicIdFromUrl(url) {
 exports.updateMe = async (req, res, next) => {
   try {
     const userId = req.user.sub;
-    const { name, phone, avatar, dateOfBirth, gender, address } = req.body;
+    const { name, firstName, lastName, phone, avatar, dateOfBirth, gender, address } = req.body;
 
     const current = await User.findById(userId).select('avatar');
 
     const update = {};
     if (typeof name === 'string') update.name = name;
+    if (typeof firstName === 'string') update.firstName = firstName;
+    if (typeof lastName === 'string') update.lastName = lastName;
     if (typeof phone === 'string') update.phone = phone;
     if (typeof avatar === 'string') update.avatar = avatar;
     if (gender && ['male', 'female', 'other'].includes(gender)) update.gender = gender;
     if (dateOfBirth) update.dateOfBirth = new Date(dateOfBirth);
     if (address && typeof address === 'object') update.address = address;
 
+    // Optional: if name is not provided but first/last are, keep name in sync
+    if (!('name' in req.body) && (update.firstName || update.lastName)) {
+      const fn = update.firstName ?? '';
+      const ln = update.lastName ?? '';
+      const full = `${fn} ${ln}`.trim();
+      if (full) update.name = full;
+    }
+
     const updated = await User.findByIdAndUpdate(userId, update, {
       new: true,
-      select: '_id name email role phone avatar dateOfBirth gender address',
+      select: '_id name firstName lastName email role phone avatar dateOfBirth gender address',
     });
     if (!updated) return res.status(404).json({ message: 'User not found' });
 

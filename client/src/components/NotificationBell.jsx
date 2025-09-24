@@ -9,21 +9,12 @@ const NotificationBell = ({ isLoggedIn, userRole }) => {
   const [notifs, setNotifs] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
 
-  const sseRef = useRef(null);
-  const tokenRef = useRef(null);
   const navigate = useNavigate();
 
   // Use shared click outside hook
   const notifRef = useClickOutside(() => setNotifOpen(false));
 
-  const syncTokenFromStorage = () => {
-    try {
-      const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-      tokenRef.current = token;
-    } catch {
-      tokenRef.current = null;
-    }
-  };
+  const pollingRef = useRef(null);
 
   const loadNotifications = async () => {
     if (!isLoggedIn) return;
@@ -37,48 +28,29 @@ const NotificationBell = ({ isLoggedIn, userRole }) => {
     }
   };
 
-  const startSse = () => {
-    if (!tokenRef.current || sseRef.current) return;
-    try {
-      const es = notificationAPI.openStream(tokenRef.current);
-      es.onmessage = (ev) => {
-        try {
-          const payload = JSON.parse(ev.data);
-          if (payload?.type === 'notification') {
-            const newItems = Array.isArray(payload.items) ? payload.items : [payload.items].filter(Boolean);
-            if (newItems.length) {
-              setNotifs((prev) => [...newItems, ...prev].slice(0, 50));
-              setUnreadCount((c) => c + newItems.filter((n) => !n.read).length);
-            }
-          }
-        } catch {
-          // ignore
-        }
-      };
-      es.onerror = () => {
-        try {
-          es.close();
-        } catch {
-          /* noop */
-        }
-        sseRef.current = null;
-      };
-      sseRef.current = es;
-    } catch {
-      sseRef.current = null;
+  const clearPolling = () => {
+    if (pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
     }
   };
 
-  const stopSse = () => {
-    if (sseRef.current) {
-      try {
-        sseRef.current.close();
-      } catch {
-        /* noop */
-      }
-      sseRef.current = null;
+  useEffect(() => {
+    if (isLoggedIn) {
+      // initial fetch
+      loadNotifications();
+      // start polling every 15s
+      clearPolling();
+      pollingRef.current = setInterval(loadNotifications, 15000);
+    } else {
+      clearPolling();
+      setNotifs([]);
+      setUnreadCount(0);
     }
-  };
+    return () => {
+      clearPolling();
+    };
+  }, [isLoggedIn]);
 
   const markRead = async (id) => {
     try {
@@ -99,21 +71,6 @@ const NotificationBell = ({ isLoggedIn, userRole }) => {
       navigate('/profile?tab=orders');
     }
   };
-
-  useEffect(() => {
-    syncTokenFromStorage();
-    if (isLoggedIn) {
-      loadNotifications();
-      startSse();
-    } else {
-      stopSse();
-      setNotifs([]);
-      setUnreadCount(0);
-    }
-    return () => {
-      stopSse();
-    };
-  }, [isLoggedIn]);
 
   return (
     <div className="relative" ref={notifRef}>

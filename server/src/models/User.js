@@ -8,6 +8,7 @@ const AddressSchema = new mongoose.Schema(
     district: { type: String, trim: true },
     city: { type: String, trim: true },
     postalCode: { type: String, trim: true },
+    country: { type: String, trim: true, default: 'Vietnam' },
   },
   { _id: false }
 );
@@ -15,6 +16,8 @@ const AddressSchema = new mongoose.Schema(
 const UserSchema = new mongoose.Schema(
   {
     name: { type: String, required: true, trim: true },
+    firstName: { type: String, trim: true },
+    lastName: { type: String, trim: true },
     email: {
       type: String,
       required: true,
