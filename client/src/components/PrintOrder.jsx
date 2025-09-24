@@ -126,6 +126,7 @@ const PrintOrder = ({ order, skuToStockLeft = {} }) => {
 
           <div className="no-print" style={{ marginTop: 16, textAlign: 'right' }}>
             <button
+              id="printBtn"
               onClick={() => window.print()}
               style={{
                 padding: '8px 12px',
@@ -140,6 +141,27 @@ const PrintOrder = ({ order, skuToStockLeft = {} }) => {
             </button>
           </div>
         </div>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function(){
+                function onReady(fn){
+                  if(document.readyState === 'complete' || document.readyState === 'interactive'){ fn(); }
+                  else { document.addEventListener('DOMContentLoaded', fn); }
+                }
+                onReady(function(){
+                  var btn = document.getElementById('printBtn');
+                  if (btn && !btn.__bound) {
+                    btn.addEventListener('click', function(){ try { window.print(); } catch(e){} });
+                    btn.__bound = true;
+                  }
+                  setTimeout(function(){ try { window.print(); } catch(e){} }, 300);
+                });
+                window.addEventListener('afterprint', function(){ try { window.close(); } catch(e){} });
+              })();
+            `,
+          }}
+        />
       </body>
     </html>
   );

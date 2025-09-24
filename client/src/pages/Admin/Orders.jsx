@@ -87,6 +87,13 @@ const Orders = () => {
       // ignore
     }
     win.focus();
+    win.onload = () => {
+      try {
+        win.print();
+      } catch {
+        // ignore print errors
+      }
+    };
   };
 
   if (loading) {
