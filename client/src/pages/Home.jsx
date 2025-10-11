@@ -1,10 +1,10 @@
 import React, { useCallback } from 'react';
 import { Link } from 'react-router-dom';
-import ProductCard from '../components/ProductCard';
 import productAPI from '../api/productAPI';
 import Spinner from '../components/Spinner';
 import { parseApiResponse } from '../utils/helpers';
 import { useApiState } from '../hooks/useApi';
+import ProductsGrid from '../components/ProductsGrid';
 
 const Home = () => {
   // Memoize the API function to prevent re-creation on every render
@@ -96,11 +96,7 @@ const Home = () => {
               <p className="text-gray-500">Không thể tải sản phẩm. Vui lòng thử lại sau.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
-                <ProductCard key={product.sku} product={product} />
-              ))}
-            </div>
+            <ProductsGrid products={featuredProducts} />
           )}
 
           <div className="text-center mt-12">

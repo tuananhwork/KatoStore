@@ -14,6 +14,7 @@ import {
   filterSizesByColor,
 } from '../utils/variants';
 import { useAuth } from '../hooks/useAuth';
+import QuantityInput from '../components/QuantityInput';
 
 const ProductDetail = () => {
   const { id } = useParams();
@@ -136,8 +137,7 @@ const ProductDetail = () => {
     toast.success('Đã thêm vào giỏ hàng');
   };
 
-  const handleQuantityChange = (change) => {
-    const newQuantity = quantity + change;
+  const handleQuantityChange = (newQuantity) => {
     const maxStock = selectedVariantStock;
     if (newQuantity >= 1 && newQuantity <= maxStock) {
       setQuantity(newQuantity);
@@ -262,25 +262,13 @@ const ProductDetail = () => {
             <div className="mb-6">
               <h3 className="text-sm font-medium text-gray-900 mb-3">Số lượng:</h3>
               <div className="flex items-center space-x-3">
-                <button
-                  onClick={() => handleQuantityChange(-1)}
-                  disabled={quantity <= 1}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-pink-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                  </svg>
-                </button>
-                <span className="w-12 text-center font-medium">{quantity}</span>
-                <button
-                  onClick={() => handleQuantityChange(1)}
-                  disabled={quantity >= selectedVariantStock}
-                  className="w-10 h-10 rounded-full border border-gray-300 flex items-center justify-center hover:bg-pink-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                  </svg>
-                </button>
+                <QuantityInput
+                  value={quantity}
+                  onChange={handleQuantityChange}
+                  min={1}
+                  max={selectedVariantStock || 0}
+                  className=""
+                />
                 <span className="text-sm text-gray-500">({selectedVariantStock} có sẵn)</span>
               </div>
             </div>

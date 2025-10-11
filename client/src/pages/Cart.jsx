@@ -6,6 +6,9 @@ import { formatVnd } from '../utils/helpers';
 import { CART } from '../utils/constants';
 import productAPI from '../api/productAPI';
 import { getVariantStock } from '../utils/variants';
+import { calcTotals } from '../utils/pricing';
+import OrderSummary from '../components/OrderSummary';
+import QuantityInput from '../components/QuantityInput';
 
 const Cart = () => {
   const [loading, setLoading] = useState(true);
@@ -55,10 +58,7 @@ const Cart = () => {
 
   const getVariantStockForProduct = (sku, color, size) => getVariantStock(products[sku], color, size);
 
-  const subtotal = cartItems.reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
-  const shipping = subtotal > CART.FREE_SHIPPING_THRESHOLD ? 0 : CART.DEFAULT_SHIPPING;
-  const tax = Math.round(subtotal * CART.TAX_RATE);
-  const total = subtotal + shipping + tax;
+  const { subtotal, shipping, tax, total } = calcTotals(cartItems);
 
   if (loading) {
     return (
@@ -141,42 +141,14 @@ const Cart = () => {
                             </p>
                           </div>
                           <div className="flex items-center space-x-2">
-                            <button
-                              onClick={() =>
-                                updateQuantity(
-                                  item.key,
-                                  item.quantity - 1,
-                                  getVariantStockForProduct(item.sku, item.color, item.size)
-                                )
+                            <QuantityInput
+                              value={item.quantity}
+                              onChange={(q) =>
+                                updateQuantity(item.key, q, getVariantStockForProduct(item.sku, item.color, item.size))
                               }
-                              disabled={item.quantity <= 1}
-                              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 12H4" />
-                              </svg>
-                            </button>
-                            <span className="w-12 text-center text-sm font-medium">{item.quantity}</span>
-                            <button
-                              onClick={() =>
-                                updateQuantity(
-                                  item.key,
-                                  item.quantity + 1,
-                                  getVariantStockForProduct(item.sku, item.color, item.size)
-                                )
-                              }
-                              disabled={item.quantity >= getVariantStockForProduct(item.sku, item.color, item.size)}
-                              className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-                            >
-                              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                <path
-                                  strokeLinecap="round"
-                                  strokeLinejoin="round"
-                                  strokeWidth={2}
-                                  d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-                                />
-                              </svg>
-                            </button>
+                              min={1}
+                              max={getVariantStockForProduct(item.sku, item.color, item.size)}
+                            />
                           </div>
                           <button
                             onClick={() => removeItem(item.key)}
@@ -195,29 +167,7 @@ const Cart = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 sticky top-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Tóm tắt đơn hàng</h2>
-              <div className="space-y-3">
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Tạm tính</span>
-                  <span className="font-medium">{formatVnd(subtotal)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Phí vận chuyển</span>
-                  <span className="font-medium">{shipping === 0 ? 'Miễn phí' : formatVnd(shipping)}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-600">Thuế (10%)</span>
-                  <span className="font-medium">{formatVnd(tax)}</span>
-                </div>
-                <div className="border-t border-gray-200 pt-3">
-                  <div className="flex justify-between">
-                    <span className="text-lg font-semibold text-gray-900">Tổng cộng</span>
-                    <span className="text-lg font-semibold text-gray-900">{formatVnd(total)}</span>
-                  </div>
-                </div>
-              </div>
-
+            <OrderSummary title="Tóm tắt đơn hàng" subtotal={subtotal} shipping={shipping} tax={tax} total={total}>
               {subtotal < CART.FREE_SHIPPING_THRESHOLD && (
                 <div className="mt-4 p-3 bg-blue-50 rounded-lg">
                   <p className="text-sm text-blue-800">
@@ -240,7 +190,7 @@ const Cart = () => {
                   Tiếp tục mua sắm
                 </Link>
               </div>
-            </div>
+            </OrderSummary>
           </div>
         </div>
       </div>

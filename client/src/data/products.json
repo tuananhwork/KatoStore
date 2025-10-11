@@ -149,6 +149,78 @@
     ]
   },
   {
+    "sku": "pan-0003",
+    "name": "Quần jogger dáng rộng unisex",
+    "description": "Quần jogger dáng rộng phong cách streetwear, chất liệu cotton pha spandex mềm mại, co giãn nhẹ, thoải mái khi vận động.",
+    "category": "Pants",
+    "price": 950000,
+    "stock": 40,
+    "media": [
+      {
+        "url": "/images/Pants/pan-0003_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Pants/pan-0003_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Pants/pan-0003_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Pants/pan-0003_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Black", "size": "S", "stock": 8 },
+      { "color": "Black", "size": "M", "stock": 10 },
+      { "color": "Black", "size": "L", "stock": 12 },
+      { "color": "Black", "size": "XL", "stock": 10 }
+    ]
+  },
+  {
+    "sku": "pan-0004",
+    "name": "Quần jogger bo gấu thể thao nam",
+    "description": "Quần jogger bo gấu phong cách thể thao, chất vải nỉ cotton pha polyester mềm mại, giữ ấm tốt và thấm hút mồ hôi hiệu quả.",
+    "category": "Pants",
+    "price": 920000,
+    "stock": 38,
+    "media": [
+      {
+        "url": "/images/Pants/pan-0004_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Pants/pan-0004_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Pants/pan-0004_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Pants/pan-0004_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Dark Gray", "size": "S", "stock": 8 },
+      { "color": "Dark Gray", "size": "M", "stock": 10 },
+      { "color": "Dark Gray", "size": "L", "stock": 10 },
+      { "color": "Dark Gray", "size": "XL", "stock": 10 }
+    ]
+  },
+  {
     "sku": "ski-0001",
     "name": "Chân váy midi hoa",
     "description": "Chân váy midi hoa, chất liệu chiffon mềm mại. Thiết kế nữ tính, phù hợp cho các dịp đặc biệt và dạo phố.",
@@ -257,6 +329,42 @@
     ]
   },
   {
+    "sku": "top-0002",
+    "name": "Áo thun cổ tròn unisex",
+    "description": "Áo thun cổ tròn dáng rộng, chất liệu cotton pha spandex co giãn nhẹ. Phù hợp mặc hằng ngày, phong cách trẻ trung và năng động.",
+    "category": "Tops",
+    "price": 320000,
+    "stock": 48,
+    "media": [
+      {
+        "url": "/images/Tops/top-0002_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Tops/top-0002_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Tops/top-0002_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Tops/top-0002_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Black", "size": "S", "stock": 10 },
+      { "color": "Black", "size": "M", "stock": 12 },
+      { "color": "Gray", "size": "L", "stock": 13 },
+      { "color": "Navy", "size": "XL", "stock": 13 }
+    ]
+  },
+  {
     "sku": "out-0001",
     "name": "Áo khoác bomber",
     "description": "Áo khoác bomber, chất liệu polyester chống nước. Thiết kế thể thao, phù hợp mùa đông và các hoạt động ngoài trời.",
@@ -316,6 +424,83 @@
       { "color": "Navy", "size": "M", "stock": 4 },
       { "color": "Navy", "size": "L", "stock": 4 },
       { "color": "Navy", "size": "XL", "stock": 4 }
+    ]
+  },
+  {
+    "sku": "out-0003",
+    "name": "Áo khoác gió dáng dài unisex",
+    "description": "Áo khoác gió dáng dài, chất liệu nylon chống nước, lót mỏng thoáng khí. Phù hợp đi mưa nhẹ hoặc mặc ngoài khi di chuyển hàng ngày.",
+    "category": "Outerwear",
+    "price": 1790000,
+    "stock": 25,
+    "media": [
+      {
+        "url": "/images/Outerwear/out-0003_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Outerwear/out-0003_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Outerwear/out-0003_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Outerwear/out-0003_4.jpg",
+        "type": "image",
+        "order": 4
+      }
+    ],
+    "variants": [
+      { "color": "Beige", "size": "S", "stock": 5 },
+      { "color": "Beige", "size": "M", "stock": 6 },
+      { "color": "Black", "size": "L", "stock": 7 },
+      { "color": "White", "size": "XL", "stock": 7 }
+    ]
+  },
+  {
+    "sku": "out-0004",
+    "name": "Áo khoác denim cổ điển",
+    "description": "Áo khoác denim cổ điển phong cách đường phố, chất liệu cotton denim dày dặn, dễ phối với nhiều trang phục khác nhau.",
+    "category": "Outerwear",
+    "price": 1650000,
+    "stock": 28,
+    "media": [
+      {
+        "url": "/images/Outerwear/out-0004_1.jpg",
+        "type": "image",
+        "order": 1
+      },
+      {
+        "url": "/images/Outerwear/out-0004_2.jpg",
+        "type": "image",
+        "order": 2
+      },
+      {
+        "url": "/images/Outerwear/out-0004_3.jpg",
+        "type": "image",
+        "order": 3
+      },
+      {
+        "url": "/images/Outerwear/out-0004_4.jpg",
+        "type": "image",
+        "order": 4
+      },
+      {
+        "url": "/images/Outerwear/out-0004_5.jpg",
+        "type": "image",
+        "order": 5
+      }
+    ],
+    "variants": [
+      { "color": "Blue", "size": "S", "stock": 6 },
+      { "color": "Blue", "size": "M", "stock": 8 },
+      { "color": "Green", "size": "L", "stock": 7 },
+      { "color": "Yellow", "size": "XL", "stock": 7 }
     ]
   },
   {
@@ -398,6 +583,49 @@
       { "color": "White", "size": "39", "stock": 6 },
       { "color": "White", "size": "40", "stock": 6 },
       { "color": "White", "size": "41", "stock": 6 }
+    ]
+  },
+  {
+    "sku": "sho-0002",
+    "name": "Giày thể thao cổ cao",
+    "description": "Giày sneaker cổ cao phong cách năng động, chất liệu da tổng hợp kết hợp vải mesh thoáng khí, phù hợp cả đi học và đi chơi.",
+    "category": "Shoes",
+    "price": 1490000,
+    "stock": 28,
+    "media": [
+      { "url": "/images/Shoes/sho-0002_1.jpg", "type": "image", "order": 1 },
+      { "url": "/images/Shoes/sho-0002_2.jpg", "type": "image", "order": 2 },
+      { "url": "/images/Shoes/sho-0002_3.jpg", "type": "image", "order": 3 },
+      { "url": "/images/Shoes/sho-0002_4.jpg", "type": "image", "order": 4 },
+      { "url": "/images/Shoes/sho-0002_5.jpg", "type": "image", "order": 5 },
+      { "url": "/images/Shoes/sho-0002_6.jpg", "type": "image", "order": 6 }
+    ],
+    "variants": [
+      { "color": "Black", "size": "39", "stock": 6 },
+      { "color": "Black", "size": "40", "stock": 6 },
+      { "color": "Gray", "size": "41", "stock": 8 },
+      { "color": "White", "size": "42", "stock": 8 }
+    ]
+  },
+  {
+    "sku": "sho-0003",
+    "name": "Giày chạy bộ nhẹ hơi",
+    "description": "Giày chạy bộ thiết kế nhẹ, đế EVA đàn hồi tốt, giúp giảm chấn và hỗ trợ di chuyển linh hoạt trong các hoạt động thể thao hàng ngày.",
+    "category": "Shoes",
+    "price": 1350000,
+    "stock": 26,
+    "media": [
+      { "url": "/images/Shoes/sho-0003_1.jpg", "type": "image", "order": 1 },
+      { "url": "/images/Shoes/sho-0003_2.jpg", "type": "image", "order": 2 },
+      { "url": "/images/Shoes/sho-0003_3.jpg", "type": "image", "order": 3 },
+      { "url": "/images/Shoes/sho-0003_4.jpg", "type": "image", "order": 4 },
+      { "url": "/images/Shoes/sho-0003_5.jpg", "type": "image", "order": 5 }
+    ],
+    "variants": [
+      { "color": "Blue", "size": "38", "stock": 6 },
+      { "color": "Blue", "size": "39", "stock": 6 },
+      { "color": "Green", "size": "40", "stock": 7 },
+      { "color": "Yellow", "size": "41", "stock": 7 }
     ]
   }
 ]

@@ -1,17 +1,18 @@
 import apiClient from './client';
 
 export const getProfile = async () => {
-  const res = await apiClient.get('/users/me');
+  const res = await apiClient.get('/auth/me');
   return res.data;
 };
 
 export const updateProfile = async (payload) => {
-  const res = await apiClient.put('/users/me', payload);
+  const res = await apiClient.patch('/auth/me', payload);
   return res.data;
 };
 
+// Prefer using authAPI.changePassword instead; kept for backward compatibility
 export const changePassword = async (payload) => {
-  const res = await apiClient.post('/users/change-password', payload);
+  const res = await apiClient.post('/auth/change-password', payload);
   return res.data;
 };
 
@@ -21,27 +22,9 @@ export const getUsers = async (params = {}) => {
   return res.data;
 };
 
-export const getUserById = async (id) => {
-  const res = await apiClient.get(`/admin/users/${id}`);
-  return res.data;
-};
-
-export const updateUser = async (id, payload) => {
-  const res = await apiClient.put(`/admin/users/${id}`, payload);
-  return res.data;
-};
-
-export const deleteUser = async (id) => {
-  const res = await apiClient.delete(`/admin/users/${id}`);
-  return res.data;
-};
-
 export default {
   getProfile,
   updateProfile,
   changePassword,
   getUsers,
-  getUserById,
-  updateUser,
-  deleteUser,
 };

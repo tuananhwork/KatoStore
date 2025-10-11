@@ -9,6 +9,8 @@ import { formatVnd } from '../utils/helpers';
 import { handleError } from '../utils/toast';
 import authAPI from '../api/authAPI';
 import { useAuth } from '../hooks/useAuth';
+import { calcTotals } from '../utils/pricing';
+import OrderSummary from '../components/OrderSummary';
 
 const Checkout = () => {
   const navigate = useNavigate();
@@ -102,10 +104,7 @@ const Checkout = () => {
   // Use formatVnd from utils/helpers
 
   const itemsArray = Array.isArray(cartItems) ? cartItems : [];
-  const subtotal = itemsArray.reduce((total, item) => total + (item.price || 0) * (item.quantity || 0), 0);
-  const shipping = subtotal > 2000000 ? 0 : 30000;
-  const tax = Math.round(subtotal * 0.1);
-  const total = subtotal + shipping + tax;
+  const { subtotal, shipping, tax, total } = calcTotals(itemsArray);
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -633,11 +632,7 @@ const Checkout = () => {
 
           {/* Order Summary */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow sticky top-8">
-              <div className="px-6 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-medium text-gray-900">Đơn hàng</h2>
-              </div>
-
+            <OrderSummary title="Đơn hàng" subtotal={subtotal} shipping={shipping} tax={tax} total={total}>
               <div className="p-6">
                 <div className="space-y-4 mb-6">
                   {cartItems.map((item, idx) => (
@@ -656,30 +651,8 @@ const Checkout = () => {
                     </div>
                   ))}
                 </div>
-
-                <div className="space-y-2 border-t border-gray-200 pt-4">
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Tạm tính:</span>
-                    <span className="font-medium">{formatVnd(subtotal)}</span>
-                  </div>
-
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Phí vận chuyển:</span>
-                    <span className="font-medium">{shipping === 0 ? 'Miễn phí' : formatVnd(shipping)}</span>
-                  </div>
-
-                  <div className="flex justify-between text-sm">
-                    <span className="text-gray-600">Thuế (10%):</span>
-                    <span className="font-medium">{formatVnd(tax)}</span>
-                  </div>
-
-                  <div className="flex justify-between text-lg font-semibold border-t border-gray-200 pt-2">
-                    <span>Tổng cộng:</span>
-                    <span>{formatVnd(total)}</span>
-                  </div>
-                </div>
               </div>
-            </div>
+            </OrderSummary>
           </div>
         </div>
       </div>

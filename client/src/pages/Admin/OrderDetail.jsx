@@ -5,6 +5,8 @@ import Spinner from '../../components/Spinner';
 import orderAPI from '../../api/orderAPI';
 import { formatVnd } from '../../utils/helpers';
 import { handleError } from '../../utils/toast';
+import OrderStatusBadge from '../../components/OrderStatusBadge';
+import OrderSummary from '../../components/OrderSummary';
 
 const OrderDetail = () => {
   const { id } = useParams();
@@ -79,7 +81,7 @@ const OrderDetail = () => {
             </div>
             <div>
               <div className="text-sm text-gray-500">Trạng thái</div>
-              <div className="font-medium capitalize">{order.status}</div>
+              <OrderStatusBadge status={order.status} />
             </div>
             <div>
               <div className="text-sm text-gray-500">Phương thức thanh toán</div>
@@ -165,24 +167,14 @@ const OrderDetail = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Tổng kết</h2>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="p-4 rounded-lg bg-gray-50 border">
-              <div className="text-sm text-gray-500">Tạm tính</div>
-              <div className="text-lg font-semibold">{formatVnd(order.subtotal || 0)}</div>
-            </div>
-            <div className="p-4 rounded-lg bg-gray-50 border">
-              <div className="text-sm text-gray-500">Thuế</div>
-              <div className="text-lg font-semibold">{formatVnd(order.tax || 0)}</div>
-            </div>
-            <div className="p-4 rounded-lg bg-gray-50 border">
-              <div className="text-sm text-gray-500">Phí vận chuyển</div>
-              <div className="text-lg font-semibold">{formatVnd(order.shipping || 0)}</div>
-            </div>
-          </div>
-          <div className="mt-4 text-right text-xl font-bold">Tổng cộng: {formatVnd(order.total || 0)}</div>
-        </div>
+        <OrderSummary
+          title="Tổng kết"
+          subtotal={order.subtotal || 0}
+          shipping={order.shipping || 0}
+          tax={order.tax || 0}
+          total={order.total || 0}
+          wrapperClassName="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+        />
       </div>
     </AdminLayout>
   );

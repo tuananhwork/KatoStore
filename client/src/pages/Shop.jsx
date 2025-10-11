@@ -1,9 +1,9 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import productAPI from '../api/productAPI';
-import ProductCard from '../components/ProductCard';
 import Spinner from '../components/Spinner';
 import Pagination from '../components/Pagination';
 import { parseApiResponse, normalizeText, calculatePagination } from '../utils/helpers';
+import ProductsGrid from '../components/ProductsGrid';
 
 const Shop = () => {
   const [loading, setLoading] = useState(true);
@@ -171,11 +171,10 @@ const Shop = () => {
             <p className="text-gray-500">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8">
-            {pageItems.map((product) => (
-              <ProductCard key={product.sku} product={product} />
-            ))}
-          </div>
+          <ProductsGrid
+            products={pageItems}
+            className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-8"
+          />
         )}
 
         {/* Pagination */}

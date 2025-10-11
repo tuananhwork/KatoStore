@@ -637,9 +637,6 @@ const Profile = () => {
                             <h4 className="font-medium text-gray-900">Đổi mật khẩu</h4>
                             <p className="text-sm text-gray-500">Cập nhật mật khẩu của bạn</p>
                           </div>
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
                         </div>
                       </button>
 
@@ -649,9 +646,6 @@ const Profile = () => {
                             <h4 className="font-medium text-gray-900">Xác thực 2 bước</h4>
                             <p className="text-sm text-gray-500">Bảo mật tài khoản với 2FA</p>
                           </div>
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                          </svg>
                         </div>
                       </button>
                     </div>
@@ -660,27 +654,31 @@ const Profile = () => {
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-4">Thông báo</h3>
                     <div className="space-y-4">
-                      <div className="flex items-center justify_between">
-                        <div>
-                          <h4 className="font-medium text-gray-900">Email thông báo</h4>
-                          <p className="text-sm text-gray-500">Nhận thông báo qua email</p>
-                        </div>
+                      <div className="flex items-center gap-4">
+                        {' '}
+                        {/* Removed justify_between for a more standard checkbox layout */}
                         <input
                           type="checkbox"
                           defaultChecked
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         />
+                        <div>
+                          <h4 className="font-medium text-gray-900">Email thông báo</h4>
+                          <p className="text-sm text-gray-500">Nhận thông báo qua email</p>
+                        </div>
                       </div>
 
-                      <div className="flex items-center justify_between">
-                        <div>
-                          <h4 className="font-medium text-gray-900">SMS thông báo</h4>
-                          <p className="text-sm text-gray-500">Nhận thông báo qua SMS</p>
-                        </div>
+                      <div className="flex items-center gap-4">
+                        {' '}
+                        {/* Removed justify_between for a more standard checkbox layout */}
                         <input
                           type="checkbox"
                           className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
                         />
+                        <div>
+                          <h4 className="font-medium text-gray-900">SMS thông báo</h4>
+                          <p className="text-sm text-gray-500">Nhận thông báo qua SMS</p>
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -693,9 +691,6 @@ const Profile = () => {
                           <h4 className="font-medium">Xóa tài khoản</h4>
                           <p className="text-sm">Xóa vĩnh viễn tài khoản của bạn</p>
                         </div>
-                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                        </svg>
                       </div>
                     </button>
                   </div>

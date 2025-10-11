@@ -20,6 +20,11 @@ export const logout = async () => {
   return res.data;
 };
 
+export const changePassword = async (payload) => {
+  const res = await apiClient.post('/auth/change-password', payload);
+  return res.data;
+};
+
 // OTP-based registration
 export const requestRegisterOTP = async (email) => {
   const res = await apiClient.post('/auth/register/request-otp', { email });
@@ -40,6 +45,7 @@ const authAPI = {
     const res = await apiClient.get('/auth/me');
     return res.data;
   },
+  changePassword,
   requestRegisterOTP,
   verifyRegisterOTP,
 };
