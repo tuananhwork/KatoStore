@@ -155,7 +155,7 @@ const ProductDetail = () => {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <nav className="flex items-center space-x-2 text-sm text-gray-500 mb-8">
+        <nav className="flex items-center space-x-2 text-sm text-[rgb(var(--color-text-light))] mb-8">
           <Link to="/" className="hover:text-[rgb(var(--color-primary))]">
             Trang chủ
           </Link>
@@ -164,29 +164,32 @@ const ProductDetail = () => {
             Cửa hàng
           </Link>
           <span>/</span>
-          <span className="text-gray-900">{product.name}</span>
+          <span className="text-[rgb(var(--color-text))]">{product.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
           <div>
             <div className="mb-4">
-              <img
-                src={mediaImages[selectedImage]?.url || mediaImages[0]?.url || '/api/placeholder/600/600'}
-                alt={product.name}
-                className="w-full h-96 object-cover rounded-lg shadow-lg"
-              />
+              <div className="w-full aspect-square overflow-hidden rounded-lg shadow-lg">
+                <img
+                  src={mediaImages[selectedImage]?.url || mediaImages[0]?.url || '/api/placeholder/600/600'}
+                  alt={product.name}
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
+
             {mediaImages.length > 1 && (
               <div className="grid grid-cols-5 gap-3">
                 {mediaImages.map((m, idx) => (
                   <button
                     key={m.url}
                     onClick={() => setSelectedImage(idx)}
-                    className={`border rounded overflow-hidden focus:outline-none focus:ring-2 focus:ring-pink-500 ${
+                    className={`aspect-square border rounded overflow-hidden focus:outline-none focus:ring-2 focus:ring-pink-500 ${
                       selectedImage === idx ? 'ring-2 ring-pink-600' : ''
                     }`}
                   >
-                    <img src={m.url} alt={`thumb-${idx + 1}`} className="w-full h-20 object-cover" />
+                    <img src={m.url} alt={`thumb-${idx + 1}`} className="w-full h-full object-cover" />
                   </button>
                 ))}
               </div>
@@ -195,17 +198,22 @@ const ProductDetail = () => {
 
           <div>
             <div className="mb-4">
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{product.name}</h1>
+              <h1 className="text-3xl font-bold text-[rgb(var(--color-text))] mb-2">{product.name}</h1>
+
               <div className="flex items-center mb-4">
-                <span className="text-sm text-gray-500 ml-2">SKU: {product.sku}</span>
+                <span className="text-sm text-[rgb(var(--color-text-muted))] ml-2">SKU: {product.sku}</span>
               </div>
+
               <div className="flex items-center space-x-4 mb-6">
-                <span className="text-3xl font-bold text-gray-900">{formatVnd(product.price)}</span>
+                <span className="text-3xl font-bold text-[rgb(var(--color-text))]">{formatVnd(product.price)}</span>
+
                 {product.originalPrice > product.price && (
                   <>
-                    <span className="text-xl text-gray-500 line-through">{formatVnd(product.originalPrice)}</span>
+                    <span className="text-xl text-[rgb(var(--color-text-muted))] line-through">
+                      {formatVnd(product.originalPrice)}
+                    </span>
                     {product.discount ? (
-                      <span className="bg-pink-100 text-pink-800 text-sm font-medium px-2 py-1 rounded">
+                      <span className="bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))] text-sm font-medium px-2 py-1 rounded">
                         -{product.discount}%
                       </span>
                     ) : null}
@@ -217,16 +225,16 @@ const ProductDetail = () => {
             {/* Color Selection */}
             {allColors.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-900 mb-3">Màu sắc:</h3>
+                <h3 className="text-sm font-medium text-[rgb(var(--color-text))] mb-3">Màu sắc:</h3>
                 <div className="flex flex-wrap gap-2">
                   {colorsFiltered.map((color) => (
                     <button
                       key={color}
                       onClick={() => handleColorChange(color)}
-                      className={`px-3 py-1 rounded border text-sm ${
+                      className={`px-3 py-1 rounded border text-sm transition-colors ${
                         selectedColor === color
-                          ? 'border-pink-600 text-[rgb(var(--color-primary))] bg-pink-50'
-                          : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                          ? 'border-[rgb(var(--color-primary-600))] bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))]'
+                          : 'border-[rgb(var(--color-border))] text-[rgb(var(--color-text))] hover:border-[rgb(var(--color-primary-400))]'
                       }`}
                     >
                       {color}
@@ -239,16 +247,16 @@ const ProductDetail = () => {
             {/* Size Selection */}
             {allSizes.length > 0 && (
               <div className="mb-6">
-                <h3 className="text-sm font-medium text-gray-900 mb-3">Kích thước:</h3>
+                <h3 className="text-sm font-medium text-[rgb(var(--color-text))] mb-3">Kích thước:</h3>
                 <div className="flex flex-wrap gap-2">
                   {sizesFiltered.map((size) => (
                     <button
                       key={size}
                       onClick={() => handleSizeChange(size)}
-                      className={`px-3 py-1 rounded border text-sm ${
+                      className={`px-3 py-1 rounded border text-sm transition-colors ${
                         selectedSize === size
-                          ? 'border-pink-600 text-[rgb(var(--color-primary))] bg-pink-50'
-                          : 'border-gray-300 text-gray-700 hover:border-gray-400'
+                          ? 'border-[rgb(var(--color-primary-600))] bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))]'
+                          : 'border-[rgb(var(--color-border))] text-[rgb(var(--color-text))] hover:border-[rgb(var(--color-primary-400))]'
                       }`}
                     >
                       {size}
@@ -260,16 +268,15 @@ const ProductDetail = () => {
 
             {/* Quantity Selection */}
             <div className="mb-6">
-              <h3 className="text-sm font-medium text-gray-900 mb-3">Số lượng:</h3>
+              <h3 className="text-sm font-medium text-[rgb(var(--color-text))] mb-3">Số lượng:</h3>
               <div className="flex items-center space-x-3">
                 <QuantityInput
                   value={quantity}
                   onChange={handleQuantityChange}
                   min={1}
                   max={selectedVariantStock || 0}
-                  className=""
                 />
-                <span className="text-sm text-gray-500">({selectedVariantStock} có sẵn)</span>
+                <span className="text-sm text-[rgb(var(--color-text-muted))]">({selectedVariantStock} có sẵn)</span>
               </div>
             </div>
 
@@ -285,17 +292,17 @@ const ProductDetail = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow mb-16">
-          <div className="border-b border-gray-200">
+        <div className="bg-[rgb(var(--color-bg))] rounded-lg shadow mb-16">
+          <div className="border-b border-[rgb(var(--color-border))]">
             <nav className="flex space-x-8 px-4">
               {['description', 'specifications'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                     activeTab === tab
-                      ? 'border-pink-600 text-[rgb(var(--color-primary))]'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                      ? 'border-[rgb(var(--color-primary-600))] text-[rgb(var(--color-primary-700))]'
+                      : 'border-transparent text-[rgb(var(--color-text-muted))] hover:text-[rgb(var(--color-text))] hover:border-[rgb(var(--color-border))]'
                   }`}
                 >
                   {tab === 'description' && 'Mô tả'}
@@ -304,17 +311,21 @@ const ProductDetail = () => {
               ))}
             </nav>
           </div>
+
           <div className="p-6">
-            {activeTab === 'description' && <p className="text-gray-700 leading-relaxed">{product.description}</p>}
+            {activeTab === 'description' && (
+              <p className="text-[rgb(var(--color-text))] leading-relaxed">{product.description}</p>
+            )}
+
             {activeTab === 'specifications' && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="font-medium text-gray-600">Thương hiệu:</span>
-                  <span className="text-gray-900">{product.brand || 'N/A'}</span>
+                <div className="flex justify-between py-2 border-b border-[rgb(var(--color-border))]">
+                  <span className="font-medium text-[rgb(var(--color-text-light))]">Thương hiệu:</span>
+                  <span className="text-[rgb(var(--color-text))]">{product.brand || 'N/A'}</span>
                 </div>
-                <div className="flex justify-between py-2 border-b border-gray-100">
-                  <span className="font-medium text-gray-600">Danh mục:</span>
-                  <span className="text-gray-900">{product.category}</span>
+                <div className="flex justify-between py-2 border-b border-[rgb(var(--color-border))]">
+                  <span className="font-medium text-[rgb(var(--color-text-light))]">Danh mục:</span>
+                  <span className="text-[rgb(var(--color-text))]">{product.category}</span>
                 </div>
               </div>
             )}
@@ -322,7 +333,7 @@ const ProductDetail = () => {
         </div>
 
         <div>
-          <h2 className="text-2xl font-bold text-gray-900 mb-8">Sản phẩm liên quan</h2>
+          <h2 className="text-2xl font-bold text-[rgb(var(--color-text))] mb-8">Sản phẩm liên quan</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {relatedProducts.map((related) => (
               <ProductCard key={`${related.sku}`} product={related} />

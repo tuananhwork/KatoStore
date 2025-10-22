@@ -18,15 +18,15 @@ const QuantityInput = ({ value, onChange, min = 1, max = Infinity, className = '
     <button
       onClick={() => onChange(Math.max(min, (value || 0) - 1))}
       disabled={(value || 0) <= min}
-      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-8 h-8 rounded-full border border-[rgb(var(--color-border))] flex items-center justify-center hover:bg-[rgb(var(--color-bg-alt))] disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <IconMinus />
     </button>
-    <span className="w-12 text-center text-sm font-medium">{value}</span>
+    <span className="w-12 text-center text-sm font-medium text-[rgb(var(--color-text))]">{value}</span>
     <button
       onClick={() => onChange(Math.min(max, (value || 0) + 1))}
       disabled={(value || 0) >= max}
-      className="w-8 h-8 rounded-full border border-gray-300 flex items-center justify-center hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+      className="w-8 h-8 rounded-full border border-[rgb(var(--color-border))] flex items-center justify-center hover:bg-[rgb(var(--color-bg-alt))] disabled:opacity-50 disabled:cursor-not-allowed"
     >
       <IconPlus />
     </button>

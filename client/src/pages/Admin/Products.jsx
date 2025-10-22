@@ -188,7 +188,7 @@ const Products = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+            <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Tìm kiếm</label>
             <input
               type="text"
               placeholder="Tên sản phẩm, SKU..."
@@ -199,7 +199,7 @@ const Products = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+            <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Danh mục</label>
             <select
               value={category}
               onChange={(e) => setCategory(e.target.value)}
@@ -215,7 +215,7 @@ const Products = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Trạng thái</label>
+            <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Trạng thái</label>
             <select
               value={status}
               onChange={(e) => setStatus(e.target.value)}
@@ -228,7 +228,7 @@ const Products = () => {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Sắp xếp</label>
+            <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Sắp xếp</label>
             <select
               value={sortBy}
               onChange={(e) => setSortBy(e.target.value)}
@@ -247,10 +247,10 @@ const Products = () => {
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
           <div className="flex items-center justify-between">
-            <h2 className="text-lg font-semibold text-gray-900">Danh sách sản phẩm ({total})</h2>
+            <h2 className="text-lg font-semibold text-[rgb(var(--color-text))]">Danh sách sản phẩm ({total})</h2>
             <Link
               to="/admin/products/new"
-              className="bg-pink-600 text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors"
+              className="bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-light))] px-4 py-2 rounded-lg hover:bg-[rgb(var(--color-primary-600))] transition-colors"
             >
               Thêm sản phẩm
             </Link>
@@ -261,21 +261,25 @@ const Products = () => {
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Sản phẩm
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
+                  SKU
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Danh mục
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Giá</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
+                  Giá
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Tồn kho
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Trạng thái
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Thao tác
                 </th>
               </tr>
@@ -294,20 +298,26 @@ const Products = () => {
                           />
                         ) : (
                           <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
-                            <span className="text-gray-400 text-xs">No image</span>
+                            <span className="text-[rgb(var(--color-text-light))] text-xs">No image</span>
                           </div>
                         )}
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{product.name}</div>
-                        <div className="text-sm text-gray-500">{product.brand || 'N/A'}</div>
+                        <div className="text-sm font-medium text-[rgb(var(--color-text))]">{product.name}</div>
+                        <div className="text-sm text-[rgb(var(--color-text-light))]">{product.brand || 'N/A'}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.sku}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{product.category}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{formatVnd(product.price)}</td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{getTotalStock(product)}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">{product.sku}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">
+                    {product.category}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">
+                    {formatVnd(product.price)}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">
+                    {getTotalStock(product)}
+                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <button
                       onClick={() => handleToggleVisibility(product.sku)}
@@ -316,13 +326,13 @@ const Products = () => {
                         ${
                           product.isActive !== false
                             ? 'bg-green-100 text-green-800 hover:bg-green-200'
-                            : 'bg-red-100 text-red-800 hover:bg-red-200'
+                            : 'bg-red-100 text-[rgb(var(--color-error))] hover:bg-red-200'
                         }
                         group`}
                     >
                       {product.isActive !== false ? 'Hiển thị' : 'Ẩn'}
                       <span
-                        className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-white px-2 py-1 rounded text-xs
+                        className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-[rgb(var(--color-text-light))] px-2 py-1 rounded text-xs
                         opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap"
                       >
                         Bấm để thay đổi
@@ -333,11 +343,14 @@ const Products = () => {
                     <div className="flex space-x-2">
                       <Link
                         to={`/admin/products/${product.sku}`}
-                        className="text-[rgb(var(--color-primary))] hover:text-pink-900"
+                        className="text-[rgb(var(--color-primary))] hover:text-[rgb(var(--color-primary-700))]"
                       >
                         Sửa
                       </Link>
-                      <button onClick={() => handleDelete(product.sku)} className="text-red-600 hover:text-red-900">
+                      <button
+                        onClick={() => handleDelete(product.sku)}
+                        className="text-[rgb(var(--color-error))] hover:text-[rgb(var(--color-primary-700))]"
+                      >
                         Xóa
                       </button>
                     </div>

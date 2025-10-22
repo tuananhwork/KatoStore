@@ -16,11 +16,7 @@ const Layout = ({ children, showHeader = true, showFooter = true }) => {
       <main className="flex-1">{children}</main>
 
       {/* Footer */}
-      {showFooter && (
-        <footer className="mt-auto">
-          <Footer />
-        </footer>
-      )}
+      {showFooter && <Footer />}
     </div>
   );
 };

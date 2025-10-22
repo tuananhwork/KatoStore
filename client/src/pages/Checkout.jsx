@@ -243,8 +243,8 @@ const Checkout = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Thanh toán</h1>
-          <p className="text-gray-600 mt-2">Hoàn tất đơn hàng của bạn</p>
+          <h1 className="text-3xl font-bold text-[rgb(var(--color-text))]">Thanh toán</h1>
+          <p className="text-[rgb(var(--color-text-light))] mt-2">Hoàn tất đơn hàng của bạn</p>
         </div>
 
         {/* Progress Steps */}
@@ -255,8 +255,8 @@ const Checkout = () => {
                 <div
                   className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                     step >= stepItem.number
-                      ? 'bg-pink-600 border-pink-600 text-white'
-                      : 'bg-white border-gray-300 text-gray-500'
+                      ? 'bg-pink-600 border-pink-600 text-[rgb(var(--color-text-light))]'
+                      : 'bg-white border-gray-300 text-[rgb(var(--color-text-light))]'
                   }`}
                 >
                   {step > stepItem.number ? (
@@ -270,12 +270,14 @@ const Checkout = () => {
                 <div className="ml-3 hidden sm:block">
                   <p
                     className={`text-sm font-medium ${
-                      step >= stepItem.number ? 'text-[rgb(var(--color-primary))]' : 'text-gray-500'
+                      step >= stepItem.number
+                        ? 'text-[rgb(var(--color-primary))]'
+                        : 'text-[rgb(var(--color-text-light))]'
                     }`}
                   >
                     {stepItem.title}
                   </p>
-                  <p className="text-xs text-gray-500">{stepItem.description}</p>
+                  <p className="text-xs text-[rgb(var(--color-text-light))]">{stepItem.description}</p>
                 </div>
                 {index < steps.length - 1 && (
                   <div
@@ -296,11 +298,11 @@ const Checkout = () => {
               {/* Step 1: Shipping Information */}
               {step === 1 && (
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Thông tin giao hàng</h2>
+                  <h2 className="text-xl font-semibold text-[rgb(var(--color-text))] mb-6">Thông tin giao hàng</h2>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Họ *</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Họ *</label>
                       <input
                         type="text"
                         name="firstName"
@@ -313,7 +315,9 @@ const Checkout = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tên *</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                        Tên *
+                      </label>
                       <input
                         type="text"
                         name="lastName"
@@ -328,7 +332,9 @@ const Checkout = () => {
 
                   <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email *</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                        Email *
+                      </label>
                       <input
                         type="email"
                         name="email"
@@ -341,7 +347,9 @@ const Checkout = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại *</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                        Số điện thoại *
+                      </label>
                       <input
                         type="tel"
                         name="phone"
@@ -355,7 +363,9 @@ const Checkout = () => {
                   </div>
 
                   <div className="mt-4">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ *</label>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Địa chỉ *
+                    </label>
                     <input
                       type="text"
                       name="address"
@@ -369,7 +379,9 @@ const Checkout = () => {
 
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Thành phố *</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                        Thành phố *
+                      </label>
                       <input
                         type="text"
                         name="city"
@@ -382,7 +394,9 @@ const Checkout = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Mã bưu điện *</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                        Mã bưu điện *
+                      </label>
                       <input
                         type="text"
                         name="zipCode"
@@ -395,7 +409,9 @@ const Checkout = () => {
                     </div>
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Quốc gia *</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                        Quốc gia *
+                      </label>
                       <select
                         name="country"
                         value={formData.country}
@@ -414,7 +430,7 @@ const Checkout = () => {
               {/* Step 2: Payment Information */}
               {step === 2 && (
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Phương thức thanh toán</h2>
+                  <h2 className="text-xl font-semibold text-[rgb(var(--color-text))] mb-6">Phương thức thanh toán</h2>
 
                   <div className="space-y-4 mb-6">
                     <div className="flex items-center">
@@ -427,7 +443,7 @@ const Checkout = () => {
                         onChange={(e) => setPaymentMethod(e.target.value)}
                         className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
                       />
-                      <label htmlFor="cod" className="ml-3 text-sm font-medium text-gray-700">
+                      <label htmlFor="cod" className="ml-3 text-sm font-medium text-[rgb(var(--color-text-light))]">
                         Thanh toán khi nhận hàng (COD)
                       </label>
                     </div>
@@ -442,7 +458,7 @@ const Checkout = () => {
                         onChange={(e) => setPaymentMethod(e.target.value)}
                         className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
                       />
-                      <label htmlFor="vnpay" className="ml-3 text-sm font-medium text-gray-700">
+                      <label htmlFor="vnpay" className="ml-3 text-sm font-medium text-[rgb(var(--color-text-light))]">
                         VNPAY
                       </label>
                     </div>
@@ -457,7 +473,7 @@ const Checkout = () => {
                         onChange={(e) => setPaymentMethod(e.target.value)}
                         className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
                       />
-                      <label htmlFor="momo" className="ml-3 text-sm font-medium text-gray-700">
+                      <label htmlFor="momo" className="ml-3 text-sm font-medium text-[rgb(var(--color-text-light))]">
                         MOMO
                       </label>
                     </div>
@@ -472,7 +488,7 @@ const Checkout = () => {
                         onChange={(e) => setPaymentMethod(e.target.value)}
                         className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-pink-500 border-gray-300"
                       />
-                      <label htmlFor="card" className="ml-3 text-sm font-medium text-gray-700">
+                      <label htmlFor="card" className="ml-3 text-sm font-medium text-[rgb(var(--color-text-light))]">
                         Thẻ tín dụng hoặc ghi nợ
                       </label>
                     </div>
@@ -481,7 +497,9 @@ const Checkout = () => {
                   {paymentMethod === 'card' && (
                     <div className="space-y-4">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Số thẻ *</label>
+                        <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                          Số thẻ *
+                        </label>
                         <input
                           type="text"
                           name="cardNumber"
@@ -495,7 +513,9 @@ const Checkout = () => {
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">Ngày hết hạn *</label>
+                          <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                            Ngày hết hạn *
+                          </label>
                           <input
                             type="text"
                             name="expiryDate"
@@ -508,7 +528,9 @@ const Checkout = () => {
                         </div>
 
                         <div>
-                          <label className="block text-sm font-medium text-gray-700 mb-2">CVV *</label>
+                          <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                            CVV *
+                          </label>
                           <input
                             type="text"
                             name="cvv"
@@ -522,7 +544,9 @@ const Checkout = () => {
                       </div>
 
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-2">Tên trên thẻ *</label>
+                        <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                          Tên trên thẻ *
+                        </label>
                         <input
                           type="text"
                           name="cardName"
@@ -541,34 +565,36 @@ const Checkout = () => {
               {/* Step 3: Order Confirmation */}
               {step === 3 && (
                 <div className="bg-white rounded-lg shadow p-6">
-                  <h2 className="text-xl font-semibold text-gray-900 mb-6">Xác nhận đơn hàng</h2>
+                  <h2 className="text-xl font-semibold text-[rgb(var(--color-text))] mb-6">Xác nhận đơn hàng</h2>
 
                   <div className="space-y-6">
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">Thông tin giao hàng</h3>
+                      <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-3">Thông tin giao hàng</h3>
                       <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-[rgb(var(--color-text-light))]">
                           {formData.firstName} {formData.lastName}
                         </p>
-                        <p className="text-sm text-gray-700">{formData.email}</p>
-                        <p className="text-sm text-gray-700">{formData.phone}</p>
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-[rgb(var(--color-text-light))]">{formData.email}</p>
+                        <p className="text-sm text-[rgb(var(--color-text-light))]">{formData.phone}</p>
+                        <p className="text-sm text-[rgb(var(--color-text-light))]">
                           {formData.address}, {formData.city}, {formData.zipCode}, {formData.country}
                         </p>
                       </div>
                     </div>
 
                     <div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-3">Phương thức thanh toán</h3>
+                      <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-3">Phương thức thanh toán</h3>
                       <div className="bg-gray-50 p-4 rounded-lg">
-                        <p className="text-sm text-gray-700">
+                        <p className="text-sm text-[rgb(var(--color-text-light))]">
                           {paymentMethod === 'cod' && 'Thanh toán khi nhận hàng (COD)'}
                           {paymentMethod === 'vnpay' && 'VNPAY'}
                           {paymentMethod === 'momo' && 'MOMO'}
                           {paymentMethod === 'card' && 'Thẻ tín dụng/ghi nợ'}
                         </p>
                         {paymentMethod === 'card' && (
-                          <p className="text-sm text-gray-700">**** **** **** {formData.cardNumber.slice(-4)}</p>
+                          <p className="text-sm text-[rgb(var(--color-text-light))]">
+                            **** **** **** {formData.cardNumber.slice(-4)}
+                          </p>
                         )}
                       </div>
                     </div>
@@ -582,7 +608,9 @@ const Checkout = () => {
                         checked={confirmChecked}
                         onChange={(e) => setConfirmChecked(e.target.checked)}
                       />
-                      <span className="ml-2 text-sm text-gray-700">Tôi xác nhận thông tin đơn hàng là chính xác</span>
+                      <span className="ml-2 text-sm text-[rgb(var(--color-text-light))]">
+                        Tôi xác nhận thông tin đơn hàng là chính xác
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -594,7 +622,7 @@ const Checkout = () => {
                   <button
                     type="button"
                     onClick={handlePrevious}
-                    className="px-6 py-3 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-6 py-3 border border-gray-300 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     Quay lại
                   </button>
@@ -605,7 +633,7 @@ const Checkout = () => {
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors"
+                      className="px-6 py-3 bg-pink-600 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-pink-700 transition-colors"
                     >
                       Tiếp tục
                     </button>
@@ -613,7 +641,7 @@ const Checkout = () => {
                     <button
                       type="submit"
                       disabled={loading || !confirmChecked}
-                      className="px-6 py-3 bg-pink-600 text-white rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-6 py-3 bg-pink-600 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? (
                         <div className="flex items-center">
@@ -642,10 +670,10 @@ const Checkout = () => {
                     >
                       <img src={item.image} alt={item.name} className="w-12 h-12 object-cover rounded" />
                       <div className="flex-1">
-                        <p className="text-sm font-medium text-gray-900">{item.name}</p>
-                        <p className="text-sm text-gray-500">Số lượng: {item.quantity}</p>
+                        <p className="text-sm font-medium text-[rgb(var(--color-text))]">{item.name}</p>
+                        <p className="text-sm text-[rgb(var(--color-text-light))]">Số lượng: {item.quantity}</p>
                       </div>
-                      <p className="text-sm font-medium text-gray-900">
+                      <p className="text-sm font-medium text-[rgb(var(--color-text))]">
                         {formatVnd((item.price || 0) * (item.quantity || 0))}
                       </p>
                     </div>

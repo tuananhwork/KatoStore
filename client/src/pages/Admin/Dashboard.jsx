@@ -80,7 +80,12 @@ const Dashboard = () => {
           <div className="flex items-center">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-blue-100 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg
+                  className="w-5 h-5 text-[rgb(var(--color-primary))]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -91,8 +96,8 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Tổng đơn hàng</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalOrders}</p>
+              <p className="text-sm font-medium text-[rgb(var(--color-text-light))]">Tổng đơn hàng</p>
+              <p className="text-2xl font-semibold text-[rgb(var(--color-text))]">{stats.totalOrders}</p>
             </div>
           </div>
         </div>
@@ -112,17 +117,22 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Doanh thu</p>
-              <p className="text-2xl font-semibold text-gray-900">{formatVnd(stats.revenue)}</p>
+              <p className="text-sm font-medium text-[rgb(var(--color-text-light))]">Doanh thu</p>
+              <p className="text-2xl font-semibold text-[rgb(var(--color-text))]">{formatVnd(stats.revenue)}</p>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+        <div className="bg-[rgb(var(--color-bg))] rounded-lg shadow-sm border border-[rgb(var(--color-border))] p-6">
           <div className="flex items-center">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-purple-100 rounded-lg flex items-center justify-center">
-                <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <div className="w-8 h-8 bg-[rgb(var(--color-primary-100))] rounded-lg flex items-center justify-center">
+                <svg
+                  className="w-5 h-5 text-[rgb(var(--color-primary-600))]"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
@@ -133,8 +143,8 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Khách hàng</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalCustomers}</p>
+              <p className="text-sm font-medium text-[rgb(var(--color-text-muted))]">Khách hàng</p>
+              <p className="text-2xl font-semibold text-[rgb(var(--color-text))]">{stats.totalCustomers}</p>
             </div>
           </div>
         </div>
@@ -154,8 +164,8 @@ const Dashboard = () => {
               </div>
             </div>
             <div className="ml-4">
-              <p className="text-sm font-medium text-gray-600">Sản phẩm</p>
-              <p className="text-2xl font-semibold text-gray-900">{stats.totalProducts}</p>
+              <p className="text-sm font-medium text-[rgb(var(--color-text-light))]">Sản phẩm</p>
+              <p className="text-2xl font-semibold text-[rgb(var(--color-text))]">{stats.totalProducts}</p>
             </div>
           </div>
         </div>

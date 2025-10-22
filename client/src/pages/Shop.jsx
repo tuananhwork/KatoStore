@@ -90,15 +90,15 @@ const Shop = () => {
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Cửa hàng</h1>
-          <p className="text-gray-600">Khám phá các sản phẩm thời trang đẹp nhất</p>
+          <h1 className="text-3xl font-bold text-[rgb(var(--color-text))] mb-2">Cửa hàng</h1>
+          <p className="text-[rgb(var(--color-text-light))]">Khám phá các sản phẩm thời trang đẹp nhất</p>
         </div>
 
         {/* Filters */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Tìm kiếm</label>
+              <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Tìm kiếm</label>
               <input
                 type="text"
                 placeholder="Tên sản phẩm, SKU..."
@@ -109,7 +109,7 @@ const Shop = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Danh mục</label>
+              <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Danh mục</label>
               <select
                 value={filterCategory}
                 onChange={(e) => setFilterCategory(e.target.value)}
@@ -124,7 +124,7 @@ const Shop = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Sắp xếp</label>
+              <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Sắp xếp</label>
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value)}
@@ -138,7 +138,7 @@ const Shop = () => {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">Hiển thị</label>
+              <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Hiển thị</label>
               <select
                 value={pageSize}
                 onChange={(e) => setPageSize(Number(e.target.value))}
@@ -154,7 +154,7 @@ const Shop = () => {
 
         {/* Results */}
         <div className="mb-6">
-          <p className="text-gray-600">
+          <p className="text-[rgb(var(--color-text-light))]">
             Hiển thị {pagination.startIdx + 1}-{pagination.endIdx} trong tổng số {total} sản phẩm
           </p>
         </div>
@@ -166,9 +166,9 @@ const Shop = () => {
           </div>
         ) : pageItems.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">🔍</div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">Không tìm thấy sản phẩm</h3>
-            <p className="text-gray-500">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
+            <div className="text-[rgb(var(--color-text-light))] text-6xl mb-4">🔍</div>
+            <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-2">Không tìm thấy sản phẩm</h3>
+            <p className="text-[rgb(var(--color-text-light))]">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm</p>
           </div>
         ) : (
           <ProductsGrid

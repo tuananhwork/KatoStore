@@ -47,7 +47,7 @@ const OrderDetail = () => {
       <AdminLayout>
         <div className="p-6">
           <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
-            <h2 className="text-lg font-semibold text-gray-900 mb-2">Không tìm thấy đơn hàng</h2>
+            <h2 className="text-lg font-semibold text-[rgb(var(--color-text))] mb-2">Không tìm thấy đơn hàng</h2>
             <Link to="/admin/orders" className="text-[rgb(var(--color-primary))] hover:underline">
               Quay lại danh sách đơn hàng
             </Link>
@@ -65,75 +65,77 @@ const OrderDetail = () => {
       <div className="space-y-6">
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-900">Thông tin đơn hàng</h2>
+            <h2 className="text-lg font-semibold text-[rgb(var(--color-text))]">Thông tin đơn hàng</h2>
             <Link to="/admin/orders" className="text-sm text-[rgb(var(--color-primary))] hover:underline">
               ← Quay lại danh sách
             </Link>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <div className="text-sm text-gray-500">Mã đơn hàng</div>
+              <div className="text-sm text-[rgb(var(--color-text-light))]">Mã đơn hàng</div>
               <div className="font-medium">#{String(order._id).slice(-6)}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">Ngày đặt</div>
+              <div className="text-sm text-[rgb(var(--color-text-light))]">Ngày đặt</div>
               <div className="font-medium">{new Date(order.createdAt).toLocaleString('vi-VN')}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">Trạng thái</div>
+              <div className="text-sm text-[rgb(var(--color-text-light))]">Trạng thái</div>
               <OrderStatusBadge status={order.status} />
             </div>
             <div>
-              <div className="text-sm text-gray-500">Phương thức thanh toán</div>
+              <div className="text-sm text-[rgb(var(--color-text-light))]">Phương thức thanh toán</div>
               <div className="font-medium uppercase">{order.paymentMethod}</div>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Khách hàng & Giao hàng</h2>
+          <h2 className="text-lg font-semibold text-[rgb(var(--color-text))] mb-4">Khách hàng & Giao hàng</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <div className="text-sm text-gray-500">Khách hàng</div>
+              <div className="text-sm text-[rgb(var(--color-text-light))]">Khách hàng</div>
               <div className="font-medium">{shipping.fullName || 'N/A'}</div>
-              <div className="text-gray-700">{shipping.phone || 'N/A'}</div>
+              <div className="text-[rgb(var(--color-text-light))]">{shipping.phone || 'N/A'}</div>
             </div>
             <div>
-              <div className="text-sm text-gray-500">Địa chỉ giao hàng</div>
-              <div className="text-gray-700">{shipping.street || ''}</div>
-              <div className="text-gray-700">{shipping.city || ''}</div>
-              <div className="text-gray-700">{shipping.postalCode || ''}</div>
-              <div className="text-gray-700">{shipping.country || ''}</div>
+              <div className="text-sm text-[rgb(var(--color-text-light))]">Địa chỉ giao hàng</div>
+              <div className="text-[rgb(var(--color-text-light))]">{shipping.street || ''}</div>
+              <div className="text-[rgb(var(--color-text-light))]">{shipping.city || ''}</div>
+              <div className="text-[rgb(var(--color-text-light))]">{shipping.postalCode || ''}</div>
+              <div className="text-[rgb(var(--color-text-light))]">{shipping.country || ''}</div>
             </div>
           </div>
         </div>
 
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Sản phẩm</h2>
+          <h2 className="text-lg font-semibold text-[rgb(var(--color-text))] mb-4">Sản phẩm</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">#</th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
+                    #
+                  </th>
+                  <th className="px-4 py-2 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                     Sản phẩm
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                     SKU
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                     Màu
                   </th>
-                  <th className="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                     Size
                   </th>
-                  <th className="px-4 py-2 text-center text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-center text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                     SL
                   </th>
-                  <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-right text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                     Giá
                   </th>
-                  <th className="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  <th className="px-4 py-2 text-right text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                     Thành tiền
                   </th>
                 </tr>
@@ -141,8 +143,8 @@ const OrderDetail = () => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {items.map((it, idx) => (
                   <tr key={`${it.sku}-${idx}`}>
-                    <td className="px-4 py-2 text-sm text-gray-700">{idx + 1}</td>
-                    <td className="px-4 py-2 text-sm text-gray-900">
+                    <td className="px-4 py-2 text-sm text-[rgb(var(--color-text-light))]">{idx + 1}</td>
+                    <td className="px-4 py-2 text-sm text-[rgb(var(--color-text))]">
                       <div className="flex items-center space-x-3">
                         {it.image ? (
                           <img src={it.image} alt={it.name} className="w-10 h-10 object-cover rounded" />
@@ -152,12 +154,14 @@ const OrderDetail = () => {
                         </div>
                       </div>
                     </td>
-                    <td className="px-4 py-2 text-sm text-gray-700">{it.sku}</td>
-                    <td className="px-4 py-2 text-sm text-gray-700">{it.color || '-'}</td>
-                    <td className="px-4 py-2 text-sm text-gray-700">{it.size || '-'}</td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-center">{it.quantity}</td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-right">{formatVnd(it.price)}</td>
-                    <td className="px-4 py-2 text-sm text-gray-700 text-right">
+                    <td className="px-4 py-2 text-sm text-[rgb(var(--color-text-light))]">{it.sku}</td>
+                    <td className="px-4 py-2 text-sm text-[rgb(var(--color-text-light))]">{it.color || '-'}</td>
+                    <td className="px-4 py-2 text-sm text-[rgb(var(--color-text-light))]">{it.size || '-'}</td>
+                    <td className="px-4 py-2 text-sm text-[rgb(var(--color-text-light))] text-center">{it.quantity}</td>
+                    <td className="px-4 py-2 text-sm text-[rgb(var(--color-text-light))] text-right">
+                      {formatVnd(it.price)}
+                    </td>
+                    <td className="px-4 py-2 text-sm text-[rgb(var(--color-text-light))] text-right">
                       {formatVnd((it.price || 0) * (it.quantity || 0))}
                     </td>
                   </tr>

@@ -84,12 +84,12 @@ const Header = () => {
   };
 
   return (
-    <header className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-40">
+    <header className="bg-[rgb(var(--color-bg))] shadow-sm border-b border-[rgb(var(--color-primary)/0.2)] sticky top-0 z-40">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <div className="text-2xl font-bold text-[rgb(var(--color-primary))]">KatoStore</div>
+            <div className="text-2xl font-bold text-[rgb(var(--color-primary))]">KATO</div>
           </Link>
 
           {/* Right side */}
@@ -99,11 +99,11 @@ const Header = () => {
                 {/* Cart Icon */}
                 <Link
                   to="/cart"
-                  className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="relative p-2 text-[rgb(var(--color-text)/0.7)] hover:text-[rgb(var(--color-text))] hover:bg-[rgb(var(--color-primary)/0.1)] rounded-lg transition-colors"
                 >
                   <ShoppingCart className="w-6 h-6" />
                   {cartCount > 0 && (
-                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                    <span className="absolute -top-1 -right-1 bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-light))] text-xs rounded-full h-5 w-5 flex items-center justify-center">
                       {cartCount > 99 ? '99+' : cartCount}
                     </span>
                   )}
@@ -124,13 +124,13 @@ const Header = () => {
               <>
                 <Link
                   to="/auth?mode=login"
-                  className="bg-[rgb(var(--color-primary))] text-white px-4 py-2 rounded-lg hover:bg-pink-700 transition-colors"
+                  className="bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-light))] px-4 py-2 rounded-lg hover:bg-[rgb(var(--color-primary-600))] transition-colors"
                 >
                   Đăng nhập
                 </Link>
                 <Link
                   to="/auth?mode=register"
-                  className="text-[rgb(var(--color-primary))] border border-[rgb(var(--color-primary))] px-4 py-2 rounded-lg hover:bg-pink-700 hover:text-white transition-colors"
+                  className="text-[rgb(var(--color-primary))] border border-[rgb(var(--color-primary))] px-4 py-2 rounded-lg hover:bg-[rgb(var(--color-primary))] hover:text-[rgb(var(--color-text-light))] transition-colors"
                 >
                   Đăng ký
                 </Link>

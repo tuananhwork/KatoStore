@@ -20,12 +20,12 @@ const ProductCard = ({ product }) => {
   return (
     <div className="bg-white rounded-lg shadow-md hover:shadow-lg transition-shadow duration-300 overflow-hidden group">
       {/* Product Image */}
-      <div className="relative">
+      <div className="relative aspect-square overflow-hidden">
         <Link to={`/product/${sku}`}>
           <img
             src={imageUrl}
             alt={name}
-            className="w-full h-60 object-cover hover:scale-105 transition-transform duration-300"
+            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
           />
         </Link>
       </div>
@@ -33,7 +33,7 @@ const ProductCard = ({ product }) => {
       {/* Product Info */}
       <div className="p-4">
         <Link to={`/product/${sku}`}>
-          <h3 className="font-semibold text-gray-900 hover:text-[rgb(var(--color-primary))] transition-colors line-clamp-2">
+          <h3 className="font-semibold text-[rgb(var(--color-text))] hover:text-[rgb(var(--color-primary))] transition-colors line-clamp-2">
             {name}
           </h3>
         </Link>
@@ -44,7 +44,7 @@ const ProductCard = ({ product }) => {
             {[...Array(5)].map((_, i) => (
               <svg
                 key={i}
-                className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-gray-300'}`}
+                className={`w-4 h-4 ${i < rating ? 'text-yellow-400' : 'text-[rgb(var(--color-text-muted))]'}`}
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -52,13 +52,13 @@ const ProductCard = ({ product }) => {
               </svg>
             ))}
           </div>
-          <span className="text-sm text-gray-500 ml-1">({reviews})</span>
+          <span className="text-sm text-[rgb(var(--color-text-light))] ml-1">({reviews})</span>
         </div>
 
         {/* Price */}
         <div className="mt-3 flex items-center justify-between">
           <div className="flex items-center space-x-2">
-            <span className="text-lg font-bold text-gray-900">{formatVnd(price)}</span>
+            <span className="text-lg font-bold text-[rgb(var(--color-text))]">{formatVnd(price)}</span>
           </div>
         </div>
       </div>

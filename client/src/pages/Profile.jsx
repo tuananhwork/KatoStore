@@ -252,21 +252,22 @@ const Profile = () => {
   const getStatusBadge = (status) => {
     switch (status) {
       case 'pending':
-        return 'bg-pink-100 text-pink-800';
+        return 'bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-600))]';
       case 'processing':
-        return 'bg-yellow-100 text-yellow-800';
+        return 'bg-[rgb(var(--color-warning))]/10 text-[rgb(var(--color-warning))]';
       case 'shipped':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[rgb(var(--color-info))]/10 text-[rgb(var(--color-info))]';
       case 'delivered':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[rgb(var(--color-success))]/10 text-[rgb(var(--color-success))]';
       case 'cancelled':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[rgb(var(--color-error))]/10 text-[rgb(var(--color-error))]';
       case 'refunded':
-        return 'bg-purple-100 text-purple-800';
+        return 'bg-[rgb(var(--color-primary-100))] text-[rgb(var(--color-primary-700))]';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-[rgb(var(--color-bg-alt))] text-[rgb(var(--color-text-muted))]';
     }
   };
+
   const getStatusText = getOrderStatusText;
 
   if (loading) {
@@ -282,19 +283,19 @@ const Profile = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-gray-900">Hồ sơ cá nhân</h1>
-          <p className="text-gray-600 mt-2">Quản lý thông tin và đơn hàng của bạn</p>
+          <h1 className="text-3xl font-bold text-[rgb(var(--color-text))]">Hồ sơ cá nhân</h1>
+          <p className="text-[rgb(var(--color-text-muted))] mt-2">Quản lý thông tin và đơn hàng của bạn</p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-lg shadow p-6">
+            <div className="bg-[rgb(var(--color-bg))] rounded-lg shadow p-6 border border-[rgb(var(--color-border))]">
               <div className="text-center mb-6">
                 <div className="relative w-20 h-20 mx-auto mb-4">
                   <img src={userInfo.avatar} alt="Avatar" className="w-20 h-20 rounded-full object-cover" />
                   {uploadingAvatar && (
-                    <div className="absolute inset-0 bg-white/70 rounded-full flex items-center justify-center">
+                    <div className="absolute inset-0 bg-[rgb(var(--color-bg))/0.7] rounded-full flex items-center justify-center">
                       <Spinner size="sm" />
                     </div>
                   )}
@@ -302,7 +303,7 @@ const Profile = () => {
                 <div className="flex items-center justify-center space-x-2">
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="px-3 py-1 text-sm border border-gray-300 rounded-lg hover:bg-gray-50"
+                    className="px-3 py-1 text-sm border border-[rgb(var(--color-border))] rounded-lg hover:bg-[rgb(var(--color-bg-alt))]"
                     disabled={uploadingAvatar}
                   >
                     Đổi ảnh
@@ -310,7 +311,7 @@ const Profile = () => {
                   {isEditing && (
                     <button
                       onClick={() => setUserInfo((prev) => ({ ...prev, avatar: '/images/Avatar/avt.jpg' }))}
-                      className="px-3 py-1 text-sm text-red-600 hover:text-red-800"
+                      className="px-3 py-1 text-sm text-[rgb(var(--color-error))] hover:text-[rgb(var(--color-error)/0.8)]"
                       disabled={uploadingAvatar}
                     >
                       Xóa
@@ -325,8 +326,10 @@ const Profile = () => {
                   onChange={(e) => handleUploadAvatar(e.target.files?.[0])}
                 />
 
-                <h3 className="text-lg font-semibold text-gray-900 mt-4">{userInfo.name || 'Người dùng'}</h3>
-                <p className="text-sm text-gray-500 break-words">{userInfo.email}</p>
+                <h3 className="text-lg font-semibold text-[rgb(var(--color-text))] mt-4">
+                  {userInfo.name || 'Người dùng'}
+                </h3>
+                <p className="text-sm text-[rgb(var(--color-text-muted))] break-words">{userInfo.email}</p>
               </div>
 
               <nav className="space-y-2">
@@ -336,8 +339,8 @@ const Profile = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`w-full flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
                       activeTab === tab.id
-                        ? 'bg-pink-50 text-[rgb(var(--color-primary))]'
-                        : 'text-gray-600 hover:bg-gray-50'
+                        ? 'bg-[rgb(var(--color-primary-50))] text-[rgb(var(--color-primary-700))]'
+                        : 'text-[rgb(var(--color-text))] hover:bg-[rgb(var(--color-hover-bg))]'
                     }`}
                   >
                     <span className="mr-3">{tab.icon}</span>
@@ -352,14 +355,14 @@ const Profile = () => {
           <div className="lg:col-span-3">
             {/* Profile Tab */}
             {activeTab === 'profile' && (
-              <div className="bg-white rounded-lg shadow">
-                <div className="px-6 py-4 border-b border-gray-200">
+              <div className="bg-[rgb(var(--color-bg))] rounded-lg shadow border border-[rgb(var(--color-border))]">
+                <div className="px-6 py-4 border-b border-[rgb(var(--color-border))]">
                   <div className="flex items-center justify-between">
-                    <h2 className="text-xl font-semibold text-gray-900">Thông tin cá nhân</h2>
+                    <h2 className="text-xl font-semibold text-[rgb(var(--color-text))]">Thông tin cá nhân</h2>
                     {!isEditing ? (
                       <button
                         onClick={() => setIsEditing(true)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                        className="bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-light))] px-4 py-2 rounded-lg hover:bg-[rgb(var(--color-primary-600))] transition-colors"
                       >
                         Chỉnh sửa
                       </button>
@@ -367,14 +370,14 @@ const Profile = () => {
                       <div className="space-x-2">
                         <button
                           onClick={() => setIsEditing(false)}
-                          className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors"
+                          className="px-4 py-2 border border-[rgb(var(--color-border))] text-[rgb(var(--color-text))] rounded-lg hover:bg-[rgb(var(--color-bg-alt))] transition-colors"
                         >
                           Hủy
                         </button>
                         <button
                           onClick={handleSaveProfile}
                           disabled={loading}
-                          className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50"
+                          className="bg-[rgb(var(--color-success))] text-[rgb(var(--color-text-light))] px-4 py-2 rounded-lg hover:bg-[rgb(var(--color-success)/0.85)] transition-colors disabled:opacity-50"
                         >
                           {loading ? <Spinner size="sm" /> : 'Lưu'}
                         </button>
@@ -385,86 +388,37 @@ const Profile = () => {
 
                 <div className="p-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Họ</label>
-                      <input
-                        type="text"
-                        name="firstName"
-                        value={userInfo.firstName}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
+                    {[
+                      { label: 'Họ', name: 'firstName', type: 'text' },
+                      { label: 'Tên', name: 'lastName', type: 'text' },
+                      { label: 'Họ và tên (hiển thị)', name: 'name', type: 'text', colSpan: 2 },
+                      { label: 'Email', name: 'email', type: 'email', disabled: true },
+                      { label: 'Số điện thoại', name: 'phone', type: 'tel' },
+                      { label: 'Ngày sinh', name: 'dateOfBirth', type: 'date' },
+                    ].map((field) => (
+                      <div key={field.name} className={field.colSpan ? `md:col-span-${field.colSpan}` : ''}>
+                        <label className="block text-sm font-medium text-[rgb(var(--color-text))] mb-2">
+                          {field.label}
+                        </label>
+                        <input
+                          type={field.type}
+                          name={field.name}
+                          value={userInfo[field.name]}
+                          onChange={handleInputChange}
+                          disabled={field.disabled || !isEditing}
+                          className="w-full px-3 py-2 border border-[rgb(var(--color-border))] rounded-md focus:ring-[rgb(var(--color-primary))] focus:border-[rgb(var(--color-primary))] disabled:bg-[rgb(var(--color-bg-alt))] disabled:text-[rgb(var(--color-text-muted))]"
+                        />
+                      </div>
+                    ))}
 
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Tên</label>
-                      <input
-                        type="text"
-                        name="lastName"
-                        value={userInfo.lastName}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
-
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Họ và tên (hiển thị)</label>
-                      <input
-                        type="text"
-                        name="name"
-                        value={userInfo.name}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                      <input
-                        type="email"
-                        name="email"
-                        value={userInfo.email}
-                        onChange={handleInputChange}
-                        disabled
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Số điện thoại</label>
-                      <input
-                        type="tel"
-                        name="phone"
-                        value={userInfo.phone}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Ngày sinh</label>
-                      <input
-                        type="date"
-                        name="dateOfBirth"
-                        value={userInfo.dateOfBirth}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
-
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Giới tính</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text))] mb-2">Giới tính</label>
                       <select
                         name="gender"
                         value={userInfo.gender}
                         onChange={handleInputChange}
                         disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                        className="w-full px-3 py-2 border border-[rgb(var(--color-border))] rounded-md focus:ring-[rgb(var(--color-primary))] focus:border-[rgb(var(--color-primary))] disabled:bg-[rgb(var(--color-bg-alt))] disabled:text-[rgb(var(--color-text-muted))]"
                       >
                         <option value="male">Nam</option>
                         <option value="female">Nữ</option>
@@ -474,47 +428,34 @@ const Profile = () => {
                   </div>
 
                   <div className="mt-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="md:col-span-2">
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Địa chỉ (số nhà, đường)</label>
-                      <input
-                        type="text"
-                        name="addressStreet"
-                        value={userInfo.addressStreet}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
+                    {[
+                      { label: 'Địa chỉ (số nhà, đường)', name: 'addressStreet', colSpan: 2 },
+                      { label: 'Thành phố', name: 'city' },
+                      { label: 'Mã bưu điện', name: 'postalCode' },
+                    ].map((field) => (
+                      <div key={field.name} className={field.colSpan ? `md:col-span-${field.colSpan}` : ''}>
+                        <label className="block text-sm font-medium text-[rgb(var(--color-text))] mb-2">
+                          {field.label}
+                        </label>
+                        <input
+                          type="text"
+                          name={field.name}
+                          value={userInfo[field.name]}
+                          onChange={handleInputChange}
+                          disabled={!isEditing}
+                          className="w-full px-3 py-2 border border-[rgb(var(--color-border))] rounded-md focus:ring-[rgb(var(--color-primary))] focus:border-[rgb(var(--color-primary))] disabled:bg-[rgb(var(--color-bg-alt))] disabled:text-[rgb(var(--color-text-muted))]"
+                        />
+                      </div>
+                    ))}
+
                     <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Thành phố</label>
-                      <input
-                        type="text"
-                        name="city"
-                        value={userInfo.city}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Mã bưu điện</label>
-                      <input
-                        type="text"
-                        name="postalCode"
-                        value={userInfo.postalCode}
-                        onChange={handleInputChange}
-                        disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 mb-2">Quốc gia</label>
+                      <label className="block text-sm font-medium text-[rgb(var(--color-text))] mb-2">Quốc gia</label>
                       <select
                         name="country"
                         value={userInfo.country}
                         onChange={handleInputChange}
                         disabled={!isEditing}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500 disabled:bg-gray-50 disabled:text-gray-500"
+                        className="w-full px-3 py-2 border border-[rgb(var(--color-border))] rounded-md focus:ring-[rgb(var(--color-primary))] focus:border-[rgb(var(--color-primary))] disabled:bg-[rgb(var(--color-bg-alt))] disabled:text-[rgb(var(--color-text-muted))]"
                       >
                         <option value="Vietnam">Việt Nam</option>
                         <option value="USA">Hoa Kỳ</option>
@@ -528,9 +469,9 @@ const Profile = () => {
 
             {/* Orders Tab */}
             {activeTab === 'orders' && (
-              <div className="bg-white rounded-lg shadow">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">Đơn hàng của tôi</h2>
+              <div className="bg-[rgb(var(--color-bg))] rounded-lg shadow border border-[rgb(var(--color-border))]">
+                <div className="px-6 py-4 border-b border-[rgb(var(--color-border))]">
+                  <h2 className="text-xl font-semibold text-[rgb(var(--color-text))]">Đơn hàng của tôi</h2>
                 </div>
 
                 <div className="p-6">
@@ -539,42 +480,35 @@ const Profile = () => {
                       <Spinner size="lg" />
                     </div>
                   ) : orders.length === 0 ? (
-                    <div className="text-gray-500 text-sm">Chưa có đơn hàng nào</div>
+                    <div className="text-[rgb(var(--color-text-muted))] text-sm">Chưa có đơn hàng nào</div>
                   ) : (
                     <div className="overflow-x-auto">
-                      <table className="min-w-full divide-y divide-gray-200">
-                        <thead className="bg-gray-50">
+                      <table className="min-w-full divide-y divide-[rgb(var(--color-border))]">
+                        <thead className="bg-[rgb(var(--color-bg-alt))]">
                           <tr>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Mã đơn
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Ngày đặt
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Số SP
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Tổng tiền
-                            </th>
-                            <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                              Trạng thái
-                            </th>
+                            {['Mã đơn', 'Ngày đặt', 'Số SP', 'Tổng tiền', 'Trạng thái'].map((header) => (
+                              <th
+                                key={header}
+                                className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-muted))] uppercase tracking-wider"
+                              >
+                                {header}
+                              </th>
+                            ))}
                           </tr>
                         </thead>
-                        <tbody className="bg-white divide-y divide-gray-200">
+                        <tbody className="bg-[rgb(var(--color-bg))] divide-y divide-[rgb(var(--color-border))]">
                           {orders.map((o) => (
-                            <tr key={o._id} className="hover:bg-gray-50">
-                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                            <tr key={o._id} className="hover:bg-[rgb(var(--color-bg-alt))]">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[rgb(var(--color-text))]">
                                 #{o._id.slice(-6)}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">
                                 {new Date(o.createdAt).toLocaleDateString('vi-VN')}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">
                                 {o.items?.length || 0}
                               </td>
-                              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                              <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">
                                 {formatVnd(o.total)}
                               </td>
                               <td className="px-6 py-4 whitespace-nowrap">
@@ -596,19 +530,23 @@ const Profile = () => {
 
             {/* Wishlist Tab */}
             {activeTab === 'wishlist' && (
-              <div className="bg_white rounded-lg shadow">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">Danh sách yêu thích</h2>
+              <div className="bg-[rgb(var(--color-bg))] rounded-lg shadow border border-[rgb(var(--color-border))]">
+                <div className="px-6 py-4 border-b border-[rgb(var(--color-border))]">
+                  <h2 className="text-xl font-semibold text-[rgb(var(--color-text))]">Danh sách yêu thích</h2>
                 </div>
 
                 <div className="p-6">
                   <div className="text-center py-12">
-                    <div className="text-gray-400 text-6xl mb-4">❤️</div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Danh sách yêu thích trống</h3>
-                    <p className="text-gray-500 mb-6">Bạn chưa có sản phẩm nào trong danh sách yêu thích</p>
+                    <div className="text-[rgb(var(--color-text-muted))] text-6xl mb-4">❤️</div>
+                    <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-2">
+                      Danh sách yêu thích trống
+                    </h3>
+                    <p className="text-[rgb(var(--color-text-light))] mb-6">
+                      Bạn chưa có sản phẩm nào trong danh sách yêu thích
+                    </p>
                     <Link
                       to="/shop"
-                      className="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors"
+                      className="bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-light))] px-6 py-3 rounded-lg hover:bg-[rgb(var(--color-primary-600))] transition-colors"
                     >
                       Khám phá sản phẩm
                     </Link>
@@ -619,32 +557,32 @@ const Profile = () => {
 
             {/* Settings Tab */}
             {activeTab === 'settings' && (
-              <div className="bg-white rounded-lg shadow">
-                <div className="px-6 py-4 border-b border-gray-200">
-                  <h2 className="text-xl font-semibold text-gray-900">Cài đặt</h2>
+              <div className="bg-[rgb(var(--color-bg))] rounded-lg shadow border border-[rgb(var(--color-border))]">
+                <div className="px-6 py-4 border-b border-[rgb(var(--color-border))]">
+                  <h2 className="text-xl font-semibold text-[rgb(var(--color-text))]">Cài đặt</h2>
                 </div>
 
                 <div className="p-6 space-y-6">
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Bảo mật</h3>
+                    <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-4">Bảo mật</h3>
                     <div className="space-y-4">
                       <button
                         onClick={() => setShowChangePassword(true)}
-                        className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                        className="w-full text-left p-4 border border-[rgb(var(--color-border))] rounded-lg hover:bg-[rgb(var(--color-bg-alt))] transition-colors"
                       >
-                        <div className="flex items-center justify_between">
+                        <div className="flex items-center gap-4">
                           <div>
-                            <h4 className="font-medium text-gray-900">Đổi mật khẩu</h4>
-                            <p className="text-sm text-gray-500">Cập nhật mật khẩu của bạn</p>
+                            <h4 className="font-medium text-[rgb(var(--color-text))]">Đổi mật khẩu</h4>
+                            <p className="text-sm text-[rgb(var(--color-text-light))]">Cập nhật mật khẩu của bạn</p>
                           </div>
                         </div>
                       </button>
 
-                      <button className="w-full text-left p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors">
-                        <div className="flex items-center justify_between">
+                      <button className="w-full text-left p-4 border border-[rgb(var(--color-border))] rounded-lg hover:bg-[rgb(var(--color-bg-alt))] transition-colors">
+                        <div className="flex items-center gap-4">
                           <div>
-                            <h4 className="font-medium text-gray-900">Xác thực 2 bước</h4>
-                            <p className="text-sm text-gray-500">Bảo mật tài khoản với 2FA</p>
+                            <h4 className="font-medium text-[rgb(var(--color-text))]">Xác thực 2 bước</h4>
+                            <p className="text-sm text-[rgb(var(--color-text-light))]">Bảo mật tài khoản với 2FA</p>
                           </div>
                         </div>
                       </button>
@@ -652,44 +590,40 @@ const Profile = () => {
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Thông báo</h3>
+                    <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-4">Thông báo</h3>
                     <div className="space-y-4">
                       <div className="flex items-center gap-4">
-                        {' '}
-                        {/* Removed justify_between for a more standard checkbox layout */}
                         <input
                           type="checkbox"
                           defaultChecked
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-[rgb(var(--color-primary))] border-[rgb(var(--color-border))] rounded"
                         />
                         <div>
-                          <h4 className="font-medium text-gray-900">Email thông báo</h4>
-                          <p className="text-sm text-gray-500">Nhận thông báo qua email</p>
+                          <h4 className="font-medium text-[rgb(var(--color-text))]">Email thông báo</h4>
+                          <p className="text-sm text-[rgb(var(--color-text-light))]">Nhận thông báo qua email</p>
                         </div>
                       </div>
 
                       <div className="flex items-center gap-4">
-                        {' '}
-                        {/* Removed justify_between for a more standard checkbox layout */}
                         <input
                           type="checkbox"
-                          className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                          className="h-4 w-4 text-[rgb(var(--color-primary))] focus:ring-[rgb(var(--color-primary))] border-[rgb(var(--color-border))] rounded"
                         />
                         <div>
-                          <h4 className="font-medium text-gray-900">SMS thông báo</h4>
-                          <p className="text-sm text-gray-500">Nhận thông báo qua SMS</p>
+                          <h4 className="font-medium text-[rgb(var(--color-text))]">SMS thông báo</h4>
+                          <p className="text-sm text-[rgb(var(--color-text-light))]">Nhận thông báo qua SMS</p>
                         </div>
                       </div>
                     </div>
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-4">Tài khoản</h3>
-                    <button className="w-full text-left p-4 border border-red-200 rounded-lg hover:bg-red-50 transition-colors text-red-600">
-                      <div className="flex items-center justify_between">
+                    <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-4">Tài khoản</h3>
+                    <button className="w-full text-left p-4 border border-red-200 rounded-lg hover:bg-red-50 transition-colors text-[rgb(var(--color-error))]">
+                      <div className="flex items-center gap-4">
                         <div>
                           <h4 className="font-medium">Xóa tài khoản</h4>
-                          <p className="text-sm">Xóa vĩnh viễn tài khoản của bạn</p>
+                          <p className="text-sm text-[rgb(var(--color-error))]">Xóa vĩnh viễn tài khoản của bạn</p>
                         </div>
                       </div>
                     </button>
@@ -702,50 +636,56 @@ const Profile = () => {
       </div>
 
       {showChangePassword && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-6 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-[rgb(var(--color-overlay))] overflow-y-auto h-full w-full z-50 flex items-start justify-center pt-20">
+          <div className="relative w-11/12 md:w-1/2 lg:w-1/3 p-6 border shadow-lg rounded-md bg-[rgb(var(--color-bg))]">
             <div className="mb-4">
-              <h3 className="text-lg font-semibold text-gray-900">Đổi mật khẩu</h3>
-              <p className="text-sm text-gray-500">Vui lòng nhập mật khẩu hiện tại và mật khẩu mới</p>
+              <h3 className="text-lg font-semibold text-[rgb(var(--color-text))]">Đổi mật khẩu</h3>
+              <p className="text-sm text-[rgb(var(--color-text-light))]">
+                Vui lòng nhập mật khẩu hiện tại và mật khẩu mới
+              </p>
             </div>
             <form onSubmit={handleSubmitChangePassword} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu hiện tại</label>
+                <label className="block text-sm font-medium text-[rgb(var(--color-text))] mb-1">
+                  Mật khẩu hiện tại
+                </label>
                 <input
                   type="password"
                   value={pwForm.currentPassword}
                   onChange={(e) => setPwForm((p) => ({ ...p, currentPassword: e.target.value }))}
                   required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                  className="w-full px-3 py-2 border border-[rgb(var(--color-border))] rounded-md focus:ring-pink-500 focus:border-pink-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Mật khẩu mới</label>
+                <label className="block text-sm font-medium text-[rgb(var(--color-text))] mb-1">Mật khẩu mới</label>
                 <input
                   type="password"
                   value={pwForm.newPassword}
                   onChange={(e) => setPwForm((p) => ({ ...p, newPassword: e.target.value }))}
                   required
                   minLength={6}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                  className="w-full px-3 py-2 border border-[rgb(var(--color-border))] rounded-md focus:ring-pink-500 focus:border-pink-500"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Xác nhận mật khẩu mới</label>
+                <label className="block text-sm font-medium text-[rgb(var(--color-text))] mb-1">
+                  Xác nhận mật khẩu mới
+                </label>
                 <input
                   type="password"
                   value={pwForm.confirmPassword}
                   onChange={(e) => setPwForm((p) => ({ ...p, confirmPassword: e.target.value }))}
                   required
                   minLength={6}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
+                  className="w-full px-3 py-2 border border-[rgb(var(--color-border))] rounded-md focus:ring-pink-500 focus:border-pink-500"
                 />
               </div>
               <div className="flex justify-end space-x-2 pt-2">
                 <button
                   type="button"
                   onClick={() => setShowChangePassword(false)}
-                  className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                  className="px-4 py-2 border border-[rgb(var(--color-border))] text-[rgb(var(--color-text))] rounded-lg hover:bg-[rgb(var(--color-bg-alt))]"
                   disabled={pwSubmitting}
                 >
                   Hủy
@@ -753,7 +693,7 @@ const Profile = () => {
                 <button
                   type="submit"
                   disabled={pwSubmitting}
-                  className="px-4 py-2 bg-pink-600 text-white rounded-lg hover:bg-pink-700 disabled:opacity-50"
+                  className="px-4 py-2 bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-light))] rounded-lg hover:bg-[rgb(var(--color-primary-700))] disabled:opacity-50"
                 >
                   {pwSubmitting ? 'Đang cập nhật...' : 'Cập nhật mật khẩu'}
                 </button>

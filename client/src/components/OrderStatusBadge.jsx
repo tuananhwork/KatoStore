@@ -4,19 +4,19 @@ import { getOrderStatusText } from '../utils/helpers';
 const statusClass = (status) => {
   switch (status) {
     case 'pending':
-      return 'bg-pink-100 text-pink-800';
+      return 'bg-[rgb(var(--color-warning))]/10 text-[rgb(var(--color-warning))]';
     case 'processing':
-      return 'bg-yellow-100 text-yellow-800';
+      return 'bg-[rgb(var(--color-info))]/10 text-[rgb(var(--color-info))]';
     case 'shipped':
-      return 'bg-blue-100 text-blue-800';
+      return 'bg-[rgb(var(--color-primary))]/10 text-[rgb(var(--color-primary-600))]';
     case 'delivered':
-      return 'bg-green-100 text-green-800';
+      return 'bg-[rgb(var(--color-success))]/10 text-[rgb(var(--color-success))]';
     case 'cancelled':
-      return 'bg-red-100 text-red-800';
+      return 'bg-[rgb(var(--color-error))]/10 text-[rgb(var(--color-error))]';
     case 'refunded':
-      return 'bg-purple-100 text-purple-800';
+      return 'bg-[rgb(var(--color-text-muted))]/10 text-[rgb(var(--color-text-muted))]';
     default:
-      return 'bg-gray-100 text-gray-800';
+      return 'bg-[rgb(var(--color-border))] text-[rgb(var(--color-text))]';
   }
 };
 

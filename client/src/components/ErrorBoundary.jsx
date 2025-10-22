@@ -17,18 +17,16 @@ class ErrorBoundary extends React.Component {
   render() {
     if (this.state.hasError) {
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50">
+        <div className="min-h-screen flex items-center justify-center bg-[rgb(var(--color-bg-alt))]">
           <div className="text-center">
             <div className="text-6xl mb-4">⚠️</div>
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
-              Đã xảy ra lỗi
-            </h1>
-            <p className="text-gray-600 mb-6">
+            <h1 className="text-2xl font-bold text-[rgb(var(--color-text))] mb-2">Đã xảy ra lỗi</h1>
+            <p className="text-[rgb(var(--color-text-muted))] mb-6">
               Xin lỗi, có lỗi không mong muốn xảy ra. Vui lòng thử lại sau.
             </p>
             <button
               onClick={() => window.location.reload()}
-              className="bg-pink-600 text-white px-6 py-3 rounded-lg hover:bg-pink-700 transition-colors"
+              className="bg-[rgb(var(--color-error))] text-[rgb(var(--color-bg))] px-6 py-3 rounded-lg hover:bg-[rgb(var(--color-error))]/80 transition-colors"
             >
               Tải lại trang
             </button>

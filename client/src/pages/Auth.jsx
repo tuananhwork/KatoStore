@@ -11,11 +11,11 @@ const Auth = () => {
   const handleSwitch = () => setIsLogin((prev) => !prev);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="text-center">
           <h2 className="text-3xl font-bold text-[rgb(var(--color-primary))] mb-2">KatoStore</h2>
-          <h3 className="text-2xl font-bold text-gray-900">{isLogin ? 'Đăng nhập' : 'Đăng ký'}</h3>
+          <h3 className="text-2xl font-bold text-[rgb(var(--color-text))]">{isLogin ? 'Đăng nhập' : 'Đăng ký'}</h3>
         </div>
       </div>
 

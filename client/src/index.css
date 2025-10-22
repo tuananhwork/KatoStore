@@ -1,37 +1,59 @@
 @import 'tailwindcss';
 
-@layer base {
-  :root {
-    --color-primary: 255 105 180; /* hot pink */
-    --color-primary-600: 236 72 153; /* pink-500ish */
-    --color-primary-700: 219 39 119;
-    --color-accent: 158 91 255; /* soft violet */
-    --color-muted: 250 232 255; /* rose/rose-50 */
-    --color-bg: 255 250 252; /* very soft rose */
-    --color-text: 31 41 55; /* gray-800 */
-  }
+@theme {
+  --color-primary: 150 225 221;
+  --color-primary-50: 235 250 249;
+  --color-primary-100: 210 240 238;
+  --color-primary-200: 185 230 227;
+  --color-primary-400: 135 210 205;
+  --color-primary-500: 150 225 221;
+  --color-primary-600: 120 190 185;
+  --color-primary-700: 90 160 155;
 
+  --color-text: 53 52 50;
+  --color-text-light: 90 90 90;
+  --color-text-muted: 130 130 130;
+  --color-border: 225 225 225;
+  --color-bg: 255 255 255;
+  --color-bg-alt: 245 247 247;
+
+  --color-success: 60 179 113;
+  --color-warning: 255 193 7;
+  --color-error: 220 38 38;
+  --color-info: 59 130 246;
+}
+
+@layer base {
   html,
   body,
   #root {
     height: 100%;
   }
+
   body {
     @apply bg-[rgb(var(--color-bg))] text-[rgb(var(--color-text))];
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
   }
 }
 
 @layer components {
   .btn-primary {
-    @apply bg-pink-600 hover:bg-pink-700 text-white rounded-lg px-4 py-2 transition-colors;
+    @apply bg-[rgb(var(--color-primary))] hover:bg-[rgb(var(--color-primary-600))] text-[rgb(var(--color-text-light))] rounded-lg px-4 py-2 transition-colors;
   }
+
   .btn-accent {
-    @apply bg-violet-600 hover:bg-violet-700 text-white rounded-lg px-4 py-2 transition-colors;
+    @apply bg-[rgb(var(--color-primary-700))] hover:bg-[rgb(var(--color-primary-600))] text-[rgb(var(--color-text-light))] rounded-lg px-4 py-2 transition-colors;
   }
+
+  .btn-outline {
+    @apply border border-[rgb(var(--color-primary-600))] text-[rgb(var(--color-primary-700))] hover:bg-[rgb(var(--color-primary-50))] px-4 py-2 rounded-lg transition-colors;
+  }
+
   .badge-primary {
-    @apply bg-pink-100 text-pink-800 text-xs font-medium px-2 py-1 rounded;
+    @apply bg-[rgb(var(--color-primary)/0.15)] text-[rgb(var(--color-primary-700))] text-xs font-medium px-2 py-1 rounded;
   }
+
   .link-primary {
-    @apply text-[rgb(var(--color-primary))] hover:text-pink-700;
+    @apply text-[rgb(var(--color-primary))] hover:text-[rgb(var(--color-primary-700))] transition-colors;
   }
 }

@@ -238,8 +238,8 @@ const ProductForm = () => {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
-          <h1 className="text-2xl font-semibold text-gray-900 mb-2">Không có quyền truy cập</h1>
-          <p className="text-gray-600 mb-6">Trang này chỉ dành cho Admin/Manager</p>
+          <h1 className="text-2xl font-semibold text-[rgb(var(--color-text))] mb-2">Không có quyền truy cập</h1>
+          <p className="text-[rgb(var(--color-text-light))] mb-6">Trang này chỉ dành cho Admin/Manager</p>
           <button onClick={() => navigate('/')} className="btn-primary">
             Về trang chủ
           </button>
@@ -376,18 +376,20 @@ const ProductForm = () => {
             <AdminSidebar />
           </div>
           <div className="lg:col-span-3">
-            <h1 className="text-3xl font-bold text-gray-900 mb-6">{isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}</h1>
+            <h1 className="text-3xl font-bold text-[rgb(var(--color-text))] mb-6">
+              {isEdit ? 'Sửa sản phẩm' : 'Thêm sản phẩm'}
+            </h1>
 
             {loading ? (
               <div className="bg-white rounded-lg shadow p-6">
-                <div className="text-gray-500">Đang tải...</div>
+                <div className="text-[rgb(var(--color-text-light))]">Đang tải...</div>
               </div>
             ) : (
               <form onSubmit={handleSubmit} className="bg-white rounded-lg shadow p-6 space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      SKU <span className="text-red-600">*</span>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      SKU <span className="text-[rgb(var(--color-error))]">*</span>
                     </label>
                     <input
                       name="sku"
@@ -397,14 +399,14 @@ const ProductForm = () => {
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:ring-pink-500 focus:border-pink-500"
                     />
                     {!isEdit && skuSuggestion && (
-                      <p className="text-xs text-gray-500 mt-1">
+                      <p className="text-xs text-[rgb(var(--color-text-light))] mt-1">
                         Gợi ý SKU tiếp theo: <span className="font-medium">{skuSuggestion}</span>
                       </p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Tên sản phẩm <span className="text-red-600">*</span>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Tên sản phẩm <span className="text-[rgb(var(--color-error))]">*</span>
                     </label>
                     <input
                       name="name"
@@ -414,8 +416,8 @@ const ProductForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Danh mục <span className="text-red-600">*</span>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Danh mục <span className="text-[rgb(var(--color-error))]">*</span>
                     </label>
                     {!addingNewCategory ? (
                       <div className="flex items-center gap-2">
@@ -434,7 +436,7 @@ const ProductForm = () => {
                         </select>
                         <button
                           type="button"
-                          className="text-[rgb(var(--color-primary))] hover:text-pink-800 whitespace-nowrap"
+                          className="text-[rgb(var(--color-primary))] hover:text-[rgb(var(--color-primary-700))] whitespace-nowrap"
                           onClick={() => {
                             setAddingNewCategory(true);
                             setNewCategory('');
@@ -475,7 +477,9 @@ const ProductForm = () => {
                     )}
                   </div>
                   <div>
-                    <label className="block text_sm font-medium text-gray-700 mb-2">Thương hiệu</label>
+                    <label className="block text_sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Thương hiệu
+                    </label>
                     <input
                       name="brand"
                       value={form.brand}
@@ -486,7 +490,7 @@ const ProductForm = () => {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Mô tả</label>
+                  <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">Mô tả</label>
                   <textarea
                     name="description"
                     value={form.description}
@@ -498,8 +502,8 @@ const ProductForm = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Giá <span className="text-red-600">*</span>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Giá <span className="text-[rgb(var(--color-error))]">*</span>
                     </label>
                     <input
                       name="price"
@@ -511,7 +515,9 @@ const ProductForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Giá gốc</label>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Giá gốc
+                    </label>
                     <input
                       name="originalPrice"
                       type="number"
@@ -522,7 +528,9 @@ const ProductForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Giảm (%)</label>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Giảm (%)
+                    </label>
                     <input
                       name="discount"
                       type="number"
@@ -534,7 +542,9 @@ const ProductForm = () => {
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Tồn kho</label>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Tồn kho
+                    </label>
                     <input
                       name="stock"
                       type="number"
@@ -548,7 +558,9 @@ const ProductForm = () => {
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Ảnh (có thể nhiều)</label>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Ảnh (có thể nhiều)
+                    </label>
                     <input
                       ref={imageInputRef}
                       type="file"
@@ -562,7 +574,12 @@ const ProductForm = () => {
                       onClick={handlePickImages}
                     >
                       <div className="flex flex-col items-center justify-center">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          className="w-8 h-8 text-[rgb(var(--color-text-light))]"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -576,13 +593,17 @@ const ProductForm = () => {
                             d="M8 11l2 2 4-4m2 8H8a2 2 0 01-2-2"
                           />
                         </svg>
-                        <p className="mt-2 text-sm text-gray-700">
+                        <p className="mt-2 text-sm text-[rgb(var(--color-text-light))]">
                           Kéo thả hoặc{' '}
                           <span className="text-[rgb(var(--color-primary))] font-medium">bấm để chọn ảnh</span>
                         </p>
-                        <p className="text-xs text-gray-500">Hỗ trợ PNG, JPG, WEBP • Có thể chọn nhiều</p>
+                        <p className="text-xs text-[rgb(var(--color-text-light))]">
+                          Hỗ trợ PNG, JPG, WEBP • Có thể chọn nhiều
+                        </p>
                         {imageFiles.length > 0 && (
-                          <p className="mt-1 text-xs text-gray-600">Đã chọn: {imageFiles.length} file</p>
+                          <p className="mt-1 text-xs text-[rgb(var(--color-text-light))]">
+                            Đã chọn: {imageFiles.length} file
+                          </p>
                         )}
                         <div className="mt-3 flex gap-2">
                           <button
@@ -613,7 +634,7 @@ const ProductForm = () => {
                         {existingImagePreviews.map((p, idx) => (
                           <div key={`ex-img-${idx}`} className="relative group">
                             <img src={p.url} alt={p.name} className="w-full h-24 object-cover rounded" />
-                            <div className="mt-1 text-xs text-gray-600 truncate" title={p.name}>
+                            <div className="mt-1 text-xs text-[rgb(var(--color-text-light))] truncate" title={p.name}>
                               {p.name}
                             </div>
                           </div>
@@ -631,12 +652,12 @@ const ProductForm = () => {
                                 e.stopPropagation();
                                 removeImageAt(idx);
                               }}
-                              className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100"
+                              className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-[rgb(var(--color-text-light))] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100"
                               title="Xóa ảnh này"
                             >
                               Xóa
                             </button>
-                            <div className="mt-1 text-xs text-gray-600 truncate" title={p.name}>
+                            <div className="mt-1 text-xs text-[rgb(var(--color-text-light))] truncate" title={p.name}>
                               {p.name}
                             </div>
                           </div>
@@ -645,7 +666,9 @@ const ProductForm = () => {
                     )}
                   </div>
                   <div className="md:col-span-3">
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Video (có thể nhiều)</label>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text-light))] mb-2">
+                      Video (có thể nhiều)
+                    </label>
                     <input
                       ref={videoInputRef}
                       type="file"
@@ -659,7 +682,12 @@ const ProductForm = () => {
                       onClick={handlePickVideos}
                     >
                       <div className="flex flex-col items-center justify-center">
-                        <svg className="w-8 h-8 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg
+                          className="w-8 h-8 text-[rgb(var(--color-text-light))]"
+                          fill="none"
+                          stroke="currentColor"
+                          viewBox="0 0 24 24"
+                        >
                           <path
                             strokeLinecap="round"
                             strokeLinejoin="round"
@@ -668,13 +696,17 @@ const ProductForm = () => {
                           />
                           <rect x="3" y="6" width="12" height="12" rx="2" ry="2" strokeWidth="2" />
                         </svg>
-                        <p className="mt-2 text-sm text-gray-700">
+                        <p className="mt-2 text-sm text-[rgb(var(--color-text-light))]">
                           Kéo thả hoặc{' '}
                           <span className="text-[rgb(var(--color-primary))] font-medium">bấm để chọn video</span>
                         </p>
-                        <p className="text-xs text-gray-500">Hỗ trợ MP4, WebM • Có thể chọn nhiều</p>
+                        <p className="text-xs text-[rgb(var(--color-text-light))]">
+                          Hỗ trợ MP4, WebM • Có thể chọn nhiều
+                        </p>
                         {videoFiles.length > 0 && (
-                          <p className="mt-1 text-xs text-gray-600">Đã chọn: {videoFiles.length} file</p>
+                          <p className="mt-1 text-xs text-[rgb(var(--color-text-light))]">
+                            Đã chọn: {videoFiles.length} file
+                          </p>
                         )}
                         <div className="mt-3 flex gap-2">
                           <button
@@ -705,7 +737,7 @@ const ProductForm = () => {
                         {existingVideoPreviews.map((p, idx) => (
                           <div key={`ex-vid-${idx}`} className="relative group">
                             <video src={p.url} className="w-40 h-40 rounded" controls muted />
-                            <div className="mt-1 text-xs text-gray-600 truncate" title={p.name}>
+                            <div className="mt-1 text-xs text-[rgb(var(--color-text-light))] truncate" title={p.name}>
                               {p.name}
                             </div>
                           </div>
@@ -723,12 +755,12 @@ const ProductForm = () => {
                                 e.stopPropagation();
                                 removeVideoAt(idx);
                               }}
-                              className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100"
+                              className="absolute top-1 right-1 bg-black/60 hover:bg-black/80 text-[rgb(var(--color-text-light))] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100"
                               title="Xóa video này"
                             >
                               Xóa
                             </button>
-                            <div className="mt-1 text-xs text-gray-600 truncate" title={p.name}>
+                            <div className="mt-1 text-xs text-[rgb(var(--color-text-light))] truncate" title={p.name}>
                               {p.name}
                             </div>
                           </div>
@@ -737,7 +769,7 @@ const ProductForm = () => {
                     )}
                   </div>
                   <div className="md:col-span-3">
-                    <p className="text-xs text-gray-500">
+                    <p className="text-xs text-[rgb(var(--color-text-light))]">
                       Tệp sẽ được lưu tại: <span className="font-medium">{computedFolder}</span>
                     </p>
                   </div>
@@ -745,15 +777,18 @@ const ProductForm = () => {
 
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-sm font-medium text-gray-700">Biến thể (màu/kích thước/tồn)</label>
+                    <label className="block text-sm font-medium text-[rgb(var(--color-text))]">
+                      Biến thể (màu/kích thước/tồn)
+                    </label>
                     <button
                       type="button"
                       onClick={addVariant}
-                      className="text-[rgb(var(--color-primary))] hover:text-pink-800 text-sm"
+                      className="text-[rgb(var(--color-primary))] hover:text-[rgb(var(--color-primary-700))] text-sm"
                     >
                       + Thêm biến thể
                     </button>
                   </div>
+
                   <div className="space-y-3">
                     {variants.map((v, idx) => (
                       <div key={idx} className="grid grid-cols-1 md:grid-cols-4 gap-3">
@@ -780,7 +815,7 @@ const ProductForm = () => {
                         <button
                           type="button"
                           onClick={() => removeVariant(idx)}
-                          className="text-red-600 hover:text-red-800 text-sm"
+                          className="text-[rgb(var(--color-error))] hover:text-[rgb(var(--color-error))] text-sm"
                         >
                           Xóa
                         </button>
@@ -792,7 +827,7 @@ const ProductForm = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
                   <div className="flex items-center space-x-2">
                     <input id="isActive" name="isActive" type="checkbox" checked={form.isActive} onChange={onChange} />
-                    <label htmlFor="isActive" className="text-sm text-gray-700">
+                    <label htmlFor="isActive" className="text-sm text-[rgb(var(--color-text-light))]">
                       Hiển thị
                     </label>
                   </div>

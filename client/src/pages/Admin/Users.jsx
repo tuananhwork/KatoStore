@@ -46,8 +46,8 @@ const Users = () => {
       <AdminLayout title="Không có quyền truy cập" description="Bạn cần quyền admin để truy cập trang này.">
         <div className="min-h-screen bg-gray-50 flex items-center justify-center">
           <div className="text-center">
-            <h1 className="text-2xl font-bold text-gray-900 mb-4">Không có quyền truy cập</h1>
-            <p className="text-gray-600">Bạn cần quyền admin để truy cập trang này.</p>
+            <h1 className="text-2xl font-bold text-[rgb(var(--color-text))] mb-4">Không có quyền truy cập</h1>
+            <p className="text-[rgb(var(--color-text-light))]">Bạn cần quyền admin để truy cập trang này.</p>
           </div>
         </div>
       </AdminLayout>
@@ -72,13 +72,13 @@ const Users = () => {
   const getRoleColor = (role) => {
     switch (role) {
       case 'admin':
-        return 'bg-red-100 text-red-800';
+        return 'bg-[rgb(var(--color-error))]/10 text-[rgb(var(--color-error))]';
       case 'manager':
-        return 'bg-blue-100 text-blue-800';
+        return 'bg-[rgb(var(--color-primary-100))] text-[rgb(var(--color-primary-700))]';
       case 'customer':
-        return 'bg-green-100 text-green-800';
+        return 'bg-[rgb(var(--color-success))]/10 text-[rgb(var(--color-success))]';
       default:
-        return 'bg-gray-100 text-gray-800';
+        return 'bg-[rgb(var(--color-border))] text-[rgb(var(--color-text-muted))]';
     }
   };
 
@@ -100,27 +100,29 @@ const Users = () => {
       {/* Users Table */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h2 className="text-lg font-semibold text-gray-900">Danh sách người dùng ({total})</h2>
+          <h2 className="text-lg font-semibold text-[rgb(var(--color-text))]">Danh sách người dùng ({total})</h2>
         </div>
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
             <thead className="bg-gray-50">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tên</th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
+                  Tên
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Email
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Vai trò
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Ngày tạo
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Trạng thái
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Hành động
                 </th>
               </tr>
@@ -132,29 +134,31 @@ const Users = () => {
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
                         <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
-                          <span className="text-sm font-medium text-gray-600">
+                          <span className="text-sm font-medium text-[rgb(var(--color-text-light))]">
                             {user.name?.charAt(0)?.toUpperCase() || 'U'}
                           </span>
                         </div>
                       </div>
                       <div className="ml-4">
-                        <div className="text-sm font-medium text-gray-900">{user.name || 'N/A'}</div>
+                        <div className="text-sm font-medium text-[rgb(var(--color-text))]">{user.name || 'N/A'}</div>
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{user.email}</td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">{user.email}</td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span className={`px-2 py-1 text-xs font-medium rounded-full ${getRoleColor(user.role)}`}>
                       {getRoleText(user.role)}
                     </span>
                   </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-[rgb(var(--color-text))]">
                     {new Date(user.createdAt).toLocaleDateString('vi-VN')}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
                       className={`px-2 py-1 text-xs font-medium rounded-full ${
-                        user.isActive !== false ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                        user.isActive !== false
+                          ? 'bg-green-100 text-green-800'
+                          : 'bg-red-100 text-[rgb(var(--color-error))]'
                       }`}
                     >
                       {user.isActive !== false ? 'Hoạt động' : 'Bị khóa'}
@@ -162,8 +166,12 @@ const Users = () => {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex space-x-2">
-                      <button className="text-[rgb(var(--color-primary))] hover:text-pink-900">Sửa</button>
-                      <button className="text-red-600 hover:text-red-900">Khóa</button>
+                      <button className="text-[rgb(var(--color-primary))] hover:text-[rgb(var(--color-primary-700))]">
+                        Sửa
+                      </button>
+                      <button className="text-[rgb(var(--color-error))] hover:text-[rgb(var(--color-primary-700))]">
+                        Khóa
+                      </button>
                     </div>
                   </td>
                 </tr>
