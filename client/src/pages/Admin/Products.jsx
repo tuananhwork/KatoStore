@@ -175,7 +175,7 @@ const Products = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
           <Spinner size="lg" />
         </div>
       </AdminLayout>
@@ -259,7 +259,7 @@ const Products = () => {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-[rgb(var(--color-bg-alt))]">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Sản phẩm
@@ -286,7 +286,7 @@ const Products = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {pageItems.map((product) => (
-                <tr key={product.sku} className="hover:bg-gray-50">
+                <tr key={product.sku} className="hover:bg-[rgb(var(--color-bg-alt))]">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-12 w-12">
@@ -297,7 +297,7 @@ const Products = () => {
                             alt={product.name}
                           />
                         ) : (
-                          <div className="h-12 w-12 rounded-lg bg-gray-200 flex items-center justify-center">
+                          <div className="h-12 w-12 rounded-lg bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
                             <span className="text-[rgb(var(--color-text-light))] text-xs">No image</span>
                           </div>
                         )}
@@ -332,7 +332,7 @@ const Products = () => {
                     >
                       {product.isActive !== false ? 'Hiển thị' : 'Ẩn'}
                       <span
-                        className="absolute -top-8 left-1/2 -translate-x-1/2 bg-gray-800 text-[rgb(var(--color-text-light))] px-2 py-1 rounded text-xs
+                        className="absolute -top-8 left-1/2 -translate-x-1/2 bg-[rgb(var(--color-bg-alt))] text-[rgb(var(--color-text-light))] px-2 py-1 rounded text-xs
                         opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap"
                       >
                         Bấm để thay đổi

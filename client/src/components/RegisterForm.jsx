@@ -239,13 +239,13 @@ const RegisterForm = ({ onSwitch }) => {
 
       <div className="mt-6 grid grid-cols-2 gap-3">
         {/* Google Button */}
-        <button className="w-full inline-flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-[rgb(var(--color-text-light))] hover:bg-pink-50 transition">
+        <button className="w-full inline-flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-[rgb(var(--color-text-light))] hover:bg-[rgb(var(--color-primary-500))] transition">
           <img src="/icons/google.svg" alt="Google" className="w-5 h-5" />
           <span className="ml-2">Google</span>
         </button>
 
         {/* Facebook Button */}
-        <button className="w-full inline-flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-[rgb(var(--color-text-light))] hover:bg-pink-50 transition">
+        <button className="w-full inline-flex items-center justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-[rgb(var(--color-text-light))] hover:bg-[rgb(var(--color-primary-500))] transition">
           <img src="/icons/facebook.svg" alt="Facebook" className="w-5 h-5" />
           <span className="ml-2">Facebook</span>
         </button>

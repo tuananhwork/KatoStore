@@ -203,12 +203,12 @@ const LoginForm = ({ onSwitch }) => {
         </div>
 
         <div className="mt-6 grid grid-cols-2 gap-3">
-          <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-[rgb(var(--color-text-light))] hover:bg-pink-50">
+          <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-[rgb(var(--color-text-light))] hover:bg-[rgb(var(--color-primary-500))]">
             <img src="/icons/google.svg" alt="Google" className="w-5 h-5" />
             <span className="ml-2">Google</span>
           </button>
 
-          <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-[rgb(var(--color-text-light))] hover:bg-pink-50">
+          <button className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-[rgb(var(--color-text-light))] hover:bg-[rgb(var(--color-primary-500))]">
             <img src="/icons/facebook.svg" alt="Facebook" className="w-5 h-5" />
             <span className="ml-2">Facebook</span>
           </button>
@@ -223,7 +223,7 @@ const LoginForm = ({ onSwitch }) => {
       </div>
 
       {showForgot && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+        <div className="fixed inset-0 bg-[rgb(var(--color-bg-alt))] bg-opacity-50 overflow-y-auto h-full w-full z-50">
           <div className="relative top-20 mx-auto p-6 border w-11/12 md:w-1/2 lg:w-1/3 shadow-lg rounded-md bg-white">
             <div className="mb-4">
               <h3 className="text-lg font-semibold text-[rgb(var(--color-text))]">Quên mật khẩu</h3>
@@ -250,7 +250,7 @@ const LoginForm = ({ onSwitch }) => {
                   <button
                     type="button"
                     onClick={() => setShowForgot(false)}
-                    className="px-4 py-2 border border-gray-300 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-gray-50"
+                    className="px-4 py-2 border border-gray-300 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-[rgb(var(--color-bg-alt))]"
                     disabled={forgotSubmitting}
                   >
                     Hủy
@@ -258,7 +258,7 @@ const LoginForm = ({ onSwitch }) => {
                   <button
                     type="submit"
                     disabled={forgotSubmitting}
-                    className="px-4 py-2 bg-pink-600 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-pink-700 disabled:opacity-50"
+                    className="px-4 py-2 bg-[rgb(var(--color-primary-500))] text-[rgb(var(--color-text-light))] rounded-lg hover:bg-[rgb(var(--color-primary-700))] disabled:opacity-50"
                   >
                     {forgotSubmitting ? 'Đang gửi...' : 'Gửi OTP'}
                   </button>
@@ -315,7 +315,7 @@ const LoginForm = ({ onSwitch }) => {
                     <button
                       type="button"
                       onClick={() => setShowForgot(false)}
-                      className="px-4 py-2 border border-gray-300 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-gray-50"
+                      className="px-4 py-2 border border-gray-300 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-[rgb(var(--color-bg-alt))]"
                       disabled={forgotSubmitting}
                     >
                       Hủy
@@ -323,7 +323,7 @@ const LoginForm = ({ onSwitch }) => {
                     <button
                       type="submit"
                       disabled={forgotSubmitting}
-                      className="px-4 py-2 bg-pink-600 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-pink-700 disabled:opacity-50"
+                      className="px-4 py-2 bg-[rgb(var(--color-primary-500))] text-[rgb(var(--color-text-light))] rounded-lg hover:bg-[rgb(var(--color-primary-700))] disabled:opacity-50"
                     >
                       {forgotSubmitting ? 'Đang cập nhật...' : 'Đặt lại mật khẩu'}
                     </button>

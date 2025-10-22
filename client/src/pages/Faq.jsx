@@ -82,7 +82,7 @@ const Faq = () => {
   }, {});
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[rgb(var(--color-bg-alt))]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <h1 className="text-4xl font-bold text-center text-gray-900 mb-12">Câu hỏi thường gặp (FAQ)</h1>
         <div className="bg-white p-8 rounded-lg shadow-md border border-gray-200">

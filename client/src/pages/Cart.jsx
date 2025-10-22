@@ -62,7 +62,7 @@ const Cart = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
         <Spinner size="lg" />
       </div>
     );

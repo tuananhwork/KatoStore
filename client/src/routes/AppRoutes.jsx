@@ -38,7 +38,7 @@ const AdminGuard = ({ roles = [ROLES.ADMIN, ROLES.MANAGER], children }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
         <Spinner size="lg" />
       </div>
     );
@@ -52,7 +52,7 @@ const AdminGuard = ({ roles = [ROLES.ADMIN, ROLES.MANAGER], children }) => {
           <p className="text-[rgb(var(--color-text-light))] mb-8">Trang không tồn tại</p>
           <Link
             to="/"
-            className="bg-pink-600 text-[rgb(var(--color-text-light))] px-6 py-3 rounded-lg hover:bg-pink-700 transition-colors"
+            className="bg-[rgb(var(--color-primary-500))] text-[rgb(var(--color-text-light))] px-6 py-3 rounded-lg hover:bg-[rgb(var(--color-primary-700))] transition-colors"
           >
             Về trang chủ
           </Link>
@@ -68,7 +68,7 @@ const RequireAuth = ({ children }) => {
   const { isLoggedIn, loading } = useAuth();
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
         <Spinner size="lg" />
       </div>
     );

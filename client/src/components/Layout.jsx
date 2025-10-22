@@ -4,7 +4,7 @@ import Footer from './Footer';
 
 const Layout = ({ children, showHeader = true, showFooter = true }) => {
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-[rgb(var(--color-bg-alt))]">
       {/* Header */}
       {showHeader && (
         <header className="sticky top-0 z-50">

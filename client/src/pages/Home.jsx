@@ -16,8 +16,8 @@ const Home = () => {
   const featuredProducts = products?.slice(0, 8) || [];
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <section className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-primary)/0.2)] text-[rgb(var(--color-text))] py-20">
+    <div className="min-h-screen bg-[rgb(var(--color-bg-alt))]">
+      <section className="bg-gradient-to-r from-[rgb(var(--color-primary))] to-[rgb(var(--color-primary)/0.2)] text-[rgb(var(--color-text))] py-32">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Chào mừng đến với KatoStore</h1>
           <p className="text-xl md:text-2xl mb-8 text-[rgb(var(--color-text)/0.8)]">

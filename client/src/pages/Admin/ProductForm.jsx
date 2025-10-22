@@ -236,7 +236,7 @@ const ProductForm = () => {
 
   if (!role || !['admin', 'manager'].includes(role)) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
         <div className="text-center">
           <h1 className="text-2xl font-semibold text-[rgb(var(--color-text))] mb-2">Không có quyền truy cập</h1>
           <p className="text-[rgb(var(--color-text-light))] mb-6">Trang này chỉ dành cho Admin/Manager</p>
@@ -369,7 +369,7 @@ const ProductForm = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[rgb(var(--color-bg-alt))]">
       <div className="max-w-screen-2xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
           <div className="lg:col-span-1">
@@ -570,7 +570,7 @@ const ProductForm = () => {
                       className="hidden"
                     />
                     <div
-                      className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:bg-gray-50 cursor-pointer"
+                      className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:bg-[rgb(var(--color-bg-alt))] cursor-pointer"
                       onClick={handlePickImages}
                     >
                       <div className="flex flex-col items-center justify-center">
@@ -678,7 +678,7 @@ const ProductForm = () => {
                       className="hidden"
                     />
                     <div
-                      className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:bg-gray-50 cursor-pointer"
+                      className="border-2 border-dashed border-gray-300 rounded-md p-4 text-center hover:bg-[rgb(var(--color-bg-alt))] cursor-pointer"
                       onClick={handlePickVideos}
                     >
                       <div className="flex flex-col items-center justify-center">

@@ -35,7 +35,7 @@ const OrderDetail = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
           <Spinner size="lg" />
         </div>
       </AdminLayout>
@@ -112,7 +112,7 @@ const OrderDetail = () => {
           <h2 className="text-lg font-semibold text-[rgb(var(--color-text))] mb-4">Sản phẩm</h2>
           <div className="overflow-x-auto">
             <table className="min-w-full divide-y divide-gray-200">
-              <thead className="bg-gray-50">
+              <thead className="bg-[rgb(var(--color-bg-alt))]">
                 <tr>
                   <th className="px-4 py-2 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                     #

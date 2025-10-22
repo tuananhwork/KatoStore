@@ -99,7 +99,7 @@ const Orders = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
           <Spinner size="lg" />
         </div>
       </AdminLayout>
@@ -116,7 +116,7 @@ const Orders = () => {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-[rgb(var(--color-bg-alt))]">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Mã đơn hàng
@@ -150,7 +150,7 @@ const Orders = () => {
                 </tr>
               ) : (
                 orders.map((order) => (
-                  <tr key={order._id} className="hover:bg-gray-50">
+                  <tr key={order._id} className="hover:bg-[rgb(var(--color-bg-alt))]">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-[rgb(var(--color-text))]">
                       #{order._id.slice(-6)}
                     </td>

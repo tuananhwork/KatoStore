@@ -44,7 +44,7 @@ const Users = () => {
   if (!hasAccess) {
     return (
       <AdminLayout title="Không có quyền truy cập" description="Bạn cần quyền admin để truy cập trang này.">
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
           <div className="text-center">
             <h1 className="text-2xl font-bold text-[rgb(var(--color-text))] mb-4">Không có quyền truy cập</h1>
             <p className="text-[rgb(var(--color-text-light))]">Bạn cần quyền admin để truy cập trang này.</p>
@@ -57,7 +57,7 @@ const Users = () => {
   if (loading) {
     return (
       <AdminLayout>
-        <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="min-h-screen bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
           <Spinner size="lg" />
         </div>
       </AdminLayout>
@@ -105,7 +105,7 @@ const Users = () => {
 
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-[rgb(var(--color-bg-alt))]">
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-[rgb(var(--color-text-light))] uppercase tracking-wider">
                   Tên
@@ -129,11 +129,11 @@ const Users = () => {
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
               {pageUsers.map((user) => (
-                <tr key={user._id} className="hover:bg-gray-50">
+                <tr key={user._id} className="hover:bg-[rgb(var(--color-bg-alt))]">
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center">
                       <div className="flex-shrink-0 h-10 w-10">
-                        <div className="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+                        <div className="h-10 w-10 rounded-full bg-[rgb(var(--color-bg-alt))] flex items-center justify-center">
                           <span className="text-sm font-medium text-[rgb(var(--color-text-light))]">
                             {user.name?.charAt(0)?.toUpperCase() || 'U'}
                           </span>

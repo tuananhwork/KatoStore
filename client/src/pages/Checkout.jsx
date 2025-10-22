@@ -239,7 +239,7 @@ const Checkout = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[rgb(var(--color-bg-alt))]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Header */}
         <div className="mb-8">
@@ -255,7 +255,7 @@ const Checkout = () => {
                 <div
                   className={`flex items-center justify-center w-10 h-10 rounded-full border-2 ${
                     step >= stepItem.number
-                      ? 'bg-pink-600 border-pink-600 text-[rgb(var(--color-text-light))]'
+                      ? 'bg-[rgb(var(--color-primary-500))] border-pink-600 text-[rgb(var(--color-text-light))]'
                       : 'bg-white border-gray-300 text-[rgb(var(--color-text-light))]'
                   }`}
                 >
@@ -282,7 +282,7 @@ const Checkout = () => {
                 {index < steps.length - 1 && (
                   <div
                     className={`hidden sm:block w-24 h-0.5 mx-4 ${
-                      step > stepItem.number ? 'bg-pink-600' : 'bg-gray-300'
+                      step > stepItem.number ? 'bg-[rgb(var(--color-primary-500))]' : 'bg-[rgb(var(--color-bg-alt))]'
                     }`}
                   />
                 )}
@@ -570,7 +570,7 @@ const Checkout = () => {
                   <div className="space-y-6">
                     <div>
                       <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-3">Thông tin giao hàng</h3>
-                      <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="bg-[rgb(var(--color-bg-alt))] p-4 rounded-lg">
                         <p className="text-sm text-[rgb(var(--color-text-light))]">
                           {formData.firstName} {formData.lastName}
                         </p>
@@ -584,7 +584,7 @@ const Checkout = () => {
 
                     <div>
                       <h3 className="text-lg font-medium text-[rgb(var(--color-text))] mb-3">Phương thức thanh toán</h3>
-                      <div className="bg-gray-50 p-4 rounded-lg">
+                      <div className="bg-[rgb(var(--color-bg-alt))] p-4 rounded-lg">
                         <p className="text-sm text-[rgb(var(--color-text-light))]">
                           {paymentMethod === 'cod' && 'Thanh toán khi nhận hàng (COD)'}
                           {paymentMethod === 'vnpay' && 'VNPAY'}
@@ -622,7 +622,7 @@ const Checkout = () => {
                   <button
                     type="button"
                     onClick={handlePrevious}
-                    className="px-6 py-3 border border-gray-300 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-gray-50 transition-colors"
+                    className="px-6 py-3 border border-gray-300 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-[rgb(var(--color-bg-alt))] transition-colors"
                   >
                     Quay lại
                   </button>
@@ -633,7 +633,7 @@ const Checkout = () => {
                     <button
                       type="button"
                       onClick={handleNext}
-                      className="px-6 py-3 bg-pink-600 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-pink-700 transition-colors"
+                      className="px-6 py-3 bg-[rgb(var(--color-primary-500))] text-[rgb(var(--color-text-light))] rounded-lg hover:bg-[rgb(var(--color-primary-700))] transition-colors"
                     >
                       Tiếp tục
                     </button>
@@ -641,7 +641,7 @@ const Checkout = () => {
                     <button
                       type="submit"
                       disabled={loading || !confirmChecked}
-                      className="px-6 py-3 bg-pink-600 text-[rgb(var(--color-text-light))] rounded-lg hover:bg-pink-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="px-6 py-3 bg-[rgb(var(--color-primary-500))] text-[rgb(var(--color-text-light))] rounded-lg hover:bg-[rgb(var(--color-primary-700))] transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                       {loading ? (
                         <div className="flex items-center">
