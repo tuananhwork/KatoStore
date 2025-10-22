@@ -13,6 +13,14 @@ import Cart from '../pages/Cart';
 import Checkout from '../pages/Checkout';
 import Auth from '../pages/Auth';
 import Profile from '../pages/Profile';
+import About from '../pages/About';
+import Blog from '../pages/Blog';
+import Contact from '../pages/Contact';
+import Faq from '../pages/Faq';
+import Help from '../pages/Help';
+import Returns from '../pages/Returns';
+import Shipping from '../pages/Shipping';
+import SizeGuide from '../pages/SizeGuide';
 
 // Admin Pages
 import AdminDashboard from '../pages/Admin/Dashboard';
@@ -102,6 +110,72 @@ const AppRoutes = () => {
         }
       />
 
+      <Route
+        path="/about"
+        element={
+          <Layout>
+            <About />
+          </Layout>
+        }
+      />
+      <Route
+        path="/blog"
+        element={
+          <Layout>
+            <Blog />
+          </Layout>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <Layout>
+            <Contact />
+          </Layout>
+        }
+      />
+      <Route
+        path="/faq"
+        element={
+          <Layout>
+            <Faq />
+          </Layout>
+        }
+      />
+      <Route
+        path="/help"
+        element={
+          <Layout>
+            <Help />
+          </Layout>
+        }
+      />
+      <Route
+        path="/returns"
+        element={
+          <Layout>
+            <Returns />
+          </Layout>
+        }
+      />
+      <Route
+        path="/shipping"
+        element={
+          <Layout>
+            <Shipping />
+          </Layout>
+        }
+      />
+      <Route
+        path="/size-guide"
+        element={
+          <Layout>
+            <SizeGuide />
+          </Layout>
+        }
+      />
+
+      {/* RequireAuth Routes */}
       <Route
         path="/cart"
         element={
@@ -234,7 +308,7 @@ const AppRoutes = () => {
                 <p className="text-[rgb(var(--color-text-light))] mb-8">Trang không tồn tại</p>
                 <Link
                   to="/"
-                  className="bg-pink-600 text-[rgb(var(--color-text-light))] px-6 py-3 rounded-lg hover:bg-pink-700 transition-colors"
+                  className="bg-[rgb(var(--color-primary))] text-[rgb(var(--color-text-light))] px-6 py-3 rounded-lg hover:bg-[rgb(var(--color-primary-700))] transition-colors"
                 >
                   Về trang chủ
                 </Link>
